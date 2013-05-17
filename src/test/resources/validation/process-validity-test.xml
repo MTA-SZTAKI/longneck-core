@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        
+  <source>
+    <database-source connection-name="test">
+      <query>
+        select * from dual
+      </query>    
+    </database-source>
+  </source>
+  <target>
+    <database-target connection-name="test">
+      <truncate-query>
+        delete from some_table    
+      </truncate-query>
+      <insert-query>
+        insert into some_table values(:a, :b)
+      </insert-query>
+    </database-target>
+  </target>
+  <blocks>
+    <!-- Block reference -->
+    <block-ref id="package1:some.block.id" version="1.0">
+      <pass fields="a b c"/>
+      <prefix fields="d e" text="fff"/>
+      <postfix fields="g h" text="iii"/>
+      <map from="j" to="k"/>
+    </block-ref>
+    
+    <check summary="test summary">
+      <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+	  <exists apply-to="exists1 exists2 $_exists3"/>        
+    </check>
+
+    <!-- Copy -->
+    <copy apply-to="f1 f2 $v1 $v2" from="f3"/>
+    <copy apply-to="f1 f2 $v1 $v2" from="f3" with-flags="true"/>
+    <copy apply-to="f1 f2 $v1 $v2" from="f3" with-flags="false"/>
+    
+    <add-flag apply-to="a" flag="INVALID"/>
+    <remove-flag apply-to="a" flag="INVALID"/>
+    <clear-flags apply-to="a"/>
+
+    <!-- If -->
+    <if>
+	<!-- Constraints -->
+  	  <alphabet apply-to="a b c" classes="Letter Number" policy="Deny"/>
+  	  <and>
+	    <constraint-ref id="package4:some.constraint" version="3.0">
+          <pass fields="a b c"/>
+          <prefix fields="d e" text="fff"/>
+          <postfix fields="g h" text="iii"/>
+          <map from="j" to="k"/>          
+          <map from="j" to="k"/>          
+          <map from="j" to="k"/>          
+          <map from="j" to="k"/>          
+        </constraint-ref>
+	    <entity-ref id="package5:hello.world" version="3.4">
+          <pass fields="a b c"/>
+          <prefix fields="d e" text="fff"/>
+          <postfix fields="g h" text="iii"/>
+          <map from="j" to="k"/>                    
+        </entity-ref>
+	    <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+        <equals-imploded apply-to="a b" sources="c d e" glue=":"/>
+	    <exists apply-to="exists1 exists2 $_exists3"/>
+	    <false apply-to="false1"/>
+	    <has-flag apply-to="flag1" flag="INVALID"/>
+	    <is-null apply-to="null1"/>
+	    <match apply-to="m1 m2" regexp="a?b?">
+	      <equals apply-to="$1" with="fieldName"/>
+	    </match>
+	    <not-null apply-to="notnull1"/>
+	    <not>
+	      <not-null apply-to="notnull1"/>
+	    </not>
+	    <or>
+	      <false apply-to="false1"/>
+	      <has-flag apply-to="flag1" flag="INVALID"/>	    
+	    </or>
+	    <true apply-to="true1 true2"/>
+        
+        <when>
+          <is-null apply-to="a b c"/>
+          
+          <then>
+            <not-null apply-to="d"/>    
+          </then>
+          <else>
+            <not-null apply-to="e"/>    
+          </else>
+        </when>
+        
+	  </and>
+	  <not-null apply-to="f1 f2 $v1 $v2"/>
+
+      <then>
+        <copy apply-to="if1 if2 $if3 $if4" from="if5"/>
+        <copy apply-to="if1 if2 $if3 $if4" from="if5"/>
+      </then>
+      
+      <else>
+	    <copy apply-to="else1 else2 $else3 $else4" from="f3"/>            
+      </else>
+    </if>
+    
+    <implode apply-to="a b" sources="c d e" glue=":"/>
+
+    <!-- Match extract -->
+    <match-extract apply-to="match1 match2 $match3" regexp="$a*b">
+      <copy apply-to="$c1" from="$1"/>
+    </match-extract>
+
+    <!-- Remove -->
+    <remove apply-to="remove1 remove2"/>
+
+    <!-- Replace all -->
+    <replace-all apply-to="replaceAll1 replaceAll2 $replaceAll3" regexp="u." replacement="utca"/>
+
+    <!-- Replace first -->
+    <replace-first apply-to="replaceFirst1 replaceFirst2 $replaceFirst3" regexp="u." replacement="utca"/>
+
+    <!-- Set -->
+    <set apply-to="set1 set2" value="some value"/>
+
+    <!-- Switch -->
+    <switch>
+      <case>
+        <check summary="test summary">
+          <not-null apply-to="f1 f2 $v1 $v2"/>	  
+        </check>
+        <copy apply-to="if1 if2 $if3 $if4" from="if5"/>	
+      </case>
+      <case>
+        <check summary="test summary">
+          <not-null apply-to="f3 f4 $v1 $v2"/>	  
+        </check>
+        <copy apply-to="if1 if2 $if3 $if4" from="if5"/>	
+      </case>
+    </switch>
+
+    <!-- Switch Strict -->
+    <switch-strict>
+      <case>
+        <check summary="test summary">
+            <not-null apply-to="f1 f2 $v1 $v2"/>	  
+        </check>
+        <copy apply-to="if1 if2 $if3 $if4" from="if5"/>	
+      </case>
+      <case>
+        <check summary="test summary">
+          <not-null apply-to="f3 f4 $v1 $v2"/>	  
+        </check>
+    	<copy apply-to="if1 if2 $if3 $if4" from="if5"/>	
+      </case>
+    </switch-strict>
+
+    <!-- Try all -->
+    <try-all>
+      <case>
+        <check summary="test summary">
+          <not-null apply-to="f1 f2 $v1 $v2"/>	  
+        </check>
+        <copy apply-to="if1 if2 $if3 $if4" from="if5"/>	
+      </case>
+      <case>
+        <check summary="test summary">
+          <not-null apply-to="f3 f4 $v1 $v2"/>	  
+        </check>
+        <copy apply-to="if1 i_f2 $if.3 $if4" from="if5"/>	
+      </case>
+    </try-all>
+
+    <unicode-normalize apply-to="$a b c" form="NFD"/>
+    
+  </blocks>
+</process>

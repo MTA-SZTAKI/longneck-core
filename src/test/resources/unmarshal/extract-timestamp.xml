@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+	<blocks>
+
+		<set apply-to="timestamp" value="-191754408" />
+
+		<extract-timestamp apply-to="timestamp">
+			<copy apply-to="year" from="$year" />
+			<copy apply-to="month" from="$month" />
+			<copy apply-to="day" from="$day" />
+			<copy apply-to="hour" from="$hour" />
+			<copy apply-to="min" from="$min" />
+			<copy apply-to="sec" from="$sec" />
+		</extract-timestamp>
+
+	</blocks>
+	
+</process>

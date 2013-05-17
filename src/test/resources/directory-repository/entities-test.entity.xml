@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<entity-package xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+
+  <entity id="some.entity" version="1">
+    <not-null apply-to="a b"/>
+  </entity>
+
+  <entity id="some.entity" version="2">
+    <is-null apply-to="a b"/>
+  </entity>
+  
+</entity-package>

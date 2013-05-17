@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<block-package xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+
+  <block id="some.block.id" version="5">
+    <if>
+	  <is-null apply-to="b"/>
+
+      <then>
+        <copy apply-to="b" from="a"/>
+      </then>
+      <else>
+	    <copy apply-to="b" from="c"/>
+      </else>
+    </if>
+  </block>
+
+</block-package>

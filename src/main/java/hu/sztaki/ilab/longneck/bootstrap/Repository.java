@@ -1,0 +1,155 @@
+package hu.sztaki.ilab.longneck.bootstrap;
+
+import hu.sztaki.ilab.longneck.process.*;
+import hu.sztaki.ilab.longneck.process.block.BlockReference;
+import hu.sztaki.ilab.longneck.process.block.GenericBlock;
+import hu.sztaki.ilab.longneck.process.constraint.ConstraintReference;
+import hu.sztaki.ilab.longneck.process.constraint.EntityReference;
+import hu.sztaki.ilab.longneck.process.constraint.GenericConstraint;
+import hu.sztaki.ilab.longneck.process.constraint.GenericEntity;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.log4j.Logger;
+
+/**
+ *
+ * @author Molnár Péter <molnarp@sztaki.mta.hu>
+ */
+public class Repository {
+    /** Log object. */
+    protected final Logger LOG = Logger.getLogger(Repository.class);
+    
+    /** Entity packages. */
+    protected final Map<String,EntityPackage> entities;
+    /** Constraint packages. */
+    protected final Map<String,ConstraintPackage> constraints;
+    /** Block packages. */
+    protected final Map<String,BlockPackage> blocks;
+    
+    public Repository() {
+        entities = new HashMap<String,EntityPackage>();
+        constraints = new HashMap<String,ConstraintPackage>();
+        blocks = new HashMap<String,BlockPackage>();        
+    }
+    
+    public Repository(List<LongneckPackage> packages) {
+        this();
+        
+        for (LongneckPackage pkg : packages) {
+            addPackage(pkg);
+        }
+    }
+    
+    public final void addPackage(LongneckPackage pkg) {
+        switch (pkg.getType()) {
+            case Block:
+                blocks.put(pkg.getPackageId(), (BlockPackage) pkg);
+                break;
+                
+            case Constraint:
+                constraints.put(pkg.getPackageId(), (ConstraintPackage) pkg);
+                break;
+                
+            case Entity:
+                entities.put(pkg.getPackageId(), (EntityPackage) pkg);
+                break;
+        }
+    }
+    
+    public GenericEntity getEntity(String id, String version) {
+        SplitId splitId = new SplitId(id);
+        
+        GenericEntity entity = null;
+        try {
+            entity = entities.get(splitId.pkg).getEntity(splitId.id, version);
+        } catch (NullPointerException ex) {
+            throw new RuntimeException("Entity package not found: " + id + ":" + version, ex);
+        }
+        
+        if (entity == null) {
+            throw new RuntimeException("Entity not found: " + id + ":" + version);
+        }
+        
+        return entity;
+    }
+    
+    public GenericConstraint getConstraint(String id, String version) {
+        SplitId splitId = new SplitId(id);
+        
+        GenericConstraint constraint = null;
+        try {
+            constraint = constraints.get(splitId.pkg).getConstraint(splitId.id, version);
+        } catch (NullPointerException ex) {
+            throw new RuntimeException("Constraint package not found: " + id + ":" + version, ex);
+        }
+        
+        if (constraint == null) {
+            throw new RuntimeException("Constraint not found: " + id + ":" + version);
+        }
+        
+        return constraint;
+    }
+    
+    public GenericBlock getBlock(String id, String version) {
+        SplitId splitId = new SplitId(id);
+        
+        GenericBlock block = null;
+        try {
+             block = blocks.get(splitId.pkg).getBlock(splitId.id, version);
+        } catch (NullPointerException ex) {
+            throw new RuntimeException("Block package not found: " + id + ":" + version, ex);
+        }
+        
+        if (block == null) {
+            throw new RuntimeException("Block not found: " + id + ":" + version);
+        }
+        
+        return block;
+    }
+    
+    public boolean isLoaded(FileType type, String pkg) {
+        switch (type) {
+            case Block:
+                return blocks.containsKey(pkg);
+            case Constraint:
+                return constraints.containsKey(pkg);
+            case Entity:
+                return entities.containsKey(pkg);
+            default:
+                return false;                
+        }
+    }
+    
+    public void updateReferences(List<AbstractReference> references) {
+        for (AbstractReference ref : references) {
+            if (ref instanceof BlockReference) {
+                ((BlockReference) ref).setReferredBlock(getBlock(ref.getId(), ref.getVersion()));
+            }
+            else if (ref instanceof ConstraintReference) {
+                ((ConstraintReference) ref).setReferredConstraint(
+                        getConstraint(ref.getId(), ref.getVersion()));
+            }
+            else if (ref instanceof EntityReference) {
+                ((EntityReference) ref).setReferredEntity(getEntity(ref.getId(), ref.getVersion()));
+            }
+        }
+    }
+    
+    public List<LongneckPackage> getSources() {
+        List<LongneckPackage> sources = new ArrayList<LongneckPackage>(
+                blocks.size() + constraints.size() + entities.size());
+        for (BlockPackage pak : blocks.values()) {
+            sources.add(pak);
+        }
+        for (ConstraintPackage pak : constraints.values()) {
+            sources.add(pak);
+        }
+        for (EntityPackage pak : entities.values()) {
+            sources.add(pak);
+        }
+        
+        return sources;
+    }
+}

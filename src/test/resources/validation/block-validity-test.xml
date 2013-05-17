@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<block-package xmlns="urn:hu.sztaki.ilab.longneck:1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <block id="some.block.id" version="2">
+    <input-constraints summary="input constraints">
+      <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+	  <exists apply-to="exists1 exists2 $_exists3"/>        
+    </input-constraints>
+    
+    <if>
+	  <is-null apply-to="b"/>
+
+      <then>
+        <copy apply-to="b" from="a"/>
+      </then>
+      <else>
+	    <copy apply-to="b" from="c"/>
+      </else>
+    </if>
+    <match-extract apply-to="match1 match2 $match3" regexp="$a*b">
+      <copy apply-to="$c1" from="$1"/>
+    </match-extract>
+
+    <!-- Remove -->
+    <remove apply-to="remove1 remove2"/>
+    
+    
+    <output-constraints summary="output constraints">
+      <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+	  <exists apply-to="exists1 exists2 $_exists3"/>
+    </output-constraints>
+  </block>
+
+</block-package>

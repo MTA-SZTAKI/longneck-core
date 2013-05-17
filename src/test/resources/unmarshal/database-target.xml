@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+       
+    <target>
+      <database-target connection-name="connection1">
+        <truncate-query>
+          delete from test1_target    
+        </truncate-query>
+        <insert-query>
+          insert into test1_target (a, b) values(:a, :b)    
+        </insert-query>
+      </database-target>    
+    </target>
+        
+    <blocks>
+    </blocks>
+</process>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<when xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+  <is-null apply-to="a"/>
+
+  <then>
+    <is-null apply-to="b"/>    
+  </then>
+  <else>
+    <is-null apply-to="c"/>    
+  </else>
+</when>        

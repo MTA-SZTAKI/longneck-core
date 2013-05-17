@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns:tns="urn:hu.sztaki.ilab.longneck:1.0"
+           targetNamespace="urn:hu.sztaki.ilab.longneck:1.0" 
+           elementFormDefault="qualified">
+
+  <xs:include schemaLocation="longneck.xsd"/>
+  
+  <xs:element name="database-source" type="tns:databaseSourceType" substitutionGroup="tns:abstract-source"/>
+
+  <!-- Database attribute group -->
+  <xs:attributeGroup name="databaseAccessorAttrGroup">
+    <xs:attribute name="connection-name" type="xs:string"/>
+  </xs:attributeGroup>
+
+  <!-- Database source -->
+  <xs:complexType name="databaseSourceType">
+    <xs:complexContent>
+      <xs:extension base="tns:sourceType">
+        <xs:sequence>
+          <xs:element name="query" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="block-package">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:block" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

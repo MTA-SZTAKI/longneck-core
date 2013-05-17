@@ -1,0 +1,2011 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns:tns="urn:hu.sztaki.ilab.longneck:1.0"
+           targetNamespace="urn:hu.sztaki.ilab.longneck:1.0"
+           xmlns:d="urn:hu.sztaki.ilab.longneck.doc:1.0" 
+           elementFormDefault="qualified"
+           >
+  <!-- xmlns="http://www.w3.org/1999/xhtml" -->
+  <!-- $Id$ -->
+  
+  <!-- XML Schema for longneck -->
+
+  <!-- Version: 1.0-SNAPSHOT -->
+
+  <!-- Abstract Source -->
+  <xs:complexType name="sourceContainerType">
+    <xs:annotation>
+      <xs:documentation>
+        Sequence of <code>tns:abstract-source</code>.
+      </xs:documentation>
+    </xs:annotation>   
+    <xs:sequence>
+      <xs:element ref="tns:abstract-source" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="source" type="tns:sourceContainerType" />
+
+  <xs:complexType name="sourceType" />
+  <xs:element name="abstract-source" type="tns:sourceType" abstract="true" />
+
+  <!-- identifier type for field names and variables -->
+  <xs:simpleType name="identifierType"> 
+    <xs:annotation>
+      <xs:documentation>
+        Identifier, an alphanumeric string optionally beginning with '$', may contain '_', '-' or '.'.
+        Examples: abc, $def, $_my_val, foo.bar
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <!-- Java: 
+           <xs:pattern value="(\$)?[0-9a-zA-Z_.]+"/> 
+      -->
+      <!-- libxml2: 
+           <xs:pattern value="$?[0-9a-zA-Z_.]+"/> 
+      -->
+
+      <xs:pattern value="(\$)?[0-9a-zA-Z_.-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- identifier list -->
+  <xs:simpleType name="identifierListType">
+    <xs:annotation>
+      <xs:documentation>
+        List of identifiers.
+      </xs:documentation>
+    </xs:annotation>                    
+    <xs:list itemType="tns:identifierType"/>
+  </xs:simpleType>
+
+  <!-- field name -->
+  <xs:simpleType name="fieldNameType">
+    <xs:annotation>
+      <xs:documentation>
+        Identifier, an alphanumeric string optionally beginning with '$', may contain '_', '-' or '.'.
+        Examples: abc, $def, $_my_val, foo.bar
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(\$)?[0-9a-zA-Z_.-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- field name list type -->
+  <xs:simpleType name="fieldNameListType">
+    <xs:annotation>
+      <xs:documentation>
+        List of fieldnames.
+      </xs:documentation>
+    </xs:annotation>    
+    <xs:list itemType="tns:fieldNameType"/>
+  </xs:simpleType>
+
+  <!-- generic block, constraint and entity id type -->
+  <xs:simpleType name="genericIdType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-zA-Z_.-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- referred block, constraint and entity id type -->
+  <xs:simpleType name="referenceIdType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-zA-Z_.-]+:[0-9a-zA-Z_.-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- generic version type -->
+  <xs:simpleType name="genericVersionType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-zA-Z.\-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Repository item reference attribute group -->
+  <xs:attributeGroup name="referenceAttrGroup">
+    <xs:attribute name="id" type="tns:referenceIdType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id of the referenced constraint / block / entity. It is starting with the constraint / block/ entity package name, this is the name of the file befor the entity.xml / block.xml (example : name.block.xml -> name), 
+          where included the named constraint / block/ entity.
+          It is divided by ':' with the constraint / block/ entity name. 
+          The constraint / block/ entity name part is splitting by '.', this defines the subpart of the block's name.
+          The correct name defined in <code>tns:referenceIdType</code>.
+          Example: email:e-mail.multiple.process.skipnull
+        </xs:documentation>
+      </xs:annotation> 
+    </xs:attribute>
+    <xs:attribute name="version" type="tns:genericVersionType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The version of the referenced constraint / block/ entity.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- Referred repository item attribute group -->
+  <xs:attributeGroup name="referredAttrGroup">
+    <xs:attribute name="id" type="tns:genericIdType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The unique id of the constraint / block/ entity in repository.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="version" type="tns:genericVersionType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The version of the constraint / block/ entity.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- abstract block -->
+  <xs:complexType name="abstractBlockType"/>
+  <xs:element name="abstract-block" type="tns:abstractBlockType" abstract="true"/>
+  
+
+  <!-- block element group -->
+  <xs:group name="blockElementGroup">
+    <xs:sequence>
+      <xs:element ref="tns:abstract-block" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- atomic block attribute group -->
+  <xs:attributeGroup name="atomicBlockAttrGroup">
+    <xs:attribute name="apply-to" type="tns:identifierListType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          List of fields this element applies to.
+        </xs:documentation>
+      </xs:annotation>                    
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- atomic block type -->
+  <xs:complexType name="atomicBlockType">
+    <xs:annotation>
+      <xs:documentation>
+        Abstract atomic block type.
+      </xs:documentation>
+    </xs:annotation>        
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:attributeGroup ref="tns:atomicBlockAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- atomic field only block type -->
+  <xs:complexType name="atomicFieldOnlyBlockType">
+    <xs:annotation>
+      <xs:documentation>
+        Abstract field-only block type.
+      </xs:documentation>
+    </xs:annotation>        
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:attribute name="apply-to" type="tns:fieldNameListType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              List of fields this element applies to.
+            </xs:documentation>
+          </xs:annotation>              
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- regexp block type -->
+  <xs:complexType name="regexpBlockType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="regexp" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              A regular expression.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- sequence type -->
+  <xs:complexType name="sequenceType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:group ref="tns:blockElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- BLOCK ELEMENTS -->
+
+  <!-- Add flag -->
+  <xs:complexType name="abstractFlagBlockType">
+    <xs:annotation>
+      <xs:documentation>
+        Abstract flag-related type.
+      </xs:documentation>
+    </xs:annotation>    
+    <xs:complexContent>
+      <xs:extension base="tns:atomicFieldOnlyBlockType">
+        <xs:attribute name="flag" type="tns:constraintFlagType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the flag type for the operation.
+            </xs:documentation>
+          </xs:annotation>              
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="add-flag" type="tns:abstractFlagBlockType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Adds a pre-defined flag to the fields listed in the apply-to attribute. The flag can
+        be chosen from the values defined in <code>tns:constraintFlagType</code>.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <add-flag apply-to="field1 field2" flag="INVALID"/>
+      </xs:documentation>
+    </xs:annotation>      
+  </xs:element>
+
+  <!-- Block reference -->
+  <xs:complexType name="blockReferenceType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:sequence>
+          <xs:element ref="tns:abstract-mapping-rule" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:referenceAttrGroup"/>
+        <xs:attribute name="propagate-failure" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>
+              This boolean variable determines the way of the error propagate.
+              Enable propagation of errors to lower levels.
+              If the value is false, then the error catched in this block-ref level, that means,
+              the process - when the reffed block fail - followed by after the block-ref, it is the default.
+              Outher case, when this variable set to trus, the block fail propagate the higher level and 
+              the process skipp the after blocks in this level.
+              See more the error handling, error table section.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="block-ref" type="tns:blockReferenceType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        It is a reference to the given block, that defined the id and the version attribute.
+        The process continues with the calling block that it follows after the blockref.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <block-ref id="email:e-mail.multiple.process.skipnull" version="1.0"/>
+      </xs:documentation>
+      <xs:documentation>
+        Use mapping during the block-ref.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+         <block-ref id="name:name.canonize" version="1.0" >
+           <unprefix fields="rep_tempname rep_temp_remain " text="rep_"/>
+           <prefix fields="tempname temp_remain " text="rep_"/>
+           <postfix fields="tempname temp_remain " text="_rep"/>
+           <pass fields="tempname temp_remain"/>
+           <map from="work-raw-extension" to="raw-extension"/>
+         </block-ref>
+      </xs:documentation>
+      <xs:documentation>
+        Defined the propagation level.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <block-ref id="email:e-mail.multiple.process.skipnull" version="1.0" propagate-failure="true"/>
+      </xs:documentation>
+    </xs:annotation>  
+  </xs:element>
+
+  <!-- Break -->
+  <xs:complexType name="breakType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType"/>        
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="break" type="tns:breakType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Stopped the actual block process and step up one level in the block-ref chain.
+        If isn't exist highter level stopped the process
+        else continue the process the given level after a blockref.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <break/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Fail -->
+  <xs:complexType name="failType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType"/>        
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="fail" type="tns:failType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        It trigger a block fail event.
+        See more the error handling, error table section.
+        It can be usefull and a good implementation decide.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <fail/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Filter -->
+  <xs:complexType name="filterType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType"/>        
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="filter" type="tns:filterType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Filter the given row from the source, it dosen't apper in a target.
+        Example it can use to filter the uninterested rows.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <filter/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+  
+  <!-- Case -->
+  <xs:complexType name="caseType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:sequence>
+          <xs:group ref="tns:blockElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="case" type="tns:caseType" substitutionGroup="tns:abstract-block">   
+    <xs:annotation>
+      <xs:documentation>
+        Case in a switch structure.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
+  <!-- Check -->
+  <xs:complexType name="checkType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:group ref="tns:constraintElementGroup" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:attribute name="summary" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The summary of implemented checks as a short text.
+              Descrition of a checked attribure or what we checked.
+              It is important to the error table when the check fail.
+              See more the error handling, error table section.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="checkedfield" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              The filed that is checked. This field's value'll appear in the error table when block failure event occour.
+              See more the error handling, error table section.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="check" type="tns:checkType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        It is a block, it can use like a block but it contain 1 or more constraint.
+        The constraints are in logical and relationships.
+        If all of the constraint checked the process continued
+        but if one of the constraints fail, it trigger a block failure event.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <check summary="Address error. Check if bm-code is exactly four digits plus one letter"  checkedfield="bm-code">
+          <match apply-to="bm-code" regexp="^\d{4}[A-Z0]?$"/>
+        </check>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Clear flags -->
+  <xs:complexType name="clearFlagsType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicFieldOnlyBlockType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="clear-flags" type="tns:clearFlagsType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Remove all of flags from the fields listed in the apply-to attribute.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <clear-flags apply-to="field1 field2"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Collapse whitespace -->
+  <xs:complexType name="collapseWhitespaceType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="collapse-whitespace" type="tns:collapseWhitespaceType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Collapses whitespace characters between tokens to single space characters. 
+        This block does not remove whitespace from the beginning and the end of a string (use trim for that).
+        See Trim.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <collapse-whitespace apply-to="county"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Copy -->
+  <xs:complexType name="copyType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="from" type="tns:identifierType">
+          <xs:annotation>
+            <xs:documentation>
+              The name of the field to copy from.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="with-flags" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>
+              If tha value is true also copy source flags if any.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="copy" type="tns:copyType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Copies the content of another field.
+        Copy the value of the from filed to the fields, thats are represent in the apply-to list.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <copy apply-to="public-domain-type" from="$1"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Cut -->
+  <xs:complexType name="cutType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="value" type="xs:integer" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The desired lenght.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="cut" type="tns:cutType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Cut the length of the apply-to fileds to a given value if they are longer.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <cut apply-to="a b c" value="4"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- DateTime To Format -->
+  <xs:complexType name="dateTimeToFormatType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="from" type="tns:identifierType">
+          <xs:annotation>
+            <xs:documentation>
+              To read the date from.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="from-pattern" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              The pattern to convert the text to a date object from.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="to-pattern" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              The pattern to convert the text to a date object to. 
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="datetime-to-format" type="tns:dateTimeToFormatType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Converts a date and time string to the given format.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <datetime-to-format apply-to="timeInMillis" from="time" fromPattern="dd/MMM/yyyy:HH:mm:ss Z" toPattern=""/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+  
+  <!-- DateTime To Milliseconds -->
+  <xs:complexType name="dateTimeToMillisecondsType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="from" type="tns:identifierType">
+          <xs:annotation>
+            <xs:documentation>
+              To read the date from.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pattern" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              The pattern to convert the text to a date object.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="datetime-to-milliseconds" type="tns:dateTimeToMillisecondsType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Converts a date and time string to milliseconds.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <datetime-to-milliseconds apply-to="timeInMillis" from="time" pattern="dd/MMM/yyyy:HH:mm:ss Z"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Generic block -->
+  <xs:complexType name="genericBlockType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:sequence>
+          <xs:element name="input-constraints" type="tns:checkType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>
+                The input constraints.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:group ref="tns:blockElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="output-constraints" type="tns:checkType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>
+                The output constraints.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:referredAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="block" type="tns:genericBlockType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Generic transformation block.
+        Transformation block with custom transformation steps, that has an id and version, and can be retrieved from repository.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <block id="address.canonize.init-place-name-hu.skipnull" version="1.0">
+          <if>
+            <is-null apply-to="place-name" />
+            <then>
+              <break/>
+            </then>
+          </if>
+          <trim apply-to="place-name"/>
+          <collapse-whitespace apply-to="place-name"/>
+          <set-character-case apply-to="place-name" case="Lowercase" characters="ALL" />
+          <!--    <set-character-case apply-to="place-name" case="Uppercase" characters="TOKEN_INITIALS" />-->
+          <set-character-case apply-to="place-name" case="Uppercase" characters="TOKEN_INITIALS_NON_ALNUM" />
+          <replace-all apply-to="place-name" regexp=".*((?i)N/A).*" replacement="" />
+          <replace-all apply-to="place-name" regexp="^Bpest" replacement="Budapest" />
+          <replace-all apply-to="place-name" regexp="^(Bp\.?)" replacement="Budapest" />
+          <replace-all apply-to="place-name" regexp="^(Pest)" replacement="Budapest" />
+          <replace-all apply-to="place-name" regexp="^(Buda)[\P{L}]" replacement="Budapest" />
+          <replace-all apply-to="place-name" regexp="^Ismeretlen Irányítószám !$" replacement="" />
+          <trim apply-to="place-name"/>
+          <collapse-whitespace apply-to="place-name"/>
+        </block>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- If -->
+  <xs:complexType name="ifType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:sequence>
+          
+          <!-- conditions -->
+          <xs:group ref="tns:constraintElementGroup" minOccurs="1" maxOccurs="unbounded"/>
+
+          <!-- then -->
+          <xs:element name="then" type="tns:sequenceType"/>
+
+          <!-- else -->
+          <xs:element name="else" type="tns:sequenceType" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>	
+  </xs:complexType>
+
+  <xs:element name="if" type="tns:ifType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        If-then-else control structure.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <if>
+          <equals apply-to="$has-type" value="false"/>
+          <not-null apply-to="public-domain-type" />
+          <then>
+            <if>
+              <entity-ref id="address:address.part.public-domain-type.hu" version="1.0" />
+              <then>
+                <replace-all apply-to="public-domain-name" regexp="\s(\S*)$" replacement=""/>
+                <trim apply-to="public-domain-name"/>
+              </then>
+              <else>
+                <set-null apply-to="public-domain-type"/>
+              </else>
+            </if>
+          </then>
+        </if>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Implode -->
+  <xs:complexType name="implodeType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="glue" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Separate character between fields.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="sources" type="tns:identifierListType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The name of fileds to concatenates.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="skip-empty-strings" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation>
+              Skip the empty string from result. The default is false.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="implode" type="tns:implodeType" substitutionGroup="tns:abstract-block" >
+    <xs:annotation>
+      <xs:documentation>
+        Concatenates the values of the fields listed in source and adds the text defined in the glue parameter in between them.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <implode apply-to="house-number" sources="F_HAZSZAM F_AJTO" glue="."  skip-empty-strings="true"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Add-prefix, add-postfix -->
+  <xs:complexType name="abstractAddFixBlockType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="text" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The text to use affix.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="add-prefix" type="tns:abstractAddFixBlockType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Set prefix to the field from text. Concatenate the constant text before the field.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <add-prefix apply-to="house-number" text="home_" />
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="add-postfix" type="tns:abstractAddFixBlockType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Set postfix to the field from text. Concatenate the constant text behind the field.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <add-postfix apply-to="house-number" text="_home" />
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- MatchExtract -->
+  <xs:complexType name="matchExtractType">
+    <xs:complexContent>
+      <xs:extension base="tns:regexpBlockType">
+        <xs:sequence>
+          <xs:group ref="tns:blockElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="match-extract" type="tns:matchExtractType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Matches the input against regular expression and extracts regexp groups.
+        The groups defined in the regular expression are exported as variables starting from $0, which
+        contains the entire match.
+
+        Note, that the MatchExtract block behaves like a Check block, namely if the specified regular
+        expression does not match the input, a CheckResult is raised.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <match-extract apply-to="phone-number" regexp="^(\d)(\d+)$">
+          <if>
+            <equals apply-to="$1" with="country-code"/>
+            <then>
+              <copy apply-to="phone-number" from="$2" />
+            </then>
+          </if>
+        </match-extract>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+  
+  <!-- Milliseconds To DateTime -->
+  <xs:complexType name="millisecondsToDateTimeType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="from" type="tns:identifierType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Read the millisecounds value.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pattern" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The pattern to convert the text to a date object.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="milliseconds-to-datetime" type="tns:millisecondsToDateTimeType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Converts milliseconds to date and time string.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <milliseconds-to-datetime apply-to="date" from="timeinMillisecounds" pattern="dd/MMM/yyyy:HH:mm:ss Z"/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Remove -->
+  <xs:element name="remove" type="tns:atomicBlockType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Removes a field from the record.
+        Note: Variables cannot be unset. A variable is deleted when execution leaves the scope
+        where it was defined.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <remove apply-to="date"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Remove flag -->
+  <xs:element name="remove-flag" type="tns:abstractFlagBlockType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Remove a given flag of the fields listed in the apply-to attribute.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <remove-flag apply-to="field1 field2" flag="INVALID"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Remove prefix -->
+  <xs:complexType name="removePrefixType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="from" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The field to read from.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="prefix" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The prefix to remove.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="remove-prefix" type="tns:removePrefixType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Remove the given prefix from the from filed.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <remove-prefix apply-to="house-number" text="home_" />
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Replace All -->
+  <xs:complexType name="replaceType">
+    <xs:complexContent>
+      <xs:extension base="tns:regexpBlockType">
+        <xs:attribute name="replacement" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Replacement string.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="replace-all" type="tns:replaceType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Matches against regular expression and replaces all matches against the specified value.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <replace-all apply-to="unit" regexp="(=\/|^)0(?=\/|$)" replacement="" />
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Replace First -->
+  <xs:element name="replace-first" type="tns:replaceType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Matches against regular expression and replaces the first occurrence of the match.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <replace-first apply-to="unit" regexp="(=\/|^)0(?=\/|$)" replacement="" />
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Set -->
+  <xs:complexType name="setType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="value" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The value to set.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+  
+  <xs:element name="set" type="tns:setType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>  
+        Sets the field to the specified constant value.
+        Note: use Copy to copy the value of a field or variable.
+        See copy also.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <set apply-to="$unit-emelet-text" value="em"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Set Character Case -->
+  <xs:simpleType name="characterTargetType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ALL"/>
+      <xs:enumeration value="FIRST"/>
+      <xs:enumeration value="TOKEN_INITIALS"/>
+      <xs:enumeration value="TOKEN_INITIALS_NON_ALNUM"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="setCharacterCaseType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="characters" type="tns:characterTargetType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The characters to change.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="case" type="tns:characterCaseType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The character case to apply.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="set-character-case" type="tns:setCharacterCaseType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Set the scecipied filds caracter case.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <set-character-case apply-to="country" case="Lowercase" characters="ALL" />
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Set Null -->
+  <xs:complexType name="setNullType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType"/>        
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="set-null" type="tns:setNullType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Set the value of the given filds to null.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <set-null apply-to="zip-code" />
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+  
+
+  <!-- Switch -->
+  <xs:complexType name="switchType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:sequence>
+          <xs:element ref="tns:case" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>        
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="switch" type="tns:switchType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Switch-like control structure.
+        Executes each case, which meets the condition for that case in sequential order, until the 
+        first case succeeds. Failed cases have no effect on the data.
+        See try-all also.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <switch>
+          <!-- Hungarian mobile nr -->
+          <case>
+            <block-ref id="phonenr:phone-number.extract-hun-mobile" version="1.0" propagate-failure="true"/>
+          </case>
+          <!-- Hungarian country nr -->
+          <case>
+            <block-ref id="phonenr:phone-number.extract-hun-rural" version="1.0" propagate-failure="true"/>
+          </case>
+          <!-- Hungarian nr : Budapest 1 -->
+          <case>
+            <block-ref id="phonenr:phone-number.extract-hun-budapest" version="1.0" propagate-failure="true"/>
+          </case>
+          <!-- Set as empty - removed as error/invalid handling completed -->
+          <case>
+            <block-ref id="phonenr:phone-number.set-null" version="1.0" propagate-failure="true"/>
+          </case>
+        </switch>
+        <block-ref id="email:e-mail.multiple.process.skipnull" version="1.0"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Switch Strict -->
+  <xs:element name="switch-strict" type="tns:switchType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Strict switch control structure.
+        It provides the same functionality as the Switch class, but it fails, if no cases are
+        executed due to constraint or block failures.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <switch-strict>
+          <!-- Hungarian mobile nr -->
+          <case>
+            <block-ref id="phonenr:phone-number.extract-hun-mobile" version="1.0" propagate-failure="true"/>
+          </case>
+          <!-- Hungarian country nr -->
+          <case>
+            <block-ref id="phonenr:phone-number.extract-hun-rural" version="1.0" propagate-failure="true"/>
+          </case>
+          <!-- Hungarian nr : Budapest 1 -->
+          <case>
+            <block-ref id="phonenr:phone-number.extract-hun-budapest" version="1.0" propagate-failure="true"/>
+          </case>
+          <!-- Set as empty - removed as error/invalid handling completed -->
+          <case>
+            <block-ref id="phonenr:phone-number.set-null" version="1.0" propagate-failure="true"/>
+          </case>
+        </switch-strict>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Trim -->
+  <xs:complexType name="trimType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="trim" type="tns:trimType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        This block remove whitespace from the beginning and the end of a string.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <trim apply-to="unit"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Try All -->
+  <xs:element name="try-all" type="tns:switchType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Try all cases control structure.
+        This control behaves much like a switch-case structure, but it tries all cases defined,
+        regardless of which succeeds or not. Unsuccessful block executions are rolled back, and have
+        no effect on the transformed record.
+        See switch also.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <try-all>
+          <case>
+            <check summary="test summary">
+              <not-null apply-to="f1 f2 $v1 $v2"/>	  
+            </check>
+            <copy apply-to="if1 if2 $if3 $if4" from="if5"/>	
+          </case>
+          <case>
+            <check summary="test summary">
+              <not-null apply-to="f3 f4 $v1 $v2"/>	  
+            </check>
+            <copy apply-to="if1 i_f2 $if.3 $if4" from="if5"/>	
+          </case>
+        </try-all>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- Unicode normalize -->
+  <xs:complexType name="unicodeNormalizeType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:attribute name="form">
+          <xs:annotation>
+            <xs:documentation>
+              The form of normalization, see http://unicode.org/reports/tr15/#Norm_Forms
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="NFD"/>
+              <xs:enumeration value="NFC"/>
+              <xs:enumeration value="NFKD"/>
+              <xs:enumeration value="NFKC"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="unicode-normalize" type="tns:unicodeNormalizeType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Normalize the given field list according to the form.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <unicode-normalize apply-to="$a b c" form="NFD"/>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+
+  <!-- ExtractTimestamp -->
+  <xs:complexType name="extractTimestampType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:sequence>
+          <xs:group ref="tns:blockElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="extract-timestamp" type="tns:extractTimestampType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Extracts input Unix timestamp into distinct date element fields (year,month,day,hour,min,sec).
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <extract-timestamp apply-to="timestamp">
+			<copy apply-to="year" from="$year" />
+			<copy apply-to="month" from="$month" />
+			<copy apply-to="day" from="$day" />
+			<copy apply-to="hour" from="$hour" />
+			<copy apply-to="min" from="$min" />
+			<copy apply-to="sec" from="$sec" />
+		</extract-timestamp>
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+  
+  <!-- Clone Record -->
+ 
+  <!-- clone record attribute group -->
+  <xs:attributeGroup name="cloneRecordBlockAttrGroup">
+    <xs:attribute name="set-field" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The field added when record is cloned.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="set-value" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The value of the newly added field.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:complexType name="cloneRecordType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractBlockType">
+        <xs:attributeGroup ref="tns:cloneRecordBlockAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="clone-record" type="tns:cloneRecordType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+      <xs:documentation>
+        Clone / duplicate the given record. 
+        To specificied the cloned record the block has the ability to add a new field to the cloned records.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <clone-record set-field="ctrl_doEventSplit" set-value="true" />
+      </xs:documentation>
+    </xs:annotation> 
+  </xs:element>
+  
+  <!-- CONSTRAINTS -->
+
+  <!-- abstract constraint -->
+  <xs:complexType name="abstractConstraintType"/>
+  <xs:element name="abstract-constraint" type="tns:abstractConstraintType" abstract="true"/>
+
+
+  <!-- Atomic constraint attribute group -->
+  <xs:attributeGroup name="atomicConstraintAttrGroup">
+    <xs:attribute name="apply-to" type="tns:identifierListType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          List of fields this element applies to.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- Simple atomic constraint -->
+  <xs:complexType name="atomicConstraintType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractConstraintType">
+        <xs:attributeGroup ref="tns:atomicConstraintAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Constraint element group strict -->
+  <xs:group name="constraintElementGroup">
+    <xs:sequence>
+      <xs:element ref="tns:abstract-constraint" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- Constraint element group -->
+  <xs:group name="constraintElementGroupfree">
+    <xs:sequence>
+      <xs:element ref="tns:abstract-constraint" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:group>
+  
+  <!-- Character class -->
+  <xs:simpleType name="characterClassType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Letter"/>
+      <xs:enumeration value="Number"/>
+      <xs:enumeration value="Space"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Character class list -->
+  <xs:simpleType name="characterClassListType">
+    <xs:list itemType="tns:characterClassType"/>
+  </xs:simpleType>
+
+  <!-- Policy -->
+  <xs:simpleType name="policyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Allow"/>
+      <xs:enumeration value="Deny"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Alphabet constraint -->
+  <xs:complexType name="alphabetType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicConstraintType">
+        <xs:attribute name="classes" type="tns:characterClassListType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Character classes checked in this constraint.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="policy" type="tns:policyType" use="optional" default="Allow">
+          <xs:annotation>
+            <xs:documentation>
+              Allow or deny policy for character containment.
+            </xs:documentation>
+          </xs:annotation>                                                                                 
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="alphabet" type="tns:alphabetType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks input against an alphabet.
+          The alphabet defines the characters, that are checked. The policy defines
+          if the alphabet specified is allowed in the input, or denied.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <alphabet apply-to="a b c" classes="Letter Number" policy="Deny"/>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Is Longer constraint -->
+  <xs:complexType name="isnotlongerType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicConstraintType">
+        <xs:attribute name="value" type="xs:integer" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The apceptable length.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="is-notlonger" type="tns:isnotlongerType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Check the input field is not longer than a given value.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <is-notlonger apply-to="a b c" value="4"/>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- And operator -->
+  <xs:complexType name="andTypefree">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractConstraintType">
+        <xs:sequence>
+          <xs:group ref="tns:constraintElementGroupfree" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- And operator -->
+  <xs:complexType name="andType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractConstraintType">
+        <xs:sequence>
+          <xs:group ref="tns:constraintElementGroup" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="and" type="tns:andType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          And operator for multiple constraints.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <and>
+            <not-null apply-to="zip-code" />
+            <exists apply-to="zip-code" />
+          </and>
+        </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Character case -->
+  <xs:simpleType name="characterCaseType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Uppercase"/>
+      <xs:enumeration value="Lowercase"/>
+      <xs:enumeration value="Capitalized"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Constraint flag -->
+  <xs:simpleType name="constraintFlagType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="INVALID"/>
+      <xs:enumeration value="NOT_APPLICABLE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Constraint reference -->
+  <xs:complexType name="constraintReferenceType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractConstraintType">
+        <xs:sequence>
+          <xs:element ref="tns:abstract-mapping-rule" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:referenceAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="constraint-ref" type="tns:constraintReferenceType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Reference to a named constraint.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <constraint-ref id="package4:some.constraint" version="3.0">
+          <pass fields="a b c"/>
+          <prefix fields="d e" text="fff"/>
+          <postfix fields="g h" text="iii"/>
+          <map from="j" to="k"/>          
+          <map from="j" to="k"/>          
+          <map from="j" to="k"/>          
+          <map from="j" to="k"/>          
+        </constraint-ref>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Entity reference -->
+  <xs:element name="entity-ref" type="tns:constraintReferenceType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Reference to a named entity.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <entity-ref id="address:address.part.zip-code.hu" version="1.0" >
+            <pass fields="a b c"/>
+            <prefix fields="d e" text="fff"/>
+            <postfix fields="g h" text="iii"/>
+            <map from="j" to="k"/>          
+            <map from="j" to="k"/>          
+            <map from="j" to="k"/>          
+            <map from="j" to="k"/> 
+          </entity-ref>
+        </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
+  <!-- Equals constraint -->
+  <xs:complexType name="equalsType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicConstraintType">
+        <xs:attribute name="value" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Value to be equal with.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="with" type="tns:identifierType" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              The identifier of the field the checked fields must be equal to.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="equals" type="tns:equalsType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the apply-to field value equals to the given field in with attribute.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <equals apply-to="house-number" with="hrsz" />
+        </xs:documentation>
+        <xs:documentation>
+          Checks, if the apply-to fields value equals to the specified constant.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <equals apply-to="house-number" value="113" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Equals imploded constraint -->
+  <xs:complexType name="equalsImplodedType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicConstraintType">
+        <xs:attribute name="sources" type="tns:identifierListType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The list of sources.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="glue" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The glue to merge between parts.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="equals-imploded" type="tns:equalsImplodedType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Implode the source fields using glue. Checks if the apply-to field values equal the created fieled.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <equals-implode apply-to="house-number" sources="F_HAZSZAM F_AJTO" glue="." />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Exists constraint -->
+  <xs:element name="exists" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the specified field exists according to the fields list.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <exists apply-to="zip-code" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- False constraint -->
+  <xs:element name="false" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks if the field is false. 
+          The field value is lowercased, and checked against the string "false".
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <false apply-to="field1"/>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Generic constraint -->
+  <xs:complexType name="genericConstraintType">
+    <xs:complexContent>
+      <xs:extension base="tns:andTypefree">
+        <xs:attributeGroup ref="tns:referredAttrGroup"/>	
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="constraint" type="tns:genericConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Constraint with id and version.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <constraint id="address.part.public-domain-type.hu" version="1.0">
+            <lookup apply-to="public-domain-type">
+              <external-wordset column-name="word">
+                <wordset-file-source
+                  source-file="longneck-jobs/lookup_resources/wordsets/cr_address/domain_type.txt" />
+              </external-wordset>
+            </lookup>
+          </constraint>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Generic entity -->
+  <xs:element name="entity" type="tns:genericConstraintType">
+    <xs:annotation>
+        <xs:documentation>
+          Entity implementation.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <entity id="address.part.public-domain-type.hu" version="1.0">
+            <lookup apply-to="public-domain-type">
+              <external-wordset column-name="word">
+                <wordset-file-source
+                  source-file="longneck-jobs/lookup_resources/wordsets/cr_address/domain_type.txt" />
+              </external-wordset>
+            </lookup>
+          </entity>
+        </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Has flag constraint -->
+  <xs:complexType name="hasFlagType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicConstraintType">
+        <xs:attribute name="flag" type="tns:constraintFlagType" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the flag type for the operation.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="has-flag" type="tns:hasFlagType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the field has the specified flag.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <has-flag apply-to="flag1" flag="INVALID"/>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Is null constraint -->
+  <xs:element name="is-null" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the specified field is null.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <is-null apply-to="country" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Is empty constraint -->
+  <xs:element name="is-empty" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the specified field is empty.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <is-empty apply-to="house-number" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Match constraint -->
+  <xs:complexType name="matchType">
+    <xs:complexContent>
+      <xs:extension base="tns:andTypefree">
+        <xs:attributeGroup ref="tns:atomicConstraintAttrGroup"/>
+        <xs:attribute name="regexp" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              A regular expression.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="match" type="tns:matchType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the field matches the specified regular expression.
+          Matched subgroups can also be checked using contained constraints. The match groups are assigned
+          to variables $0, $1, $2... and so on, within the match constraint scope.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <match apply-to="unit" regexp="(?i:hrsz?(:|.)?)"/>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Not null constraint -->
+  <xs:element name="not-null" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the specified field is not null.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <not-null apply-to="bm-code" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Not empty constraint -->
+  <xs:element name="not-empty" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the specified field is not empty.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <not-empty apply-to="bm-code" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Not operator -->
+  <xs:complexType name="notOperatorType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractConstraintType">
+        <xs:sequence>
+          <xs:group ref="tns:constraintElementGroup"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="not" type="tns:notOperatorType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Negates the result of the contained constraint check.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <not>
+            <exists apply-to="unit" />
+          </not>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- Or operator -->
+  <xs:element name="or" type="tns:andType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Or operator for constraints.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <or>
+            <is-empty apply-to="house-number" />
+            <when>
+              <not-null apply-to="house-number" />
+              <then>
+                <not>
+                  <entity-ref id="address:address.part.house-number.hu" version="1.0" />
+                </not>
+              </then>
+            </when>
+            <equals apply-to="house-number" with="hrsz" />
+            <match apply-to="unit" regexp="(?i:hrsz?(:|.)?)"/>
+          </or>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- True constraint -->
+  <xs:element name="true" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks, if the specified field is true.
+          This check is performed on a string value, ie. the field has to equal "true" in it's
+          lowercased form.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <true apply-to="field1"/>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- When -->
+  <xs:complexType name="whenType">
+    <xs:complexContent>
+      <xs:extension base="tns:andType">
+        <xs:sequence>
+          <xs:element name="then" type="tns:andType">
+            <xs:annotation>
+              <xs:documentation>
+                Then branch with additional checks.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="else" type="tns:andType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>
+                Else branch with additional checks.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="when" type="tns:whenType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          If-then-else control structure to constraint.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <when>
+              <not-null apply-to="house-number" />
+              <then>
+                <not>
+                  <entity-ref id="address:address.part.house-number.hu" version="1.0" />
+                </not>
+              </then>
+            </when>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- OrCase -->
+  <xs:complexType name="orcaseType">
+    <xs:complexContent>
+      <xs:extension base="tns:andTypefree">
+        <xs:sequence>
+          <xs:element name="then" type="tns:andType">
+            <xs:annotation>
+              <xs:documentation>
+                Then branch with additional checks.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="orcase" type="tns:orcaseType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          OrCase in an or-switch structure.
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+
+  <!-- OrSwitch -->
+  <xs:complexType name="orswitchStrictType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractConstraintType">
+        <xs:sequence>
+          <xs:element ref="tns:orcase" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- OrSwitch Strict -->
+  <xs:element name="orswitch-strict" type="tns:orswitchStrictType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Strict or-switch control structure.       
+          This structure check trough all straight orcase constraint, if some constraint is true, then the
+          or-switch constraint result equals the orcasre then result.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <orswitch-strict>
+            <orcase>
+              <entity-ref id="phonenr:phone-number.canonized.hu.selector" version="1.0"/>
+              <then>
+                <entity-ref id="phonenr:phone-number.canonized.hu" version="1.0"/>
+              </then>
+            </orcase>
+            <orcase>
+              <entity-ref id="phonenr:phone-number.canonized.sk.selector" version="1.0"/>
+              <then>
+                <entity-ref id="phonenr:phone-number.canonized.sk" version="1.0"/>
+              </then>
+            </orcase>
+          </orswitch-strict>
+        </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- MAPPING -->
+
+  <!-- Mapping rule type -->
+  <xs:complexType name="abstractMappingRuleType"/>
+  <xs:element name="abstract-mapping-rule" type="tns:abstractMappingRuleType" abstract="true"/>
+
+  <!-- Pass -->
+  <xs:complexType name="passType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractMappingRuleType">
+        <xs:attribute name="fields" type="tns:fieldNameListType" use="required"/>        
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="pass" type="tns:passType" substitutionGroup="tns:abstract-mapping-rule"/>
+
+  <!-- Prefix -->
+  <xs:complexType name="abstractFixType">
+    <xs:complexContent>
+      <xs:extension base="tns:passType">
+        <xs:attribute name="text" type="tns:fieldNameType" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="prefix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule"/>
+
+  <!-- Unprefix -->
+  <xs:element name="unprefix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule"/>
+
+  <!-- Postfix -->
+  <xs:element name="postfix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule"/>
+
+  <!-- Map -->
+  <xs:complexType name="mapType">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractMappingRuleType">
+        <xs:attribute name="from" type="tns:fieldNameType" use="required"/>
+        <xs:attribute name="to" type="tns:fieldNameType" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="map" type="tns:mapType" substitutionGroup="tns:abstract-mapping-rule"/>
+
+  <!-- Caching -->
+  <xs:attributeGroup name="cachingAttrGroup">
+    <xs:attribute name="output-fields" type="tns:identifierListType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Value of the cache.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="size" type="xs:integer" > 
+      <xs:annotation>
+        <xs:documentation>
+          Maximum size.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:complexType name="cachingType">
+    <xs:complexContent>
+      <xs:extension base="tns:atomicBlockType">
+        <xs:sequence>
+          <xs:group ref="tns:blockElementGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:cachingAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="caching" type="tns:cachingType" substitutionGroup="tns:abstract-block">
+    <xs:annotation>
+        <xs:documentation>
+          Block that caches block outputs as key-value pairs it contains.
+          Each thread has its own internal cache (LRUMap). Cache key is the field 
+          value defined in the "apply-to" parameter. Note that only one field name 
+          is permitted here! Cache value is a list of fields defined in the 
+          "output-fields" parameter.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <caching apply-to="userAgent" size="100"
+                   output-fields="userAgentAgentName 
+                     userAgentAgentType 
+                     userAgentAgentVersion 
+                     userAgentLang
+                     userAgentOS 
+                     userAgentOSVersion 
+                     userAgentOSDistro 
+                     userAgentLayoutEngine 
+                     userAgentLayoutRes 
+                     userAgentDevice 
+                     userAgentProcessor 
+                     userAgentSWPlatform">
+            <copy apply-to="userAgentAgentName" from="userAgent" />
+          </caching>
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
+  
+</xs:schema>

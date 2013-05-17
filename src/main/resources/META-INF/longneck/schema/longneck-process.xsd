@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns:tns="urn:hu.sztaki.ilab.longneck:1.0"
+           targetNamespace="urn:hu.sztaki.ilab.longneck:1.0" 
+           elementFormDefault="qualified">
+  
+  <!-- $Id$ -->
+  
+  <!-- XML Schema for longneck process -->
+
+  <!-- Version: 1.0 -->
+
+  <xs:include schemaLocation="longneck.xsd"/>
+
+  <!-- root element -->
+  <xs:complexType name="processType">
+    <xs:sequence>
+      <xs:element ref="tns:source" minOccurs="0"/>
+      <xs:element ref="tns:target" minOccurs="0"/>
+      <xs:element ref="tns:error-target" minOccurs="0"/>
+      <xs:element ref="tns:blocks"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="process" type="tns:processType"/>
+
+  <!-- Abstract Source definition has been moved to longneck.xsd -->
+  
+  <!-- Abstract Target -->
+  <xs:complexType name="targetContainerType">
+    <xs:sequence>
+      <xs:element ref="tns:abstract-target" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="target" type="tns:targetContainerType"/>
+  <xs:element name="error-target" type="tns:targetContainerType"/>
+  
+  <xs:complexType name="targetType"/>
+  <xs:element name="abstract-target" type="tns:targetType" abstract="true"/>
+  
+
+  <!-- Abstract source -->
+  <xs:element name="database-source" type="tns:databaseSourceType" substitutionGroup="tns:abstract-source"/>
+
+  <!-- Database attribute group -->
+  <xs:attributeGroup name="databaseAccessorAttrGroup">
+    <xs:attribute name="connection-name" type="xs:string"/>
+  </xs:attributeGroup>
+
+  <!-- Database source -->
+  <xs:complexType name="databaseSourceType">
+    <xs:complexContent>
+      <xs:extension base="tns:sourceType">
+        <xs:sequence>
+          <xs:element name="query" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- Concrete Targets -->
+  
+  <!-- Database Target -->
+  <xs:element name="database-target" type="tns:databaseTargetType" substitutionGroup="tns:abstract-target"/>
+  
+  <xs:complexType name="databaseTargetType">
+    <xs:complexContent>
+      <xs:extension base="tns:targetType">
+        <xs:sequence>
+          <xs:element name="truncate-query" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="insert-query" minOccurs="1" maxOccurs="1">
+            <xs:complexType>
+              <xs:simpleContent>  
+                <xs:extension base="xs:string">
+                  <xs:attribute name="numeric-fields-to-convert" type="xs:string" use="optional"/>
+                </xs:extension>
+              </xs:simpleContent>             
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>    
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- Console Target  -->
+  <xs:element name="console-target" type="tns:consoleTargetType" substitutionGroup="tns:abstract-target"/>
+  
+  <xs:complexType name="consoleTargetType">
+    <xs:complexContent>
+      <xs:extension base="tns:targetType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Simple file Target -->
+  <xs:element name="simple-file-target" type="tns:simpleFileTargetType" substitutionGroup="tns:abstract-target" />
+
+  <xs:complexType name="simpleFileTargetType">
+    <xs:complexContent>
+      <xs:extension base="tns:targetType">
+        <xs:attributeGroup ref="tns:simpleFileAccessorAttrGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- CSV Source -->
+  <xs:complexType name="csvSourceType">
+    <xs:complexContent>
+      <xs:extension base="tns:sourceType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="delimiter" type="xs:string" use="optional"/>
+        <xs:attribute name="has-headers" type="xs:boolean" use="optional"/>
+        <xs:attribute name="columns" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="csv-source" type="tns:csvSourceType" substitutionGroup="tns:abstract-source" />
+  
+  <!-- CSV Target -->
+  <xs:element name="csv-target" type="tns:csvTargetType" substitutionGroup="tns:abstract-target" />
+
+  <xs:attributeGroup name="simpleFileAccessorAttrGroup">
+    <xs:attribute name="target" type="xs:string" use="required" />
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="csvFileAccessorAttrGroup">
+    <xs:attribute name="delimiter" type="xs:string" use="optional"/>
+    <xs:attribute name="columns" type="xs:string" use="optional"/>
+    <xs:attribute name="empty-value" type="xs:string" use="optional"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="csvTargetType">
+    <xs:complexContent>
+      <xs:extension base="tns:targetType">
+        <xs:attributeGroup ref="tns:simpleFileAccessorAttrGroup" />
+        <xs:attributeGroup ref="tns:csvFileAccessorAttrGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- Null Target -->
+  <xs:element name="null-target" substitutionGroup="tns:abstract-target"/>
+  
+  <!-- Blocks --> 
+  <xs:element name="blocks" type="tns:sequenceType"/>
+  
+</xs:schema>

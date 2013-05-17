@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <blocks>
+    <if>
+      <equals apply-to="a" value=""/>    
+      <equals apply-to="b" value="some value"/>    
+      <equals apply-to="c" with="a"/>    
+      <then></then>      
+    </if>
+  </blocks>
+</process>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+  <blocks>
+    <if>
+      <is-notlonger apply-to="a b c" value="4"/>
+      <then></then>      
+    </if>
+  </blocks>
+</process>

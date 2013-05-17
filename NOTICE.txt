@@ -1,0 +1,4 @@
+Longneck data integration: longneck-core
+
+This product includes software developed at MTA SZTAKI Data Mining and Search Group (http://dms.sztaki.hu).
+See http://longneck.sztaki.hu for details and related Longneck data integration software.

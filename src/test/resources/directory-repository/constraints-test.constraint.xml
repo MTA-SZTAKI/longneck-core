@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<constraint-package xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+  
+  <constraint id="my.private.constraint" version="3">
+    <or>
+      <not-null apply-to="a"/>
+      <is-null apply-to="b"/>      
+    </or>
+  </constraint>
+
+  <constraint id="my.private.constraint" version="4">
+    <or>
+      <not-null apply-to="a"/>
+      <is-null apply-to="b"/>      
+    </or>
+  </constraint>
+
+</constraint-package>

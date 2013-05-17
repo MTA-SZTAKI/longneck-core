@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+  <blocks>
+    <if>
+      <not-null apply-to="a b"/>
+	  <is-null apply-to="d"/>
+      
+      <then>
+        <copy apply-to="d" from="a"/>
+      </then>
+      
+      <else>
+	    <copy apply-to="c" from="b"/>
+      </else>
+    </if>
+  </blocks>
+</process>

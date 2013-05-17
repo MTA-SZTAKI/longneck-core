@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+  <blocks>
+    <copy apply-to="c1 c2 $c3" from="$c4"/>
+  </blocks>
+</process>

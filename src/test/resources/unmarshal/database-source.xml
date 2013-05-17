@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+       
+    <source>
+      <database-source connection-name="connection1">
+        <query>
+          select a, b from test1_source    
+        </query>    
+      </database-source>
+    </source>
+    <blocks>
+    </blocks>
+
+</process>

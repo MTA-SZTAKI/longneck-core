@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd" 
+       xmlns:aop="http://www.springframework.org/schema/aop">
+
+
+  <!-- Frame address resolver -->
+  <bean id="frame-address-resolver" class="hu.sztaki.ilab.longneck.process.FrameAddressResolver" scope="singleton"/>
+  
+  <!-- Bean configurator for castor -->
+  <bean id="unmarshal-listener" class="hu.sztaki.ilab.longneck.bootstrap.SpringUnmarshalListener" scope="singleton">
+    <property name="frameAddressResolver" ref="frame-address-resolver"/>
+  </bean>
+  <!-- Mapping loader for castor -->
+  <bean id="unmashaller-loader" class="hu.sztaki.ilab.longneck.bootstrap.UnmarshallerLoader" scope="singleton">
+    <property name="unmarshalerListener" ref="unmarshal-listener"/>
+  </bean>
+
+  <!-- Unified XML schema loader -->
+  <bean id="schema-loader" class="hu.sztaki.ilab.longneck.bootstrap.SchemaLoader" scope="singleton"/>
+
+  <!-- XML document loader -->
+  <bean id="xml-document-loader" class="hu.sztaki.ilab.longneck.bootstrap.XMLDocumentLoader" scope="singleton">
+    <property name="schemaLoader" ref="schema-loader"/>
+  </bean>
+  
+  <!-- Longneck source loader -->
+  <bean id="source-loader" class="hu.sztaki.ilab.longneck.bootstrap.SourceLoader" scope="singleton">
+    <property name="unmarshalListener" ref="unmarshal-listener"/>
+    <property name="xmlDocumentLoader" ref="xml-document-loader"/>
+    <property name="unmarshallerLoader" ref="unmashaller-loader"/>
+  </bean>
+  
+  <!-- Database connection manager -->
+  <bean id="database-connection-manager" class="hu.sztaki.ilab.longneck.util.database.DatabaseConnectionManager"
+    init-method="afterPropertiesSet" lazy-init="true" destroy-method="destroy" scope="singleton">
+    <property name="runtimeProperties" ref="runtime-properties"/>
+  </bean>
+
+  <!-- Lazy init beans -->
+  
+  <!-- These are instantiated by the Castor unmarshaller, but configured afterwards by the spring
+       application context.
+  -->
+  
+  <!-- Database source and target -->         
+  <bean id="database-target" class="hu.sztaki.ilab.longneck.process.access.SimpleDatabaseTarget" 
+    init-method="afterPropertiesSet" lazy-init="true">
+    <property name="databaseConnectionManager" ref="database-connection-manager"/>
+    
+  </bean>
+  
+  <bean id="database-source" class="hu.sztaki.ilab.longneck.process.access.DatabaseSource"
+    init-method="afterPropertiesSet" lazy-init="true">
+    <property name="databaseConnectionManager" ref="database-connection-manager"/>
+  </bean>
+    
+  <!-- Console target --> 
+  <bean id="console-target" class="hu.sztaki.ilab.longneck.process.access.ConsoleTarget"/>
+  
+  <!-- Simple file target --> 
+  <bean id="simple-file-target" class="hu.sztaki.ilab.longneck.process.access.SimpleFileTarget"/>
+  
+  
+  <!-- CSV target -->
+  <bean id="csv-source" class="hu.sztaki.ilab.longneck.process.access.CsvSource" lazy-init="true">
+    <property name="runtimeProperties" ref="runtime-properties"/>
+  </bean>
+  
+  <!-- CSV target -->
+  <bean id="csv-target" class="hu.sztaki.ilab.longneck.process.access.CsvTarget"/>
+  
+  <!-- Regexp dependent classes -->
+  <bean id="match-extract-block" class="hu.sztaki.ilab.longneck.process.block.MatchExtract" lazy-init="true"/>
+ 
+  <bean id="replace-all-block" class="hu.sztaki.ilab.longneck.process.block.ReplaceAll" lazy-init="true"/>
+
+  <bean id="replace-first-block" class="hu.sztaki.ilab.longneck.process.block.ReplaceFirst" lazy-init="true"/>
+ 
+  <bean id="match-constraint" class="hu.sztaki.ilab.longneck.process.constraint.MatchConstraint" lazy-init="true"/>
+  
+  <!-- Repository beans -->
+  <bean id="block-reference" class="hu.sztaki.ilab.longneck.process.block.BlockReference" lazy-init="true"/>
+  <bean id="constraint-reference" class="hu.sztaki.ilab.longneck.process.constraint.ConstraintReference" lazy-init="true"/>
+  <bean id="entity-reference" class="hu.sztaki.ilab.longneck.process.constraint.EntityReference" lazy-init="true"/>
+  <bean class="hu.sztaki.ilab.longneck.process.block.DateTimeToMilliseconds" lazy-init="true" init-method="afterPropertiesSet"/>
+  <bean class="hu.sztaki.ilab.longneck.process.block.DateTimeToFormat" lazy-init="true" init-method="afterPropertiesSet"/>
+  <bean class="hu.sztaki.ilab.longneck.process.block.MillisecondsToDateTime" lazy-init="true" init-method="afterPropertiesSet"/>
+ 
+</beans>

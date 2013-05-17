@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<block-package xmlns="urn:hu.sztaki.ilab.longneck:1.0">
+
+  <block id="some.block.id" version="2">
+    <if>
+	  <is-null apply-to="b"/>
+
+      <then>
+        <copy apply-to="b" from="a"/>
+      </then>
+      <else>
+	    <copy apply-to="b" from="c"/>
+      </else>
+    </if>   
+    <unicode-normalize apply-to="b" form="NFD"/>
+    
+    <check summary="test check 1">
+      <when>
+        <is-null apply-to="a b c"/>
+        
+        <then>
+          <not-null apply-to="d"/>    
+        </then>
+        <else>
+          <not-null apply-to="e"/>    
+        </else>
+      </when>        
+    </check>
+    
+  </block>
+
+  <block id="some.block.id" version="3">
+    <if>
+	  <is-null apply-to="b"/>
+
+      <then>
+        <copy apply-to="b" from="a"/>  
+      </then>
+      
+      <else>
+	    <copy apply-to="b" from="c"/>
+      </else>
+    </if>
+  </block>
+
+  <block id="some.block.id" version="4">
+    <if>
+      <is-null apply-to="b"/>
+
+      <then>
+        <copy apply-to="b" from="a"/>
+        <add-flag apply-to="a" flag="INVALID"/>
+        <remove-flag apply-to="a" flag="INVALID"/>
+        <clear-flags apply-to="a"/>
+        
+        <set-character-case apply-to="a" case="Uppercase" characters="TOKEN_INITIALS"/>
+        
+        <check summary="test check 2">
+          <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+          <exists apply-to="exists1 exists2 $_exists3"/>        
+        </check>
+        
+        <break/>
+      </then>
+
+
+      <else>
+	    <copy apply-to="b" from="c"/>
+        <block-ref id="package1:some.block.id" version="1.0">
+          <pass fields="a b c"/>
+          <prefix fields="d e" text="fff"/>
+          <postfix fields="g h" text="iii"/>
+          <map from="j" to="k"/>
+        </block-ref>        
+      </else>
+    </if>
+  </block>
+
+  <block id="some.block.id" version="5">
+    <input-constraints summary="test input constraints 1">
+      <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+	  <exists apply-to="exists1 exists2 $_exists3"/>        
+    </input-constraints>
+    
+    <if>
+	  <is-null apply-to="b"/>
+
+      <then>
+        <copy apply-to="b" from="a"/>
+      </then>
+      <else>
+	    <copy apply-to="b" from="c"/>
+      </else>
+    </if>
+    <match-extract apply-to="match1 match2 $match3" regexp="$a*b">
+      <copy apply-to="$c1" from="$1"/>
+    </match-extract>
+
+    <!-- Remove -->
+    <remove apply-to="remove1 remove2"/>
+    
+    <output-constraints summary="test output constraints 1">
+      <equals apply-to="equals1 equals2 $equals4" value="good value"/>
+	  <exists apply-to="exists1 exists2 $_exists3"/>        
+    </output-constraints>
+    
+  </block>
+
+
+</block-package>
