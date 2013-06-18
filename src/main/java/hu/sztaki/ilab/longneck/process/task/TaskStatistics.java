@@ -91,7 +91,6 @@ public class TaskStatistics {
             
             summarizedTotalTime += current.totalTimeMillis;
             summarizedBlockedTime += current.blockedTimeMillis;
-//            measureTimeEnabled = true;
         }
         
         // Calculate average values
