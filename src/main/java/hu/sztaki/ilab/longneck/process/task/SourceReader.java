@@ -110,6 +110,7 @@ public class SourceReader extends AbstractTask implements Runnable {
             stats.blockedTimeMillis = 
                     mxBean.getThreadInfo(Thread.currentThread().getId()).getBlockedTime();
         }
+        stats.setMeasureTimeEnabled(measureTimeEnabled);
         
         LOG.info(stats.toString());
         LOG.info("Shutting down.");

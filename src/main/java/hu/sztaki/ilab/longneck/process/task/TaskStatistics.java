@@ -24,6 +24,8 @@ public class TaskStatistics {
     long totalTimeMillis = 0;
     /** Wait time. */
     long blockedTimeMillis = 0;
+    /** Measuring time. */
+    static boolean measureTimeEnabled = false;
 
     public TaskStatistics(TaskType type) {
         this.type = type;
@@ -61,11 +63,17 @@ public class TaskStatistics {
         return totalTimeMillis > 0 ? (new Double(out) / totalTimeMillis * 1000) : 0;
     }
 
+    public void setMeasureTimeEnabled(boolean measureTimeEnabled) {
+        this.measureTimeEnabled = measureTimeEnabled;
+    }
+
     @Override
     public String toString() {
-        return String.format("in: %1$d; cloned: %2$d; filtered: %3$d; out: %4$d; failed: %5$d; " + 
-                " total time: %6$d ms; blocked time: %7$d ms; throughput: %8$f records/s;", 
-                in, cloned, filtered, out, failed, totalTimeMillis, blockedTimeMillis, 
+        String ret = "in: %1$d; cloned: %2$d; filtered: %3$d; out: %4$d; failed: %5$d; ";
+        if (measureTimeEnabled) {
+            ret += " total time: %6$d ms; blocked time: %7$d ms; throughput: %8$f records/s;";
+        }
+        return String.format(ret, in, cloned, filtered, out, failed, totalTimeMillis, blockedTimeMillis,
                 getRecordsPerSec());
     }
 
@@ -83,6 +91,7 @@ public class TaskStatistics {
             
             summarizedTotalTime += current.totalTimeMillis;
             summarizedBlockedTime += current.blockedTimeMillis;
+//            measureTimeEnabled = true;
         }
         
         // Calculate average values
