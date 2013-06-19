@@ -1,4 +1,8 @@
 longneck-core
 =============
 
-Longneck core library.
+Longneck data integration tool core library.
+
+See http://longneck.sztaki.hu for more details.
+
+

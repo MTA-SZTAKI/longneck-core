@@ -4,21 +4,21 @@
   <groupId>hu.sztaki.ilab.longneck</groupId>
   <artifactId>longneck-core</artifactId>
   <version>1.7.1-SNAPSHOT</version>
-  <packaging>jar</packaging>  
-  
+  <packaging>jar</packaging>
+
   <name>longneck-core</name>
   <description>
-    The longneck-core is a framework to enable definition and use of data-transformation, 
+    The longneck-core is a framework to enable definition and use of data-transformation,
     -integration and cleansing rules, domain knowledge.
   </description>
-  
+
   <url>https://longneck.sztaki.hu</url>
-  
+
   <organization>
     <name>MTA SZTAKI ILAB</name>
     <url>http://dms.sztaki.hu/</url>
   </organization>
-    
+
   <developers>
     <developer>
       <id>lukacsg</id>
@@ -41,7 +41,7 @@
       <email>tnemeth@sztaki.mta.hu</email>
     </developer>
   </developers>
-      
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -49,42 +49,30 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
 	  <connection>scm:git:git@github.com:MTA-SZTAKI/longneck-core.git</connection>
 	  <url>https://github.com/MTA-SZTAKI/longneck-core.git</url>
 	  <developerConnection>scm:git:git@github.com:MTA-SZTAKI/longneck-core.git</developerConnection>
   </scm>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <distributionManagement>
+
+  <distributionManagement>
     <repository>
       <id>longneck</id>
       <url>dav:http://longneck.sztaki.hu/maven/</url>
     </repository>
   </distributionManagement>
-    
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <repositories>
     <repository>
       <id>codehaus</id>
       <name>Codehaus Maven repository</name>
       <url>http://repository.codehaus.org/</url>
-    </repository>      
+    </repository>
     <repository>
       <id>codehaus-nexus-snapshot</id>
       <name>Codehaus Nexus SNAPSHOT repository</name>
@@ -104,16 +92,16 @@
         <updatePolicy>always</updatePolicy>
         <checksumPolicy>warn</checksumPolicy>
       </snapshots>
-    </repository>    
+    </repository>
   </repositories>
-      
-  <dependencies>    
+
+  <dependencies>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.0.1</version>
-      <scope>compile</scope>      
-    </dependency>   
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.castor</groupId>
       <artifactId>castor-xml</artifactId>
@@ -139,42 +127,42 @@
       <scope>compile</scope>
       <type>jar</type>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
       <version>1.4</version>
       <scope>compile</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>net.sourceforge.javacsv</groupId>
       <artifactId>javacsv</artifactId>
       <version>2.1</version>
       <scope>compile</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.2</version>
       <type>jar</type>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.2.1</version>
       <scope>compile</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava-collections</artifactId>
       <version>r03</version>
       <scope>compile</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
@@ -188,24 +176,37 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    
-    
-  </dependencies>  
-  
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <profiles>
     <profile>
       <id>xsddoc</id>
-      
+
       <dependencies>
-          <dependency>
-            <groupId>docflex</groupId>
-            <artifactId>docflex-xml</artifactId>
-            <version>1.8.5</version>
-            <scope>system</scope>
-            <systemPath>${env.HOME}/opt/docflex-xml-re-1.8.7/lib/docflex-xml.jar</systemPath>
-          </dependency>
+        <dependency>
+          <groupId>docflex</groupId>
+          <artifactId>docflex-xml</artifactId>
+          <version>1.8.5</version>
+          <scope>system</scope>
+          <systemPath>${env.HOME}/opt/docflex-xml-re-1.8.7/lib/docflex-xml.jar</systemPath>
+        </dependency>
       </dependencies>
-      
+
       <reporting>
         <plugins>
           <plugin>
@@ -250,4 +251,5 @@
       </reporting>
     </profile>
   </profiles>
+  
 </project>
