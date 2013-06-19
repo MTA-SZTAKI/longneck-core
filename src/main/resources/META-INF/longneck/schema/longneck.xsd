@@ -117,7 +117,7 @@
         </xs:documentation>
       </xs:annotation> 
     </xs:attribute>
-    <xs:attribute name="version" type="tns:genericVersionType" use="required">
+    <xs:attribute name="version" type="tns:genericVersionType" use="optional">
       <xs:annotation>
         <xs:documentation>
           The version of the referenced constraint / block/ entity.
@@ -135,10 +135,10 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="version" type="tns:genericVersionType" use="required">
+    <xs:attribute name="version" type="tns:genericVersionType" use="optional">
       <xs:annotation>
         <xs:documentation>
-          The version of the constraint / block/ entity.
+          The version of the constraint / block/ entity. (optional)
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
