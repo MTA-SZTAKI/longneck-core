@@ -10,6 +10,8 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  *
@@ -79,6 +81,30 @@ public class PropertyUtils {
                     continue;
                 }
             }
+        }
+        
+        return properties;
+    }
+    
+    public static Properties readDefaultProperties() {
+        final Logger LOG = Logger.getLogger(PropertyUtils.class);
+        
+        Properties properties = new Properties();
+        // Read defaults from classpath properties files
+        PathMatchingResourcePatternResolver cpResolver = new PathMatchingResourcePatternResolver();
+        try {
+            for (Resource r : cpResolver.getResources("classpath*:META-INF/longneck/properties/*.properties")) {
+                try {
+                    Properties p = new Properties();
+                    p.load(r.getInputStream());
+                    properties.putAll(p);
+                } catch (IOException ex) {
+                    LOG.warn(String.format("Could not read properties file %1$s", 
+                            r.getURL().toString()), ex);
+                }
+            }
+        } catch (IOException ex) {
+            LOG.warn("Failed to scan for default properties.", ex);
         }
         
         return properties;

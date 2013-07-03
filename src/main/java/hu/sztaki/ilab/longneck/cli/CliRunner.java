@@ -33,10 +33,13 @@ public class CliRunner {
 
         Options options = getDefaultOptions();
         
+        // Load configuration defaults from jars
+        runtimeProperties.putAll(PropertyUtils.readDefaultProperties());
+        
         // Config file blacklist
         Set<String> blacklist = new HashSet(
                 Arrays.asList(new String[] { "log4j.properties" }));
-        
+                
         // Read configuration files from project config/
         runtimeProperties.putAll(
                 PropertyUtils.readPropertyFiles(new File("config/"), blacklist));
