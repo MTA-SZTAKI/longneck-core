@@ -37,10 +37,13 @@ public class DateTimeToFormat extends AbstractAtomicBlock {
         String dateValue = "";
         try {
             dateValue = BlockUtils.getValue(from, record, parentScope);
-            LocalDateTime date = fromFormat.parseLocalDateTime(dateValue);
+            String outValue = null;
+            if (dateValue != null) {
+                outValue = fromFormat.parseLocalDateTime(dateValue).toString(toFormat);
+            }
             
             for (String fieldName : applyTo) {
-                BlockUtils.setValue(fieldName, date.toString(toFormat), record, parentScope);
+                BlockUtils.setValue(fieldName, outValue, record, parentScope);
             }
         } catch (IllegalArgumentException ex) {
             throw new CheckError(new CheckResult(this, false, from, dateValue, 

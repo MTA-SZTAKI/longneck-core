@@ -9,12 +9,15 @@
   </properties>
   
   <body>
-    <release version="1.7.0" date="2013-03-26" description="Cli runner merge.">
+    <release version="1.7.1" date="2013-03-26" description="Cli runner merge.">
       <action dev="molnarp" type="update">
         Merged longneck-cli classes.
       </action>
       <action dev="molnarp" type="update">
         Introduced parent POM.
+      </action>
+      <action dev="molnarp" type="fix">
+        Added special null handling to datetime-to-format block to prevent NPE on null inputs.
       </action>
     </release>
   </body>
