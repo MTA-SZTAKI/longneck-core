@@ -89,7 +89,7 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
+        <updatePolicy>daily</updatePolicy>
         <checksumPolicy>warn</checksumPolicy>
       </snapshots>
     </repository>
@@ -194,62 +194,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>xsddoc</id>
-
-      <dependencies>
-        <dependency>
-          <groupId>docflex</groupId>
-          <artifactId>docflex-xml</artifactId>
-          <version>1.8.5</version>
-          <scope>system</scope>
-          <systemPath>${env.HOME}/opt/docflex-xml-re-1.8.7/lib/docflex-xml.jar</systemPath>
-        </dependency>
-      </dependencies>
-
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>docflex</groupId>
-            <artifactId>docflex-xml-maven-plugin</artifactId>
-            <version>1.0</version>
-
-            <configuration>
-              <!-- Specifying command-line parameters for DocFlex/XML Generator -->
-              <generatorParams>
-                <!-- The main template -->
-                <param>-template</param>
-                <param>${env.HOME}/opt/docflex-xml/templates/XSDDoc/FramedDoc.tpl</param>
-                <!-- Pass template parameter -->
-                <param>-p:docTitle</param>
-                <param>XML Schemas for Longneck</param>
-                <!-- Specify the output format -->
-                <param>-format</param>
-                <param>HTML</param>
-                <!-- Supress showing up the generator GUI -->
-                <param>-nodialog</param>
-                <!-- Supress most of the generator messages -->
-                <param>-quiet</param>
-                <!--
-                Specifying the data source XML files to be processed.
-                The following files will be loaded directly from Internet by the given URLs.
-                -->
-                <param>${basedir}/src/main/resources/META-INF/longneck/schema/longneck-process.xsd</param>
-              </generatorParams>
-              <!--
-              Specify the output directory name.
-              The plugin will convert it into the absolute pathname of the output directory,
-              which is passed further both to Maven and to DocFlex/XML Generator (via -d option).
-              -->
-              <outputFolder>xml-api-docs</outputFolder>
-              <!-- For the Maven project-reports page -->
-              <name>XSDDoc</name>
-              <description>XML Schemas for WSDL 1.1</description>
-            </configuration>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
   </profiles>
   
 </project>

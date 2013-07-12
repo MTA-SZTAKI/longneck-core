@@ -161,7 +161,20 @@
         </xsl:choose>
       </td>
       <td>
-        <xsl:apply-templates select="xs:annotation"/>
+        <xsl:choose>
+          <xsl:when test="substring-before(@type, ':') = 'xs'">
+            <xsl:apply-templates select="xs:annotation"/>
+          </xsl:when>
+          <xsl:when test="/xs:schema/xs:simpleType[@name = substring-after(current()/@type, 'tns:')]">
+            <xsl:apply-templates select="/xs:schema/xs:simpleType[@name = substring-after(current()/@type, 'tns:')]/xs:annotation"/>
+          </xsl:when>
+          <xsl:when test="xs:simpleType">
+            <xsl:apply-templates select="xs:annotation"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>n/a</xsl:text>
+          </xsl:otherwise>
+        </xsl:choose>
       </td>
     </tr>
   </xsl:template>

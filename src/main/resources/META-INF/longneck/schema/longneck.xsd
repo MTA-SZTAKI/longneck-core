@@ -76,7 +76,7 @@
   <xs:simpleType name="fieldNameListType">
     <xs:annotation>
       <xs:documentation>
-        List of fieldnames.
+        List of field names.
       </xs:documentation>
     </xs:annotation>    
     <xs:list itemType="tns:fieldNameType"/>
@@ -84,6 +84,11 @@
 
   <!-- generic block, constraint and entity id type -->
   <xs:simpleType name="genericIdType">
+    <xs:annotation>
+      <xs:documentation>
+        Name of the block by which it can be referred to.
+      </xs:documentation>
+    </xs:annotation>    
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9a-zA-Z_.-]+"/>
     </xs:restriction>
@@ -91,6 +96,11 @@
 
   <!-- referred block, constraint and entity id type -->
   <xs:simpleType name="referenceIdType">
+    <xs:annotation>
+      <xs:documentation>
+        Identifier of the package, followed by ':' and the name of the referred block.
+      </xs:documentation>
+    </xs:annotation>    
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9a-zA-Z_.-]+:[0-9a-zA-Z_.-]+"/>
     </xs:restriction>
@@ -98,6 +108,11 @@
 
   <!-- generic version type -->
   <xs:simpleType name="genericVersionType">
+    <xs:annotation>
+      <xs:documentation>
+        The version of the block, to distinguish variants of the same transformation.
+      </xs:documentation>
+    </xs:annotation>    
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9a-zA-Z.\-]+"/>
     </xs:restriction>
@@ -105,43 +120,14 @@
 
   <!-- Repository item reference attribute group -->
   <xs:attributeGroup name="referenceAttrGroup">
-    <xs:attribute name="id" type="tns:referenceIdType" use="required">
-      <xs:annotation>
-        <xs:documentation>
-          The id of the referenced constraint / block / entity. It is starting with the constraint / block/ entity package name, this is the name of the file befor the entity.xml / block.xml (example : name.block.xml -> name), 
-          where included the named constraint / block/ entity.
-          It is divided by ':' with the constraint / block/ entity name. 
-          The constraint / block/ entity name part is splitting by '.', this defines the subpart of the block's name.
-          The correct name defined in <code>tns:referenceIdType</code>.
-          Example: email:e-mail.multiple.process.skipnull
-        </xs:documentation>
-      </xs:annotation> 
-    </xs:attribute>
-    <xs:attribute name="version" type="tns:genericVersionType" use="optional">
-      <xs:annotation>
-        <xs:documentation>
-          The version of the referenced constraint / block/ entity.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:attribute name="id" type="tns:referenceIdType" use="required"/>
+    <xs:attribute name="version" type="tns:genericVersionType" use="optional"/>
   </xs:attributeGroup>
 
   <!-- Referred repository item attribute group -->
   <xs:attributeGroup name="referredAttrGroup">
-    <xs:attribute name="id" type="tns:genericIdType" use="required">
-      <xs:annotation>
-        <xs:documentation>
-          The unique id of the constraint / block/ entity in repository.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="version" type="tns:genericVersionType" use="optional">
-      <xs:annotation>
-        <xs:documentation>
-          The version of the constraint / block/ entity. (optional)
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:attribute name="id" type="tns:genericIdType" use="required"/>
+    <xs:attribute name="version" type="tns:genericVersionType"/>
   </xs:attributeGroup>
 
   <!-- abstract block -->
@@ -251,7 +237,7 @@
     <xs:annotation>
       <xs:documentation>
         Adds a pre-defined flag to the fields listed in the apply-to attribute. The flag can
-        be chosen from the values defined in <code>tns:constraintFlagType</code>.
+        be chosen from the values specified below.
       </xs:documentation>
       <xs:documentation d:example="true">
         <add-flag apply-to="field1 field2" flag="INVALID"/>
@@ -270,13 +256,8 @@
         <xs:attribute name="propagate-failure" type="xs:boolean">
           <xs:annotation>
             <xs:documentation>
-              This boolean variable determines the way of the error propagate.
-              Enable propagation of errors to lower levels.
-              If the value is false, then the error catched in this block-ref level, that means,
-              the process - when the reffed block fail - followed by after the block-ref, it is the default.
-              Outher case, when this variable set to trus, the block fail propagate the higher level and 
-              the process skipp the after blocks in this level.
-              See more the error handling, error table section.
+              Enables error propagation from the referred block to the outer environment. Errors
+                originating from the referred block must be handled at the block reference level.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -287,14 +268,17 @@
   <xs:element name="block-ref" type="tns:blockReferenceType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        It is a reference to the given block, that defined the id and the version attribute.
-        The process continues with the calling block that it follows after the blockref.
+        Calls a block from an external package. You may use a mapping from the field names of the
+          record to the names used inside the block, but when you do, you must list all used names,
+          or a warning is issued each time an unmapped field name is accessed. If an error occurs
+          inside the called block, the execution of the block is halted and processing continues
+          from the block reference, unless you set the <code>propagate-failure</code> attribute.
       </xs:documentation>
       <xs:documentation d:example="true">
-        <block-ref id="email:e-mail.multiple.process.skipnull" version="1.0"/>
+        <block-ref id="email:e-mail.multiple.process.skipnull"/>
       </xs:documentation>
       <xs:documentation>
-        Use mapping during the block-ref.
+        This is a simple block reference without mapping.
       </xs:documentation>
       <xs:documentation d:example="true">
          <block-ref id="name:name.canonize" version="1.0" >
@@ -306,10 +290,13 @@
          </block-ref>
       </xs:documentation>
       <xs:documentation>
-        Defined the propagation level.
+        A block reference with field name mapping and version attribute.
       </xs:documentation>
       <xs:documentation d:example="true">
-        <block-ref id="email:e-mail.multiple.process.skipnull" version="1.0" propagate-failure="true"/>
+        <block-ref id="email:e-mail.multiple.process.skipnull" propagate-failure="true"/>
+      </xs:documentation>
+      <xs:documentation>
+        Block reference with error propagation enabled.
       </xs:documentation>
     </xs:annotation>  
   </xs:element>
@@ -324,9 +311,8 @@
   <xs:element name="break" type="tns:breakType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Stopped the actual block process and step up one level in the block-ref chain.
-        If isn't exist highter level stopped the process
-        else continue the process the given level after a blockref.
+        Halts the execution of the current block, and returns to the step after the calling block 
+          reference. This does not trigger an error event.
       </xs:documentation>
       <xs:documentation d:example="true">
         <break/>
@@ -344,9 +330,8 @@
   <xs:element name="fail" type="tns:failType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        It trigger a block fail event.
-        See more the error handling, error table section.
-        It can be usefull and a good implementation decide.
+        Halts the processing of the currently transformed record with failure. The record is not
+          written to the output and an error event is recorded.
       </xs:documentation>
       <xs:documentation d:example="true">
         <fail/>
@@ -364,8 +349,8 @@
   <xs:element name="filter" type="tns:filterType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Filter the given row from the source, it dosen't apper in a target.
-        Example it can use to filter the uninterested rows.
+        Halts the processing of the currently transformed record. This does not trigger an error
+          event.
       </xs:documentation>
       <xs:documentation d:example="true">
         <filter/>
@@ -387,7 +372,7 @@
   <xs:element name="case" type="tns:caseType" substitutionGroup="tns:abstract-block">   
     <xs:annotation>
       <xs:documentation>
-        Case in a switch structure.
+        A single case in a switch-like structure.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -400,18 +385,15 @@
         <xs:attribute name="summary" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation>
-              The summary of implemented checks as a short text.
-              Descrition of a checked attribure or what we checked.
-              It is important to the error table when the check fail.
-              See more the error handling, error table section.
+              A short summary of the implemented checks that goes into the error report, very useful for
+                debugging a failed constraint check.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="checkedfield" type="xs:string">
           <xs:annotation>
             <xs:documentation>
-              The filed that is checked. This field's value'll appear in the error table when block failure event occour.
-              See more the error handling, error table section.
+              The field that is checked. The field's value is included in the error report for debugging.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -422,13 +404,10 @@
   <xs:element name="check" type="tns:checkType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        It is a block, it can use like a block but it contain 1 or more constraint.
-        The constraints are in logical and relationships.
-        If all of the constraint checked the process continued
-        but if one of the constraints fail, it trigger a block failure event.
+        This block performs the checks defined in it, and triggers an error event when the check fails.
       </xs:documentation>
       <xs:documentation d:example="true">
-        <check summary="Address error. Check if bm-code is exactly four digits plus one letter"  checkedfield="bm-code">
+        <check summary="Checks, if bm-code is exactly four digits plus one letter."  checkedfield="bm-code">
           <match apply-to="bm-code" regexp="^\d{4}[A-Z0]?$"/>
         </check>
       </xs:documentation>
@@ -446,7 +425,7 @@
   <xs:element name="clear-flags" type="tns:clearFlagsType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Remove all of flags from the fields listed in the apply-to attribute.
+        Clears all flags from the fields specified in the apply-to attribute.
       </xs:documentation>
       <xs:documentation d:example="true">
         <clear-flags apply-to="field1 field2"/>
@@ -464,9 +443,9 @@
   <xs:element name="collapse-whitespace" type="tns:collapseWhitespaceType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Collapses whitespace characters between tokens to single space characters. 
-        This block does not remove whitespace from the beginning and the end of a string (use trim for that).
-        See Trim.
+        Collapses sequences of whitespace characters to single space characters.
+        This block does not remove additional whitespace from the beginning and the end of a string.
+        Also see trim.
       </xs:documentation>
       <xs:documentation d:example="true">
         <collapse-whitespace apply-to="county"/>
@@ -499,8 +478,7 @@
   <xs:element name="copy" type="tns:copyType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Copies the content of another field.
-        Copy the value of the from filed to the fields, thats are represent in the apply-to list.
+        Copies the value of the specified field in the from attribute to other fields.        
       </xs:documentation>
       <xs:documentation d:example="true">
         <copy apply-to="public-domain-type" from="$1"/>
@@ -515,7 +493,7 @@
         <xs:attribute name="value" type="xs:integer" use="required">
           <xs:annotation>
             <xs:documentation>
-              The desired lenght.
+              The maximum length of the field value.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -526,7 +504,7 @@
   <xs:element name="cut" type="tns:cutType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Cut the length of the apply-to fileds to a given value if they are longer.
+        Cuts the length of the specified field values to a maximum size.
       </xs:documentation>
       <xs:documentation d:example="true">
         <cut apply-to="a b c" value="4"/>
@@ -541,21 +519,21 @@
         <xs:attribute name="from" type="tns:identifierType">
           <xs:annotation>
             <xs:documentation>
-              To read the date from.
+              The field, which contains the input date that is transformed.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="from-pattern" type="xs:string">
           <xs:annotation>
             <xs:documentation>
-              The pattern to convert the text to a date object from.
+              The pattern of the input date.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="to-pattern" type="xs:string">
           <xs:annotation>
             <xs:documentation>
-              The pattern to convert the text to a date object to. 
+              The output pattern of the date being converted.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -566,7 +544,8 @@
   <xs:element name="datetime-to-format" type="tns:dateTimeToFormatType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Converts a date and time string to the given format.
+        Converts a date and time string to the given format. This operation does not support time 
+          zones in the output.
       </xs:documentation>
       <xs:documentation d:example="true">
         <datetime-to-format apply-to="timeInMillis" from="time" fromPattern="dd/MMM/yyyy:HH:mm:ss Z" toPattern=""/>
@@ -581,14 +560,14 @@
         <xs:attribute name="from" type="tns:identifierType">
           <xs:annotation>
             <xs:documentation>
-              To read the date from.
+              The input date.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="pattern" type="xs:string">
           <xs:annotation>
             <xs:documentation>
-              The pattern to convert the text to a date object.
+              The pattern of the input date.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -599,7 +578,7 @@
   <xs:element name="datetime-to-milliseconds" type="tns:dateTimeToMillisecondsType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Converts a date and time string to milliseconds.
+        Converts a date and time to milliseconds from the Epoch (1970-01-01 00:00:00.000).
       </xs:documentation>
       <xs:documentation d:example="true">
         <datetime-to-milliseconds apply-to="timeInMillis" from="time" pattern="dd/MMM/yyyy:HH:mm:ss Z"/>
@@ -615,7 +594,7 @@
           <xs:element name="input-constraints" type="tns:checkType" minOccurs="0" maxOccurs="1">
             <xs:annotation>
               <xs:documentation>
-                The input constraints.
+                Constraints on the record before the execution of this block.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -623,7 +602,7 @@
           <xs:element name="output-constraints" type="tns:checkType" minOccurs="0" maxOccurs="1">
             <xs:annotation>
               <xs:documentation>
-                The output constraints.
+                Constraints on the record after the block has been executed.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -636,8 +615,9 @@
   <xs:element name="block" type="tns:genericBlockType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Generic transformation block.
-        Transformation block with custom transformation steps, that has an id and version, and can be retrieved from repository.
+        The generic block is a callable subsequence of transformation steps, which can be referred
+          by it's id and optional version. These blocks are stored in block packages, which are 
+          available from the repository.
       </xs:documentation>
       <xs:documentation d:example="true">
         <block id="address.canonize.init-place-name-hu.skipnull" version="1.0">
@@ -717,21 +697,21 @@
         <xs:attribute name="glue" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation>
-              Separate character between fields.
+              The separator character put between the joined values, may be empty string.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="sources" type="tns:identifierListType" use="required">
           <xs:annotation>
             <xs:documentation>
-              The name of fileds to concatenates.
+              The name of fields to joins.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="skip-empty-strings" type="xs:boolean">
           <xs:annotation>
             <xs:documentation>
-              Skip the empty string from result. The default is false.
+              Enables skipping of empty string values or nulls from result.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -742,7 +722,7 @@
   <xs:element name="implode" type="tns:implodeType" substitutionGroup="tns:abstract-block" >
     <xs:annotation>
       <xs:documentation>
-        Concatenates the values of the fields listed in source and adds the text defined in the glue parameter in between them.
+        Joins the values of the fields listed in source and adds the text defined in the glue parameter in between them.
       </xs:documentation>
       <xs:documentation d:example="true">
         <implode apply-to="house-number" sources="F_HAZSZAM F_AJTO" glue="."  skip-empty-strings="true"/>
@@ -757,7 +737,7 @@
         <xs:attribute name="text" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation>
-              The text to use affix.
+              The text to add to the names.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -768,7 +748,7 @@
   <xs:element name="add-prefix" type="tns:abstractAddFixBlockType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Set prefix to the field from text. Concatenate the constant text before the field.
+        Adds a mapping from the original field names to the prefixed names.
       </xs:documentation>
       <xs:documentation d:example="true">
         <add-prefix apply-to="house-number" text="home_" />
@@ -778,7 +758,7 @@
   <xs:element name="add-postfix" type="tns:abstractAddFixBlockType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Set postfix to the field from text. Concatenate the constant text behind the field.
+        Adds a mapping from the original field names to the postfixed names.
       </xs:documentation>
       <xs:documentation d:example="true">
         <add-postfix apply-to="house-number" text="_home" />
@@ -803,9 +783,8 @@
         Matches the input against regular expression and extracts regexp groups.
         The groups defined in the regular expression are exported as variables starting from $0, which
         contains the entire match.
-
-        Note, that the MatchExtract block behaves like a Check block, namely if the specified regular
-        expression does not match the input, a CheckResult is raised.
+        Note, that the MatchExtract block behaves like a check block. If the specified regular
+        expression does not match the input, an error event is triggered.
       </xs:documentation>
       <xs:documentation d:example="true">
         <match-extract apply-to="phone-number" regexp="^(\d)(\d+)$">
@@ -827,14 +806,14 @@
         <xs:attribute name="from" type="tns:identifierType" use="required">
           <xs:annotation>
             <xs:documentation>
-              Read the millisecounds value.
+              The name of the field which contains the number of milliseconds.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="pattern" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation>
-              The pattern to convert the text to a date object.
+              The pattern of the output date.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -845,7 +824,7 @@
   <xs:element name="milliseconds-to-datetime" type="tns:millisecondsToDateTimeType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Converts milliseconds to date and time string.
+        Converts milliseconds to formatted date and time string.
       </xs:documentation>
       <xs:documentation d:example="true">
         <milliseconds-to-datetime apply-to="date" from="timeinMillisecounds" pattern="dd/MMM/yyyy:HH:mm:ss Z"/>
@@ -857,9 +836,8 @@
   <xs:element name="remove" type="tns:atomicBlockType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Removes a field from the record.
-        Note: Variables cannot be unset. A variable is deleted when execution leaves the scope
-        where it was defined.
+        Removes a field from the record. Note: Variables cannot be removed. A variable is deleted when 
+          execution leaves the scope where it was defined.
       </xs:documentation>
       <xs:documentation d:example="true">
         <remove apply-to="date"/>
@@ -871,7 +849,7 @@
   <xs:element name="remove-flag" type="tns:abstractFlagBlockType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Remove a given flag of the fields listed in the apply-to attribute.
+        Remove a given flag from all of the fields listed in the apply-to attribute.
       </xs:documentation>
       <xs:documentation d:example="true">
         <remove-flag apply-to="field1 field2" flag="INVALID"/>
@@ -904,10 +882,10 @@
   <xs:element name="remove-prefix" type="tns:removePrefixType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Remove the given prefix from the from filed.
+        If the field value starts with the specified text, this block removes that prefix.
       </xs:documentation>
       <xs:documentation d:example="true">
-        <remove-prefix apply-to="house-number" text="home_" />
+        <remove-prefix apply-to="house_number" text="home_" />
       </xs:documentation>
     </xs:annotation> 
   </xs:element>
@@ -930,7 +908,7 @@
   <xs:element name="replace-all" type="tns:replaceType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Matches against regular expression and replaces all matches against the specified value.
+        Replaces all occurences of the match attribute with the value of the replacement attribute.
       </xs:documentation>
       <xs:documentation d:example="true">
         <replace-all apply-to="unit" regexp="(=\/|^)0(?=\/|$)" replacement="" />
@@ -942,7 +920,7 @@
   <xs:element name="replace-first" type="tns:replaceType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Matches against regular expression and replaces the first occurrence of the match.
+        Replaces the first occurence of the match attribute with the value of the replacement attribute.
       </xs:documentation>
       <xs:documentation d:example="true">
         <replace-first apply-to="unit" regexp="(=\/|^)0(?=\/|$)" replacement="" />
@@ -957,7 +935,7 @@
         <xs:attribute name="value" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation>
-              The value to set.
+              The new value of the field.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -968,12 +946,10 @@
   <xs:element name="set" type="tns:setType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>  
-        Sets the field to the specified constant value.
-        Note: use Copy to copy the value of a field or variable.
-        See copy also.
+        Sets the field or variable to the specified constant value.
       </xs:documentation>
       <xs:documentation d:example="true">
-        <set apply-to="$unit-emelet-text" value="em"/>
+        <set apply-to="$unit" value="em"/>
       </xs:documentation>
     </xs:annotation> 
   </xs:element>
@@ -1012,7 +988,7 @@
   <xs:element name="set-character-case" type="tns:setCharacterCaseType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Set the scecipied filds caracter case.
+        Changes the case of the selected characters to the specified case.
       </xs:documentation>
       <xs:documentation d:example="true">
         <set-character-case apply-to="country" case="Lowercase" characters="ALL" />
@@ -1030,7 +1006,7 @@
   <xs:element name="set-null" type="tns:setNullType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Set the value of the given filds to null.
+        Set the value of the given fields or variables to null.
       </xs:documentation>
       <xs:documentation d:example="true">
         <set-null apply-to="zip-code" />
@@ -1053,10 +1029,9 @@
   <xs:element name="switch" type="tns:switchType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Switch-like control structure.
-        Executes each case, which meets the condition for that case in sequential order, until the 
-        first case succeeds. Failed cases have no effect on the data.
-        See try-all also.
+        Switch-like control structure. Executes each case, which meets the condition for that case 
+          in sequential order, until the  first case succeeds. Changes made to the record in failed 
+          cases are rolled back, and have no effect on the data.
       </xs:documentation>
       <xs:documentation d:example="true">
         <switch>
@@ -1087,8 +1062,8 @@
     <xs:annotation>
       <xs:documentation>
         Strict switch control structure.
-        It provides the same functionality as the Switch class, but it fails, if no cases are
-        executed due to constraint or block failures.
+        It provides the same functionality as switch class, but triggers an error event if all
+          cases fail.
       </xs:documentation>
       <xs:documentation d:example="true">
         <switch-strict>
@@ -1123,7 +1098,7 @@
   <xs:element name="trim" type="tns:trimType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        This block remove whitespace from the beginning and the end of a string.
+        Removes whitespace from the beginning and the end of the values of specified fields.
       </xs:documentation>
       <xs:documentation d:example="true">
         <trim apply-to="unit"/>
@@ -1136,10 +1111,9 @@
     <xs:annotation>
       <xs:documentation>
         Try all cases control structure.
-        This control behaves much like a switch-case structure, but it tries all cases defined,
+        This control behaves much like a switch structure, but it tries all cases,
         regardless of which succeeds or not. Unsuccessful block executions are rolled back, and have
-        no effect on the transformed record.
-        See switch also.
+        no effect on the record.
       </xs:documentation>
       <xs:documentation d:example="true">
         <try-all>
@@ -1186,7 +1160,7 @@
   <xs:element name="unicode-normalize" type="tns:unicodeNormalizeType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Normalize the given field list according to the form.
+        Normalizes a value according the normalization type.
       </xs:documentation>
       <xs:documentation d:example="true">
         <unicode-normalize apply-to="$a b c" form="NFD"/>
@@ -1208,7 +1182,8 @@
   <xs:element name="extract-timestamp" type="tns:extractTimestampType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Extracts input Unix timestamp into distinct date element fields (year,month,day,hour,min,sec).
+        Converts the specified timestamp into a date, and assigns date fields to the variables $year, 
+          $month, $day, $hour, $min, and $sec.
       </xs:documentation>
       <xs:documentation d:example="true">
         <extract-timestamp apply-to="timestamp">
@@ -1254,8 +1229,8 @@
   <xs:element name="clone-record" type="tns:cloneRecordType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Clone / duplicate the given record. 
-        To specificied the cloned record the block has the ability to add a new field to the cloned records.
+        Creates a new record identical to the current one and optionally adds another field to the 
+          clone. The clone's transformation starts from the position of this block.
       </xs:documentation>
       <xs:documentation d:example="true">
         <clone-record set-field="ctrl_doEventSplit" set-value="true" />
@@ -1275,7 +1250,7 @@
     <xs:attribute name="apply-to" type="tns:identifierListType" use="required">
       <xs:annotation>
         <xs:documentation>
-          List of fields this element applies to.
+          List of fields this element is applied on.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -1293,7 +1268,7 @@
   <!-- Constraint element group strict -->
   <xs:group name="constraintElementGroup">
     <xs:sequence>
-      <xs:element ref="tns:abstract-constraint" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element ref="tns:abstract-constraint" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:group>
 
@@ -1351,9 +1326,8 @@
   <xs:element name="alphabet" type="tns:alphabetType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks input against an alphabet.
-          The alphabet defines the characters, that are checked. The policy defines
-          if the alphabet specified is allowed in the input, or denied.
+          Checks if characters in the input value come from the specified alphabet. The policy 
+            defines if the characters in the alphabet are allowed or denied.
         </xs:documentation>
         <xs:documentation d:example="true">
           <alphabet apply-to="a b c" classes="Letter Number" policy="Deny"/>
@@ -1368,7 +1342,7 @@
         <xs:attribute name="value" type="xs:integer" use="required">
           <xs:annotation>
             <xs:documentation>
-              The apceptable length.
+              The maximum acceptable length of the value.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -1379,7 +1353,7 @@
   <xs:element name="is-notlonger" type="tns:isnotlongerType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Check the input field is not longer than a given value.
+          Checks if the input value is not longer than a given length.
         </xs:documentation>
         <xs:documentation d:example="true">
           <is-notlonger apply-to="a b c" value="4"/>
@@ -1412,7 +1386,7 @@
   <xs:element name="and" type="tns:andType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          And operator for multiple constraints.
+          Defines a logical AND relationship between the contained constraints.
         </xs:documentation>
         <xs:documentation d:example="true">
           <and>
@@ -1455,10 +1429,10 @@
   <xs:element name="constraint-ref" type="tns:constraintReferenceType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Reference to a named constraint.
+          Reference to a constraint in an external package.
         </xs:documentation>
         <xs:documentation d:example="true">
-          <constraint-ref id="package4:some.constraint" version="3.0">
+        <constraint-ref id="package4:some.constraint" version="3.0">
           <pass fields="a b c"/>
           <prefix fields="d e" text="fff"/>
           <postfix fields="g h" text="iii"/>
@@ -1475,7 +1449,7 @@
   <xs:element name="entity-ref" type="tns:constraintReferenceType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Reference to a named entity.
+          Reference to an entity in an external package.
         </xs:documentation>
         <xs:documentation d:example="true">
           <entity-ref id="address:address.part.zip-code.hu" version="1.0" >
@@ -1516,7 +1490,8 @@
   <xs:element name="equals" type="tns:equalsType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks, if the apply-to field value equals to the given field in with attribute.
+          Checks, if the specified field's value equals the value in the given field in the 
+            <code>with</code> attribute. The values are compared as strings.
         </xs:documentation>
         <xs:documentation d:example="true">
           <equals apply-to="house-number" with="hrsz" />
