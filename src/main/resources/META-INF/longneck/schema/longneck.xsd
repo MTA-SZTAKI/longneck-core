@@ -1530,7 +1530,9 @@
   <xs:element name="equals-imploded" type="tns:equalsImplodedType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Implode the source fields using glue. Checks if the apply-to field values equal the created fieled.
+          Implodes the source fields using the text specified in the glue attribute, and checks if 
+            the apply-to field value is equal to it. If glue is empty, the source field values
+            are simply concatenated.
         </xs:documentation>
         <xs:documentation d:example="true">
           <equals-implode apply-to="house-number" sources="F_HAZSZAM F_AJTO" glue="." />
@@ -1542,7 +1544,7 @@
   <xs:element name="exists" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks, if the specified field exists according to the fields list.
+          Checks, if the specified field exists.
         </xs:documentation>
         <xs:documentation d:example="true">
           <exists apply-to="zip-code" />
@@ -1554,8 +1556,8 @@
   <xs:element name="false" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks if the field is false. 
-          The field value is lowercased, and checked against the string "false".
+          Checks if the field is false. A value is false, if it equals the string "false",
+            case insensitive.
         </xs:documentation>
         <xs:documentation d:example="true">
           <false apply-to="field1"/>
@@ -1575,7 +1577,7 @@
   <xs:element name="constraint" type="tns:genericConstraintType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Constraint with id and version.
+          Generic constraint in an external package.
         </xs:documentation>
         <xs:documentation d:example="true">
           <constraint id="address.part.public-domain-type.hu" version="1.0">
@@ -1594,7 +1596,7 @@
   <xs:element name="entity" type="tns:genericConstraintType">
     <xs:annotation>
         <xs:documentation>
-          Entity implementation.
+          Generic entity in an external package.
         </xs:documentation>
         <xs:documentation d:example="true">
           <entity id="address.part.public-domain-type.hu" version="1.0">
@@ -1616,6 +1618,7 @@
         <xs:attribute name="flag" type="tns:constraintFlagType" use="required">
           <xs:annotation>
             <xs:documentation>
+                
               Defines the flag type for the operation.
             </xs:documentation>
           </xs:annotation>
@@ -1651,7 +1654,8 @@
   <xs:element name="is-empty" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks, if the specified field is empty.
+          Checks, if the specified field is empty. A field is considered empty, if it's value is
+            null, or a zero-length string.
         </xs:documentation>
         <xs:documentation d:example="true">
           <is-empty apply-to="house-number" />
@@ -1704,7 +1708,8 @@
   <xs:element name="not-empty" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks, if the specified field is not empty.
+          Checks, if the specified field is not empty. A field is considered empty, if it's value is
+            null, or a zero-length string.
         </xs:documentation>
         <xs:documentation d:example="true">
           <not-empty apply-to="bm-code" />
@@ -1764,9 +1769,8 @@
   <xs:element name="true" type="tns:atomicConstraintType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Checks, if the specified field is true.
-          This check is performed on a string value, ie. the field has to equal "true" in it's
-          lowercased form.
+          Checks, if the specified field is true. The value is true, if it equals the string "true"
+            case insensitive.
         </xs:documentation>
         <xs:documentation d:example="true">
           <true apply-to="field1"/>
@@ -1801,7 +1805,15 @@
   <xs:element name="when" type="tns:whenType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          If-then-else control structure to constraint.
+            <p>
+          This constraint imposes further constraints on the checked record based on a preliminary
+            check. If the "when" checks succeed, the result of the full "when" constraint equals the
+            result of the "then" branch. If the "when" check fails, the result of the full "when"
+            constraint is the outcome of the "else" check.                
+            </p>
+            <p>
+                <em>Note, that the this constraint may succeed even if the "when" checks fail.</em>
+            </p>
         </xs:documentation>
         <xs:documentation d:example="true">
           <when>
@@ -1856,9 +1868,20 @@
   <xs:element name="orswitch-strict" type="tns:orswitchStrictType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          Strict or-switch control structure.       
-          This structure check trough all straight orcase constraint, if some constraint is true, then the
-          or-switch constraint result equals the orcasre then result.
+            <p>
+          The Or-Switch is similar to a switch block, but it is a constraint. The or-cases are checked
+            in sequential order. If any or-case succeeds, the or-switch succeeds. If no or-cases
+            succeed, the or-switch fails.
+            </p>
+            <p>
+                Each or-case may have a "then" branch, which is evaluated only if the basic or-case 
+                check succeeds. If the outcome is true, the result of the or-switch is the result of 
+                the checks in the "then" branch of the or-case. 
+            </p>
+            <p>
+                <em>Note, that the result of the then block may be false, and then the result of the 
+                    entire or-switch is false.</em>
+            </p>
         </xs:documentation>
         <xs:documentation d:example="true">
           <orswitch-strict>
@@ -1894,7 +1917,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="pass" type="tns:passType" substitutionGroup="tns:abstract-mapping-rule"/>
+  <xs:element name="pass" type="tns:passType" substitutionGroup="tns:abstract-mapping-rule">
+    <xs:annotation>
+      <xs:documentation>
+        Maps the field names specified in the pass element to the called block
+        without change.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <!-- Prefix -->
   <xs:complexType name="abstractFixType">
@@ -1905,13 +1935,35 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="prefix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule"/>
+  <xs:element name="prefix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule">
+    <xs:annotation>
+      <xs:documentation>
+        Adds a prefix to each specified field name in the called block. For example, if the
+        prefix is "a_" and the mapped field is "b", then the field in the called block is "a_b".
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <!-- Unprefix -->
-  <xs:element name="unprefix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule"/>
+  <xs:element name="unprefix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule">
+    <xs:annotation>
+      <xs:documentation>
+        Removes a prefix from each specified field name in the called block. For example, if the
+        prefix is "a_" and the mapped field is "a_b", then the field in the called block is "b".
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <!-- Postfix -->
-  <xs:element name="postfix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule"/>
+  <xs:element name="postfix" type="tns:abstractFixType" substitutionGroup="tns:abstract-mapping-rule">
+    <xs:annotation>
+      <xs:documentation>
+        Adds a postfix to each specified field name in the called block. For example, if the
+        prefix is "_a" and the mapped field is "b", then the field in the called block is "b_a".
+      </xs:documentation>
+    </xs:annotation>
+    
+  </xs:element>
 
   <!-- Map -->
   <xs:complexType name="mapType">
@@ -1923,21 +1975,29 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="map" type="tns:mapType" substitutionGroup="tns:abstract-mapping-rule"/>
+  <xs:element name="map" type="tns:mapType" substitutionGroup="tns:abstract-mapping-rule">
+    <xs:annotation>
+      <xs:documentation>
+        Creates a mapping between the callee and the called block context for the
+        specified field name. The field in the "from" attribute is accessible under the name
+        in the "to" attribute inside the called block.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
   <!-- Caching -->
   <xs:attributeGroup name="cachingAttrGroup">
     <xs:attribute name="output-fields" type="tns:identifierListType" use="required">
       <xs:annotation>
         <xs:documentation>
-          Value of the cache.
+          The fields, that are read from the cache on a hit.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="size" type="xs:integer" > 
       <xs:annotation>
         <xs:documentation>
-          Maximum size.
+          Maximum number of cached records.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -1957,11 +2017,9 @@
   <xs:element name="caching" type="tns:cachingType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
         <xs:documentation>
-          Block that caches block outputs as key-value pairs it contains.
-          Each thread has its own internal cache (LRUMap). Cache key is the field 
-          value defined in the "apply-to" parameter. Note that only one field name 
-          is permitted here! Cache value is a list of fields defined in the 
-          "output-fields" parameter.
+          Per-worker fields cache, that uses the Least-Recently-Used strategy to regulate it's size. The
+          fields specified in the "apply-to" attribute are used as the cache key. Upon hit, the
+          fields listed in the "output-fields" attribute are assigned from the cache.
         </xs:documentation>
         <xs:documentation d:example="true">
           <caching apply-to="userAgent" size="100"

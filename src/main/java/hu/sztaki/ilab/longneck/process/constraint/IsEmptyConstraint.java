@@ -21,7 +21,7 @@ public class IsEmptyConstraint extends AbstractAtomicConstraint {
         for (String fieldName : applyTo) {
             String s = BlockUtils.getValue(fieldName, record, scope);
             
-            if (s == null || s.length() <= 0) {
+            if (s == null || "".equals(s)) {
                 results.add(new CheckResult(this, true, fieldName, 
                         BlockUtils.getValue(fieldName, record, scope), null));
             } else {
