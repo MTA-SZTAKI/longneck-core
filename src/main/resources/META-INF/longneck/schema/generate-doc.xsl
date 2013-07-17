@@ -281,7 +281,7 @@
     <xsl:choose>
       <xsl:when test="@d:example">
         <h4>Example</h4>
-        <pre class="prettyprint linenums">
+        <pre class="prettyprint linenums lang-xml">
           <xsl:apply-templates select="child::*" mode="serialize"/>            
         </pre>
       </xsl:when>
