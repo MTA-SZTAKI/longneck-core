@@ -25,7 +25,7 @@
     <!-- Remove -->
     <remove apply-to="remove1 remove2"/>
     
-    
+
     <output-constraints summary="output constraints">
       <equals apply-to="equals1 equals2 $equals4" value="good value"/>
 	  <exists apply-to="exists1 exists2 $_exists3"/>
