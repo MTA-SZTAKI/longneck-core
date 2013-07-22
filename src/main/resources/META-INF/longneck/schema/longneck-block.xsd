@@ -6,25 +6,6 @@
 
   <xs:include schemaLocation="longneck.xsd"/>
   
-  <xs:element name="database-source" type="tns:databaseSourceType" substitutionGroup="tns:abstract-source"/>
-
-  <!-- Database attribute group -->
-  <xs:attributeGroup name="databaseAccessorAttrGroup">
-    <xs:attribute name="connection-name" type="xs:string"/>
-  </xs:attributeGroup>
-
-  <!-- Database source -->
-  <xs:complexType name="databaseSourceType">
-    <xs:complexContent>
-      <xs:extension base="tns:sourceType">
-        <xs:sequence>
-          <xs:element name="query" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-        <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="block-package">
     <xs:complexType>
       <xs:sequence>

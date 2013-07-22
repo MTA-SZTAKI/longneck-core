@@ -20,7 +20,7 @@
       </xs:documentation>
     </xs:annotation>   
     <xs:sequence>
-      <xs:element ref="tns:abstract-source" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element ref="tns:abstract-source"/>
     </xs:sequence>
   </xs:complexType>
 

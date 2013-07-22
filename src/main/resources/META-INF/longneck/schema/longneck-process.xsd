@@ -15,9 +15,9 @@
   <!-- root element -->
   <xs:complexType name="processType">
     <xs:sequence>
-      <xs:element ref="tns:source" minOccurs="0"/>
-      <xs:element ref="tns:target" minOccurs="0"/>
-      <xs:element ref="tns:error-target" minOccurs="0"/>
+      <xs:element ref="tns:source"/>
+      <xs:element ref="tns:target"/>
+      <xs:element ref="tns:error-target"/>
       <xs:element ref="tns:blocks"/>
     </xs:sequence>
   </xs:complexType>
@@ -29,7 +29,7 @@
   <!-- Abstract Target -->
   <xs:complexType name="targetContainerType">
     <xs:sequence>
-      <xs:element ref="tns:abstract-target" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="tns:abstract-target"/>
     </xs:sequence>
   </xs:complexType>
   
@@ -53,7 +53,7 @@
     <xs:complexContent>
       <xs:extension base="tns:sourceType">
         <xs:sequence>
-          <xs:element name="query" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="query" type="xs:string"/>
         </xs:sequence>
         <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
       </xs:extension>
@@ -69,8 +69,8 @@
     <xs:complexContent>
       <xs:extension base="tns:targetType">
         <xs:sequence>
-          <xs:element name="truncate-query" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="insert-query" minOccurs="1" maxOccurs="1">
+          <xs:element name="truncate-query" type="xs:string" minOccurs="0"/>
+          <xs:element name="insert-query">
             <xs:complexType>
               <xs:simpleContent>  
                 <xs:extension base="xs:string">
@@ -107,12 +107,46 @@
   
   <!-- CSV Source -->
   <xs:complexType name="csvSourceType">
+    <xs:annotation>
+      <xs:documentation>
+        The CSV source is defined with the csv-source element, and it reads one or more CSV files 
+        from a path specified in the configuration. The path is configured either through a 
+        configuration file, or on the command line with the "-D" switch.         
+      </xs:documentation>
+    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="tns:sourceType">
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="delimiter" type="xs:string" use="optional"/>
-        <xs:attribute name="has-headers" type="xs:boolean" use="optional"/>
-        <xs:attribute name="columns" type="xs:string" use="optional"/>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Sets the name of the source that selects the <code>csvSource.&lt;NAME&gt;.sourcePath</code> 
+              property in the configuration, which in turn specifies the data files to read.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="delimiter" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the field delimiter character used in the files.
+            </xs:documentation>
+          </xs:annotation>          
+        </xs:attribute>
+        <xs:attribute name="has-headers" type="xs:boolean" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Informs the application whether or not the data files contain field names as the first 
+              record or not, set to true or false.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="columns" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              A space separated list of field names in the order they occur in the input data file.
+              <em>Must be set, if has-headers is false.</em>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -123,16 +157,49 @@
   <xs:element name="csv-target" type="tns:csvTargetType" substitutionGroup="tns:abstract-target" />
 
   <xs:attributeGroup name="simpleFileAccessorAttrGroup">
-    <xs:attribute name="target" type="xs:string" use="required" />
+    <xs:attribute name="target" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Sets the path to the target file the records are written to.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="csvFileAccessorAttrGroup">
-    <xs:attribute name="delimiter" type="xs:string" use="optional"/>
-    <xs:attribute name="columns" type="xs:string" use="optional"/>
-    <xs:attribute name="empty-value" type="xs:string" use="optional"/>
+    <xs:attribute name="delimiter" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the field delimiter character used in the files. <strong>Default: ';'</strong>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="columns" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A whitespace separated list of field names in the order they should occur in the output 
+          data file. Fields not listed are skipped from the output. A mapping may be applied to the 
+          field names by using a <code>recordFieldName=csvFieldName</code> pattern for any of the fields.
+          <em>If omitted, field names are copied from the first record written out.</em>
+        </xs:documentation>
+      </xs:annotation>      
+    </xs:attribute>
+    <xs:attribute name="empty-value" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Sets the string used in the output file for empty values. <strong>Default: ''</strong>
+        </xs:documentation>
+      </xs:annotation>      
+    </xs:attribute>
   </xs:attributeGroup>
 
   <xs:complexType name="csvTargetType">
+    <xs:annotation>
+      <xs:documentation>
+        The CSV target is the counterpart of the CSV source, and let's you write records into a CSV 
+        file of your choice. This target can be used with the csv-target element in the process file.
+      </xs:documentation>
+    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="tns:targetType">
         <xs:attributeGroup ref="tns:simpleFileAccessorAttrGroup" />
