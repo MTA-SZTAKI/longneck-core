@@ -307,8 +307,8 @@
     <xsl:choose>
       <xsl:when test="@d:example">
         <h4>Example</h4>
-        <pre class="prettyprint linenums lang-xml"><xsl:apply-templates select="child::* | text()[position() = 1]" mode="serialize"/>
-        </pre>
+        <pre class="prettyprint linenums lang-xml"><code><xsl:apply-templates select="child::* | text()" mode="serialize"/>
+        </code></pre>
       </xsl:when>
       <xsl:when test="count(child::*) = 0">
         <p>
@@ -321,7 +321,11 @@
     </xsl:choose>
     
   </xsl:template>
-  
+
+  <xsl:template match="xs:documentation" mode="inline">
+    <xsl:copy-of select="child::* | text()"/>
+  </xsl:template>
+    
   <!-- ========= Children documentation ========= -->
   
   <xsl:template match="xs:element | xs:extension | xs:complexType | xs:group" mode="children-doc">
@@ -353,7 +357,7 @@
             <xsl:call-template name="element-no-bookmark"/>
             <xsl:text>: </xsl:text>
             <span class="element-inline-description">
-              <xsl:apply-templates select="xs:annotation/xs:documentation"/>
+              <xsl:apply-templates select="xs:annotation/xs:documentation" mode="inline"/>
             </span>
           </li>
         </xsl:when>
@@ -553,13 +557,13 @@
       
   <!-- ========= SERIALIZE templates ========= -->
   
-  <xsl:template match="*" mode="serialize">
+  <xsl:template match="* | text()" mode="serialize">
     <xsl:text>&lt;</xsl:text>
     <xsl:value-of select="name()"/>
     
     <xsl:apply-templates select="attribute::*" mode="serialize"/>
     <xsl:choose>
-      <xsl:when test="child::*">
+      <xsl:when test="child::* | text()">
         <xsl:text>&gt;</xsl:text>
         <xsl:apply-templates mode="serialize"/>
         
@@ -607,7 +611,7 @@
 
   <xsl:template name="element-no-bookmark">
     <xsl:param name="name" select="@name"/>
-    <xsl:text>&lt;</xsl:text><xsl:value-of select="$name"/><xsl:text>&gt;</xsl:text>
+    <span class="element-no-bookmark"><xsl:text>&lt;</xsl:text><xsl:value-of select="$name"/><xsl:text>&gt;</xsl:text></span>
   </xsl:template>  
     
   <xsl:template name="section-navbar">

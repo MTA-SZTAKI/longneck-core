@@ -16,7 +16,15 @@
   <xs:complexType name="sourceContainerType">
     <xs:annotation>
       <xs:documentation>
-        Sequence of <code>tns:abstract-source</code>.
+        This element contains the source definition element, which specifies where to read records
+        from.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <database-source connection-name="test">
+          <query>
+            select * from dual
+          </query>    
+        </database-source>
       </xs:documentation>
     </xs:annotation>   
     <xs:sequence>
@@ -372,7 +380,7 @@
   <xs:element name="case" type="tns:caseType" substitutionGroup="tns:abstract-block">   
     <xs:annotation>
       <xs:documentation>
-        A single case in a switch-like structure.
+        A single case in a switch-like structure. See <a href="#switch">&lt;switch&gt;</a> for details.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -748,7 +756,7 @@
   <xs:element name="add-prefix" type="tns:abstractAddFixBlockType" substitutionGroup="tns:abstract-block">
     <xs:annotation>
       <xs:documentation>
-        Adds a mapping from the original field names to the prefixed names.
+        Adds the specified prefix to the value of a field.
       </xs:documentation>
       <xs:documentation d:example="true">
         <add-prefix apply-to="house-number" text="home_" />
@@ -1848,7 +1856,7 @@
   <xs:element name="orcase" type="tns:orcaseType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
         <xs:documentation>
-          OrCase in an or-switch structure.
+          OrCase in an or-switch structure. See <a href="#orswitch-strict">&lt;orswitch-strict&gt;</a> for details.
         </xs:documentation>
       </xs:annotation>
   </xs:element>
@@ -1867,38 +1875,40 @@
   <!-- OrSwitch Strict -->
   <xs:element name="orswitch-strict" type="tns:orswitchStrictType" substitutionGroup="tns:abstract-constraint">
     <xs:annotation>
-        <xs:documentation>
-            <p>
+      <xs:documentation>
+        <p>
           The Or-Switch is similar to a switch block, but it is a constraint. The or-cases are checked
-            in sequential order. If any or-case succeeds, the or-switch succeeds. If no or-cases
-            succeed, the or-switch fails.
-            </p>
-            <p>
-                Each or-case may have a "then" branch, which is evaluated only if the basic or-case 
-                check succeeds. If the outcome is true, the result of the or-switch is the result of 
-                the checks in the "then" branch of the or-case. 
-            </p>
-            <p>
-                <em>Note, that the result of the then block may be false, and then the result of the 
-                    entire or-switch is false.</em>
-            </p>
-        </xs:documentation>
-        <xs:documentation d:example="true">
-          <orswitch-strict>
-            <orcase>
-              <entity-ref id="phonenr:phone-number.canonized.hu.selector" version="1.0"/>
-              <then>
-                <entity-ref id="phonenr:phone-number.canonized.hu" version="1.0"/>
-              </then>
-            </orcase>
-            <orcase>
-              <entity-ref id="phonenr:phone-number.canonized.sk.selector" version="1.0"/>
-              <then>
-                <entity-ref id="phonenr:phone-number.canonized.sk" version="1.0"/>
-              </then>
-            </orcase>
-          </orswitch-strict>
-        </xs:documentation>
+          in sequential order. If any or-case succeeds, the or-switch succeeds. If no or-cases
+          succeed, the or-switch fails.
+        </p>
+        <p>
+          Each or-case may have a "then" branch, which is evaluated only if the basic or-case 
+          check succeeds. If the outcome is true, the result of the or-switch is the result of 
+          the checks in the "then" branch of the or-case. 
+        </p>
+        <p>
+          <em>
+            Note, that the result of the then block may be false, and then the result of the 
+            entire or-switch is false.
+          </em>
+        </p>
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <orswitch-strict>
+          <orcase>
+            <entity-ref id="phonenr:phone-number.canonized.hu.selector" version="1.0"/>
+            <then>
+              <entity-ref id="phonenr:phone-number.canonized.hu" version="1.0"/>
+            </then>
+          </orcase>
+          <orcase>
+            <entity-ref id="phonenr:phone-number.canonized.sk.selector" version="1.0"/>
+            <then>
+              <entity-ref id="phonenr:phone-number.canonized.sk" version="1.0"/>
+            </then>
+          </orcase>
+        </orswitch-strict>
+      </xs:documentation>
     </xs:annotation>
   </xs:element>
 
@@ -2023,18 +2033,7 @@
         </xs:documentation>
         <xs:documentation d:example="true">
           <caching apply-to="userAgent" size="100"
-                   output-fields="userAgentAgentName 
-                     userAgentAgentType 
-                     userAgentAgentVersion 
-                     userAgentLang
-                     userAgentOS 
-                     userAgentOSVersion 
-                     userAgentOSDistro 
-                     userAgentLayoutEngine 
-                     userAgentLayoutRes 
-                     userAgentDevice 
-                     userAgentProcessor 
-                     userAgentSWPlatform">
+                   output-fields="userAgentAgentName userAgentAgentType userAgentAgentVersion">
             <copy apply-to="userAgentAgentName" from="userAgent" />
           </caching>
         </xs:documentation>
