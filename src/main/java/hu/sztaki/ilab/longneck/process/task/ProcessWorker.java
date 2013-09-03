@@ -125,6 +125,7 @@ public class ProcessWorker extends AbstractTask implements Runnable {
                         // LOG.info(ex.getMessage(), ex);
                         LOG.trace(ex.getMessage()) ;
                         stats.filtered += 1;
+                        errorRecords.add(record);
                     }
                 }
                 
