@@ -9,6 +9,29 @@
   </properties>
   
   <body>
+    <release version="1.7.2" date="2013-09-11" description="First GitHub release.">
+      <action dev="molnarp" type="update">
+        Removed parent POM.
+      </action>
+      <action dev="lukacsg" type="update">
+        Check errors coming from filtered records are added to the error table.
+      </action>
+      <action dev="molnarp" type="update">
+        Updated the process language XML Schema with documentation elements.
+      </action>
+      <action dev="molnarp" type="fix">
+        Fixed bug in datetime-to-format to handle null values silently.
+      </action>
+      <action dev="molnarp" type="update">
+        Added support for setting default properties in extensions in the META-INF/longneck/properties/ folder.
+      </action>
+      <action dev="tnemeth" type="update">
+        The version attribute on blocks, constraints and entites is now optional.
+      </action>
+      <action dev="tnemeth" type="update">
+        Removed log message, if reported times and record/sec values are 0.
+      </action>
+    </release>
     <release version="1.7.1" date="2013-03-26" description="Cli runner merge.">
       <action dev="molnarp" type="update">
         Merged longneck-cli classes.

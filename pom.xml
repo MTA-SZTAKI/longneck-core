@@ -59,7 +59,7 @@
   <distributionManagement>
     <repository>
       <id>longneck</id>
-      <url>dav:http://longneck.sztaki.hu/maven/</url>
+      <url>http://longneck.sztaki.hu/maven/</url>
     </repository>
   </distributionManagement>
 
@@ -191,9 +191,12 @@
         </configuration>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>2.4</version>
+      </extension>
+    </extensions>     
   </build>
-
-  <profiles>
-  </profiles>
-  
 </project>
