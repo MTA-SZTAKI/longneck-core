@@ -9,7 +9,7 @@
   </properties>
   
   <body>
-    <release version="1.7.2" date="2013-09-11" description="First GitHub release.">
+    <release version="1.7.1" date="2013-09-11" description="First GitHub release.">
       <action dev="molnarp" type="update">
         Removed parent POM.
       </action>
@@ -31,8 +31,6 @@
       <action dev="tnemeth" type="update">
         Removed log message, if reported times and record/sec values are 0.
       </action>
-    </release>
-    <release version="1.7.1" date="2013-03-26" description="Cli runner merge.">
       <action dev="molnarp" type="update">
         Merged longneck-cli classes.
       </action>
