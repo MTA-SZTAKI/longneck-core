@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.sztaki.ilab.longneck</groupId>
   <artifactId>longneck-core</artifactId>
-  <version>1.7.1</version>
+  <version>1.7.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>longneck-core</name>
@@ -53,7 +53,6 @@
   <scm>
 	  <connection>scm:git:git@github.com:MTA-SZTAKI/longneck-core.git</connection>
 	  <url>https://github.com/MTA-SZTAKI/longneck-core.git</url>
-	  <developerConnection>scm:git:git@github.com:MTA-SZTAKI/longneck-core.git</developerConnection>
   </scm>
 
   <distributionManagement>
