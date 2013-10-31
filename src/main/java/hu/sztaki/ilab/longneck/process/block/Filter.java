@@ -6,7 +6,9 @@ import hu.sztaki.ilab.longneck.process.FilterException;
 import hu.sztaki.ilab.longneck.process.VariableSpace;
 
 /**
+ * A filter is responsible for dropping records based on a filtering criteria.
  * 
+ * @author Csaba Sidló
  */
 public class Filter extends AbstractSourceInfoContainer implements Block {
 
