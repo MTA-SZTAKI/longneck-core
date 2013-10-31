@@ -8,8 +8,8 @@
 
   <name>longneck-core</name>
   <description>
-    The longneck-core is a framework to enable definition and use of data-transformation,
-    -integration and cleansing rules, domain knowledge.
+    Longneck-core is a data quality framework enabling definition and use of data-transformation,
+    -integration and cleansing rules built on domain knowledge.
   </description>
 
   <url>https://longneck.sztaki.hu</url>
@@ -22,22 +22,22 @@
   <developers>
     <developer>
       <id>lukacsg</id>
-      <name>Lukács Gábor</name>
+      <name>Gábor Lukács</name>
       <email>lukacsg@sztaki.mta.hu</email>
     </developer>
     <developer>
       <id>molnarp</id>
-      <name>Molnár Péter</name>
+      <name>Péter Molnár</name>
       <email>molnar.peter@sztaki.mta.hu</email>
     </developer>
     <developer>
       <id>sidlo</id>
-      <name>Sidló Csaba</name>
+      <name>Csaba Sidló</name>
       <email>sidlo@sztaki.mta.hu</email>
     </developer>
     <developer>
       <id>tnemeth</id>
-      <name>Németh Tibor</name>
+      <name>Tibor Németh</name>
       <email>tnemeth@sztaki.mta.hu</email>
     </developer>
   </developers>
@@ -98,7 +98,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.0.1</version>
+      <version>2.4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -144,7 +144,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.2</version>
+      <version>2.3</version>
       <type>jar</type>
     </dependency>
 
@@ -183,7 +183,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.1</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -194,8 +194,8 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
       </extension>
-    </extensions>     
+    </extensions>
   </build>
 </project>
