@@ -21,33 +21,33 @@ import org.springframework.context.ApplicationContext;
 public class CliRunner {
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(CliRunner.class);
-    
+
     public static void main(String[] args) {
         CliRunner cli = new CliRunner();
         cli.execute(args);
     }
-    
+
     public void execute(String[] args) {
         configureLogging();
         Properties runtimeProperties = new Properties();
 
         Options options = getDefaultOptions();
-        
+
         // Load configuration defaults from jars
         runtimeProperties.putAll(PropertyUtils.readDefaultProperties());
-        
+
         // Config file blacklist
         Set<String> blacklist = new HashSet(
                 Arrays.asList(new String[] { "log4j.properties" }));
-                
+
         // Read configuration files from project config/
         runtimeProperties.putAll(
                 PropertyUtils.readPropertyFiles(new File("config/"), blacklist));
-        
+
         // Read configuration files from per-user directory
         runtimeProperties.putAll(PropertyUtils.readPropertyFiles(
                 new File(OsUtils.getHomeDirectoryPath(OsType.getCurrent())), blacklist));
-        
+
         try {
             // Parse command line
             Parser p = new GnuParser();
@@ -74,10 +74,10 @@ public class CliRunner {
                     }
                 }
             }
-            
+
             // Create and initialize bootstrap
             Bootstrap bootstrap = new Bootstrap(runtimeProperties);
-            
+
             if (! runtimeProperties.containsKey("executeUtility")) {
                 bootstrap.run();
             } else {
@@ -85,7 +85,7 @@ public class CliRunner {
                 UtilityRunner ur = (UtilityRunner) context.getBean(runtimeProperties.getProperty("executeUtility"));
                 ur.run(runtimeProperties);
             }
-            
+
             bootstrap.close();
 
         } catch (ParseException ex) {
@@ -144,7 +144,7 @@ public class CliRunner {
             return;
         }
 
-        // configure a basic logger by hand 
+        // configure a basic logger by hand
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.removeAllAppenders();
         rootLogger.setLevel(Level.INFO);
@@ -154,9 +154,9 @@ public class CliRunner {
     }
     public static void printHelp(Options options) {
         HelpFormatter hf = new HelpFormatter();
-        hf.printHelp("longneck-aegondw <OPTIONS>", "\nLongneck data transformation tool.\n\n", 
+        hf.printHelp("", "\nLongneck data transformation.\n\nOPTIONS:\n",
                 options,
-                "\nCopyright (c) 2011-2012, MTA SZTAKI. Web: http://dms.sztaki.hu/\n\n");
+                "\nmore info: http://longneck.sztaki.hu/\n\n");
     }
 
     public static Map<String, String> parseAdditionalParameters(String[] args) {
@@ -189,5 +189,5 @@ public class CliRunner {
             runtimeProperties.setProperty(parts[0], parts[1]);
         }
     }
-    
+
 }
