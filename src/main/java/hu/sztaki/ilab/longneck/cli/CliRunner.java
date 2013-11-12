@@ -155,7 +155,7 @@ public class CliRunner {
     }
     public static void printHelp(Options options) {
         HelpFormatter hf = new HelpFormatter();
-        hf.printHelp("", "\nLongneck data transformation.\n\nOPTIONS:\n",
+        hf.printHelp("longneck-app <OPTIONS>", "\nLongneck data transformation.\n\n",
                 options,
                 "\nmore info: http://longneck.sztaki.hu/\n\n");
     }
