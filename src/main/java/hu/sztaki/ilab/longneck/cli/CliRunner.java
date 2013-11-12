@@ -15,6 +15,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.springframework.context.ApplicationContext;
 
 /**
+ * CLI runner for longneck.
  *
  * @author Molnár Péter <molnar.peter@sztaki.mta.hu>
  */
