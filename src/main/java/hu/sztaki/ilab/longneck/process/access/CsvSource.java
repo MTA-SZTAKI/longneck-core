@@ -15,16 +15,16 @@ import org.apache.log4j.Logger;
 
 /**
  * A data source reading CSV files.
- * 
+ *
  * Built on OpenCSV.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class CsvSource implements Source {
-    
+
     /** Logger. */
     private final static Logger log = Logger.getLogger(CsvSource.class);
-    
+
     /** The name of this source. */
     private String name;
 	/** The delimiter used to separate the records. */
@@ -49,50 +49,58 @@ public class CsvSource implements Source {
     @Override
     public Record getRecord() throws NoMoreRecordsException {
 		Record result = new RecordImpl();
-        
-        try {
-            while (csvReader == null || ! csvReader.readRecord()) {
-                try {
-                    nextFile();
-                } catch (CsvHeaderException ex) {
-                    log.warn(ex);
-                    continue;
-                }
-            }
-            
-            String[] values = csvReader.getValues();
 
+        try {
+            String[] values = getNextRecordValues() ;
+
+            while(values.length != columns.length ) {
+                log.warn("Skipping input line, number of columns differs: " + columns.length +
+                         " (process definition) vs. " + values.length + " (CSV file line): \n" +
+                         csvReader.getRawRecord() );
+                values = getNextRecordValues() ;
+            }
             for (int i = 0; i < values.length; ++i) {
                 result.add(new Field(columns[i], values[i]));
             }
-            
+
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        
+
         return result;
-        
+
     }
-    
-    private void nextFile() throws NoMoreRecordsException, FileNotFoundException, 
+    private String[] getNextRecordValues() throws IOException, NoMoreRecordsException {
+        while (csvReader == null || ! csvReader.readRecord()) {
+            try {
+                nextFile();
+            } catch (CsvHeaderException ex) {
+                log.warn(ex);
+                continue;
+            }
+        }
+        return csvReader.getValues();
+    }
+
+    private void nextFile() throws NoMoreRecordsException, FileNotFoundException,
             CsvHeaderException, IOException {
         // Close current reader if available
         if (csvReader != null) {
             csvReader.close();
         }
-        
+
         // Set current source file
         ++currentFileIndex;
         if (sourceFiles.size() <= currentFileIndex) {
             throw new NoMoreRecordsException("No more records.");
         }
-        
+
         log.info(String.format("Processing file: %1$s", sourceFiles.get(currentFileIndex)));
 
         // Create new reader
-        csvReader = new CsvReader(sourceFiles.get(currentFileIndex), 
+        csvReader = new CsvReader(sourceFiles.get(currentFileIndex),
                 delimiter, Charset.forName(characterSet));
-        
+
         // Try to set column names from the first file
         if (hasHeaders) {
             if (columns == null) {
@@ -100,12 +108,12 @@ public class CsvSource implements Source {
                     columns = csvReader.getHeaders();
                 } else {
                     throw new CsvHeaderException(
-                            String.format("Cannot read headers from file: %1$s", 
+                            String.format("Cannot read headers from file: %1$s",
                             sourceFiles.get(currentFileIndex)));
                 }
             } else {
                 csvReader.skipRecord();
-            }                
+            }
         }
     }
 
@@ -116,24 +124,24 @@ public class CsvSource implements Source {
             throw new RuntimeException(
                     "Input files must have headers or column names must be defined.");
         }
-        
+
         // Read source path from runtime properties
         sourcePath = runtimeProperties.getProperty(
                 String.format("csvSource.%1$s.sourcePath", name));
-        
+
         // Check source path is set
         if (sourcePath == null || "".equals(sourcePath)) {
             throw new RuntimeException(String.format("csvSource.%1$s.sourcePath is undefined.", name));
         }
-        
+
         // Create a list of files from the source path
         sourceFiles = new ArrayList<String>();
         for (String path : sourcePath.split(File.pathSeparator)) {
-            
+
             if (path == null || "".equals(path)) {
                 continue;
             }
-            
+
             File source = new File(path);
             if (source.isFile() && source.length() != 0) {
                 sourceFiles.add(source.getAbsolutePath());
@@ -146,12 +154,12 @@ public class CsvSource implements Source {
                 }
             }
         }
-        
+
         // Check that at least 1 file is defined
         if (sourceFiles.isEmpty()) {
             throw new RuntimeException(
                     String.format("No files found at the specified location: %1$s", sourcePath));
-        }        
+        }
     }
 
     @Override
@@ -159,7 +167,7 @@ public class CsvSource implements Source {
         // Close current reader if available
         if (csvReader != null) {
             csvReader.close();
-        }        
+        }
     }
 
     public String getName() {
@@ -169,7 +177,7 @@ public class CsvSource implements Source {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Character getDelimiter() {
         return delimiter;
     }
@@ -185,10 +193,10 @@ public class CsvSource implements Source {
     public void setCharacterSet(String characterSet) {
         this.characterSet = characterSet;
     }
-    
+
     public void setColumns(String columns) {
         this.columns = columns.split("\\s+");
-        
+
         if (this.columns != null && this.columns.length <= 0) {
             this.columns = null;
         }
@@ -209,5 +217,5 @@ public class CsvSource implements Source {
     public void setRuntimeProperties(Properties runtimeProperties) {
         this.runtimeProperties = runtimeProperties;
     }
-    
+
 }
