@@ -136,6 +136,10 @@
       <c:bind-xml name="name" node="attribute"/>
     </c:field>
     
+    <c:field name="path" type="string">
+      <c:bind-xml name="path" node="attribute"/>
+    </c:field>
+    
     <c:field name="delimiter" type="char">
       <c:bind-xml name="delimiter" node="attribute" type="char"/>
     </c:field>
@@ -166,8 +170,12 @@
       <c:bind-xml name="columns" node="attribute" />
     </c:field>
         
-    <c:field name="target" type="string">
-      <c:bind-xml name="target" node="attribute" type="string"/>
+    <c:field name="path" type="string">
+      <c:bind-xml name="path" node="attribute" type="string"/>
+    </c:field>
+    
+    <c:field name="name" type="string">
+      <c:bind-xml name="name" node="attribute"/>
     </c:field>
   </c:class>
 

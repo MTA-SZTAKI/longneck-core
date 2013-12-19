@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import com.csvreader.CsvWriter;
 import hu.sztaki.ilab.longneck.Field;
 import java.util.Iterator;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 
 
@@ -25,9 +26,15 @@ import org.apache.log4j.Logger;
  * 
  */
 public class CsvTarget implements Target {
+    
+    /** The runtime properties. */
+    protected Properties runtimeProperties;
+    
+    /** The name of the target from property. */
+    private String name;
 
-    /** Name of the target file */
-    private String target;
+    /** Name of the target file. */
+    private String path;
     
     /** default delimiter if not specified */
     private Character delimiter = ';'; 
@@ -43,12 +50,20 @@ public class CsvTarget implements Target {
     
     private CsvWriter writer;
     
-    public String getTarget() {
-        return target;
+    public String getPath() {
+        return path;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
     public String getDelimiter() {
@@ -80,7 +95,15 @@ public class CsvTarget implements Target {
 
     public void setColumns(String[] columns) {
         this.columns = columns;
-    }    
+    }
+    
+    public Properties getRuntimeProperties() {
+        return runtimeProperties;
+    }
+
+    public void setRuntimeProperties(Properties runtimeProperties) {
+        this.runtimeProperties = runtimeProperties;
+    }
     
     public CsvWriter getWriter() {
         return writer;
@@ -120,9 +143,14 @@ public class CsvTarget implements Target {
     @Override
     public void init() {
         
+        if(path == null) {
+            // Read target path from runtime properties
+            path = runtimeProperties.getProperty(String.format("csvTarget.%1$s.Path", name));
+        }
+        
         try {
             // Initialize writer
-            writer = new CsvWriter(new BufferedWriter(new FileWriter(target)), delimiter);
+            writer = new CsvWriter(new BufferedWriter(new FileWriter(path)), delimiter);
             
             if (columns == null) {
                 Logger.getLogger(CsvTarget.class).info(

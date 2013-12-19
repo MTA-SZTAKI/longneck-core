@@ -25,8 +25,10 @@ public class CsvSource implements Source {
     /** Logger. */
     private final static Logger log = Logger.getLogger(CsvSource.class);
 
-    /** The name of this source. */
+    /** The name of this source from property. */
     private String name;
+    /** The name of the source file. */
+    private String path;
 	/** The delimiter used to separate the records. */
 	private Character delimiter = ';';
     /** The character set to use when reading the file. */
@@ -70,6 +72,7 @@ public class CsvSource implements Source {
         return result;
 
     }
+    
     private String[] getNextRecordValues() throws IOException, NoMoreRecordsException {
         while (csvReader == null || ! csvReader.readRecord()) {
             try {
@@ -125,14 +128,16 @@ public class CsvSource implements Source {
                     "Input files must have headers or column names must be defined.");
         }
 
-        // Read source path from runtime properties
-        sourcePath = runtimeProperties.getProperty(
-                String.format("csvSource.%1$s.sourcePath", name));
+        if ((sourcePath = path) == null) {
+            // Read source path from runtime properties
+            sourcePath = runtimeProperties.getProperty(String.format("csvSource.%1$s.Path", name));
+        }
 
         // Check source path is set
         if (sourcePath == null || "".equals(sourcePath)) {
-            throw new RuntimeException(String.format("csvSource.%1$s.sourcePath is undefined.", name));
+            throw new RuntimeException(name!= null?String.format("csvSource.%1$s.sourcePath is undefined.", name):"Path is undefined");
         }
+
 
         // Create a list of files from the source path
         sourceFiles = new ArrayList<String>();
@@ -177,6 +182,16 @@ public class CsvSource implements Source {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
+    
 
     public Character getDelimiter() {
         return delimiter;

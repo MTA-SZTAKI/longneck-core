@@ -264,7 +264,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:complexType name="simpleFileTargetType">
     <xs:annotation>
       <xs:documentation>
-        This target definition writes records into the file specified in the <code>target</code> 
+        This target definition writes records into the file specified in the <code>path</code> 
         attribute. Each field value is written on a new line, and there is no record delimiter.
       </xs:documentation>
     </xs:annotation>
@@ -295,14 +295,31 @@ database.connection.NAME.password=XXXX</code></pre>
           <csv-source name="test" delimiter=";"/>
         </source>
       </xs:documentation>
+      <xs:documentation d:example="true">
+        <p>
+           In another example show, how the source file is given by inline.:
+        </p>
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <source>
+          <csv-source path="data/myfile.csv" delimiter=";"/>
+        </source>
+      </xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="tns:sourceType">
-        <xs:attribute name="name" type="xs:string" use="required">
+        <xs:attribute name="name" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
               Sets the name of the source that selects the <code>csvSource.&lt;NAME&gt;.sourcePath</code> 
               property in the configuration, which in turn specifies the data files to read.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="path" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Sets the name of the source which explicit specifies the data files to read.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -340,7 +357,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:element name="csv-target" type="tns:csvTargetType" substitutionGroup="tns:abstract-target" />
 
   <xs:attributeGroup name="simpleFileAccessorAttrGroup">
-    <xs:attribute name="target" type="xs:string" use="required">
+    <xs:attribute name="path" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation>
           Sets the path to the target file the records are written to.
@@ -386,7 +403,21 @@ database.connection.NAME.password=XXXX</code></pre>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="tns:targetType">
-        <xs:attributeGroup ref="tns:simpleFileAccessorAttrGroup" />
+        <xs:attribute name="name" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Sets the name of the target that selects the <code>csvTarget.&lt;NAME&gt;.Path</code> 
+              property in the configuration, which in turn specifies the data files to read.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="path" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Sets the name of the target which explicit specifies the data files to read.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attributeGroup ref="tns:csvFileAccessorAttrGroup" />
       </xs:extension>
     </xs:complexContent>

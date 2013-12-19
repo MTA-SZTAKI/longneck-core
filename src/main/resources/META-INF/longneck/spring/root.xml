@@ -71,7 +71,9 @@
   </bean>
   
   <!-- CSV target -->
-  <bean id="csv-target" class="hu.sztaki.ilab.longneck.process.access.CsvTarget"/>
+  <bean id="csv-target" class="hu.sztaki.ilab.longneck.process.access.CsvTarget">
+    <property name="runtimeProperties" ref="runtime-properties"/>
+  </bean>
   
   <!-- Regexp dependent classes -->
   <bean id="match-extract-block" class="hu.sztaki.ilab.longneck.process.block.MatchExtract" lazy-init="true"/>
