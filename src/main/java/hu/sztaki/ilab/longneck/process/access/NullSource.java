@@ -3,7 +3,7 @@ package hu.sztaki.ilab.longneck.process.access;
 import hu.sztaki.ilab.longneck.Record;
 
 /**
- * This source does nothing when getting a record, acts like /dev/null.
+ * This source contains no records, acts like /dev/null.
  * 
  * @author Döme Geszler
  */
