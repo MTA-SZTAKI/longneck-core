@@ -179,6 +179,11 @@
     </c:field>
   </c:class>
 
+  <!-- Null Source -->
+  <c:class name="hu.sztaki.ilab.longneck.process.access.NullSource">
+    <c:map-to xml="null-source" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+  </c:class>
+
   <!-- Null Target -->
   <c:class name="hu.sztaki.ilab.longneck.process.access.NullTarget">
     <c:map-to xml="null-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>

@@ -65,7 +65,7 @@
   <bean id="simple-file-target" class="hu.sztaki.ilab.longneck.process.access.SimpleFileTarget"/>
   
   
-  <!-- CSV target -->
+  <!-- CSV source -->
   <bean id="csv-source" class="hu.sztaki.ilab.longneck.process.access.CsvSource" lazy-init="true">
     <property name="runtimeProperties" ref="runtime-properties"/>
   </bean>
