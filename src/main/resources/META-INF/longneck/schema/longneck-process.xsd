@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:tns="urn:hu.sztaki.ilab.longneck:1.0"
-           xmlns:d="urn:hu.sztaki.ilab.longneck.doc:1.0" 
-           targetNamespace="urn:hu.sztaki.ilab.longneck:1.0" 
+           xmlns:d="urn:hu.sztaki.ilab.longneck.doc:1.0"
+           targetNamespace="urn:hu.sztaki.ilab.longneck:1.0"
            elementFormDefault="qualified">
-  
+
   <!-- $Id$ -->
-  
+
   <!-- XML Schema for longneck process -->
 
   <!-- Version: 1.0 -->
@@ -17,7 +17,7 @@
   <xs:complexType name="processType">
     <xs:annotation>
       <xs:documentation>
-        This is the root element of the process. It contains the source, target and the 
+        This is the root element of the process. It contains the source, target and the
         transformation steps of the process.
       </xs:documentation>
       <xs:documentation d:example="true">
@@ -46,14 +46,14 @@
   <xs:element name="process" type="tns:processType"/>
 
   <!-- Abstract Source definition has been moved to longneck.xsd -->
-  
+
   <!-- Abstract Target -->
   <xs:complexType name="targetContainerType">
     <xs:sequence>
       <xs:element ref="tns:abstract-target"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:element name="target" type="tns:targetContainerType">
     <xs:annotation>
       <xs:documentation>
@@ -61,17 +61,17 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  
+
   <xs:element name="error-target" type="tns:targetContainerType">
     <xs:annotation>
       <xs:documentation>
         <p>
-          Contains the error target element, where data errors and constraint failures are written. 
-          The error output records have a special set of fields, which give information about the 
+          Contains the error target element, where data errors and constraint failures are written.
+          The error output records have a special set of fields, which give information about the
           location and nature of the error that occured.
         </p>
         <p>
-          The error record is augmented automatically with the following set of fields:          
+          The error record is augmented automatically with the following set of fields:
         </p>
         <ul>
           <li>
@@ -90,34 +90,34 @@
             <code>document_url</code>: the URL of the process or block file, which was executed;
           </li>
           <li>
-            <code>document_row</code> and <code>document_column</code>: the row and column in the above document,            
+            <code>document_row</code> and <code>document_column</code>: the row and column in the above document,
           </li>
           <li>
             <code>check_result</code>: the result of the check, true or false;
           </li>
           <li>
-            <code>check_id</code>: a unique identifier attached to the event; consists of a node id, 
+            <code>check_id</code>: a unique identifier attached to the event; consists of a node id,
             a timestamp and a serial number to distinguish events that occurred within one second;
           </li>
           <li>
-            <code>check_parent_id</code>: id of another failure event, which was generated as a 
+            <code>check_parent_id</code>: id of another failure event, which was generated as a
             direct consequence of the current failure event;
           </li>
           <li>
             <code>check_tree_id</code>: id of the failure tree to allow easy querying of each tree;
           </li>
           <li>
-            <code>check_level</code>: the level of the event in the process call tree, starting from 
+            <code>check_level</code>: the level of the event in the process call tree, starting from
             zero at the root of the tree, incremented by 1 on each level toward the leaves.
           </li>
         </ul>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  
+
   <xs:complexType name="targetType"/>
   <xs:element name="abstract-target" type="tns:targetType" abstract="true"/>
-  
+
 
   <!-- Abstract source -->
   <xs:element name="database-source" type="tns:databaseSourceType" substitutionGroup="tns:abstract-source"/>
@@ -139,9 +139,9 @@
       <xs:documentation>
         <p>
           Database source definition element. This source uses a JDBC connection to connect to a
-          database, and uses SQL to query source data. The connection is selected by the 
+          database, and uses SQL to query source data. The connection is selected by the
           <code>connection-name</code> attribute. To configure a connection specifiy the following
-          properties in a configuration property file:        
+          properties in a configuration property file:
         </p>
         <pre><code>database.connection.NAME.type=jdbc
 database.connection.NAME.url=jdbc:oracle:thin:@localhost:1521:tdb
@@ -153,7 +153,7 @@ database.connection.NAME.password=XXXX</code></pre>
         <database-source connection-name="test">
           <query>
             select * from dual
-          </query>    
+          </query>
         </database-source>
       </xs:documentation>
     </xs:annotation>
@@ -172,21 +172,21 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- Concrete Targets -->
-  
+
   <!-- Database Target -->
   <xs:element name="database-target" type="tns:databaseTargetType" substitutionGroup="tns:abstract-target"/>
-  
+
   <xs:complexType name="databaseTargetType">
     <xs:annotation>
       <xs:documentation>
         <p>
           Database target definition element. This target uses a JDBC connection to connect to a
-          database, and uses SQL to insert produced data into a table. The connection is selected by the 
+          database, and uses SQL to insert produced data into a table. The connection is selected by the
           <code>connection-name</code> attribute. To configure a connection specifiy the following
           properties in a configuration property file, where <code>NAME</code> must match the identifier
-          specified in the attribute:        
+          specified in the attribute:
         </p>
         <pre><code>database.connection.NAME.type=jdbc
 database.connection.NAME.url=jdbc:oracle:thin:@localhost:1521:tdb
@@ -210,12 +210,12 @@ database.connection.NAME.password=XXXX</code></pre>
             <xs:annotation>
               <xs:documentation>
                 Specifies the insert SQL query to insert records into the database table. The values
-                of the fields can be referred to by using field names prefixed with a colon as 
+                of the fields can be referred to by using field names prefixed with a colon as
                 placeholders in the query, for example ':someFieldName'.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:simpleContent>  
+              <xs:simpleContent>
                 <xs:extension base="xs:string">
                   <xs:attribute name="numeric-fields-to-convert" type="xs:string" use="optional">
                     <xs:annotation>
@@ -226,18 +226,18 @@ database.connection.NAME.password=XXXX</code></pre>
                     </xs:annotation>
                   </xs:attribute>
                 </xs:extension>
-              </xs:simpleContent>             
+              </xs:simpleContent>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>    
+        <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- Console Target  -->
   <xs:element name="console-target" type="tns:consoleTargetType" substitutionGroup="tns:abstract-target"/>
-  
+
   <xs:complexType name="consoleTargetType">
     <xs:annotation>
       <xs:documentation>
@@ -252,7 +252,7 @@ database.connection.NAME.password=XXXX</code></pre>
         </target>
       </xs:documentation>
     </xs:annotation>
-    
+
     <xs:complexContent>
       <xs:extension base="tns:targetType"/>
     </xs:complexContent>
@@ -264,7 +264,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:complexType name="simpleFileTargetType">
     <xs:annotation>
       <xs:documentation>
-        This target definition writes records into the file specified in the <code>path</code> 
+        This target definition writes records into the file specified in the <code>path</code>
         attribute. Each field value is written on a new line, and there is no record delimiter.
       </xs:documentation>
     </xs:annotation>
@@ -274,16 +274,16 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- CSV Source -->
   <xs:complexType name="csvSourceType">
     <xs:annotation>
       <xs:documentation>
         <p>
-          The CSV source is defined with the csv-source element, and it reads one or more CSV files 
+          The CSV source is defined with the csv-source element, and it reads one or more CSV files
           from a path specified in the configuration. The path in the following example shows,
-          how the source file is configured either in a configuration file, or on the command line 
-          with the "-D" switch. 
+          how the source file is configured either in a configuration file, or on the command line
+          with the "-D" switch.
         </p>
         <pre class="prettyprint"><code>csvSource.NAME.sourcePath=data/myfile.csv</code></pre>
         <p>
@@ -311,7 +311,7 @@ database.connection.NAME.password=XXXX</code></pre>
         <xs:attribute name="name" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Sets the name of the source that selects the <code>csvSource.&lt;NAME&gt;.sourcePath</code> 
+              Sets the name of the source that selects the <code>csvSource.&lt;NAME&gt;.sourcePath</code>
               property in the configuration, which in turn specifies the data files to read.
             </xs:documentation>
           </xs:annotation>
@@ -328,12 +328,12 @@ database.connection.NAME.password=XXXX</code></pre>
             <xs:documentation>
               Specifies the field delimiter character used in the files. Default: ';'.
             </xs:documentation>
-          </xs:annotation>          
+          </xs:annotation>
         </xs:attribute>
         <xs:attribute name="has-headers" type="xs:boolean" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Informs the application whether the data files contain field names as the first 
+              Informs the application whether the data files contain field names as the first
               record. Valid values are <code>true</code> or <code>false</code>. Default is true.
             </xs:documentation>
           </xs:annotation>
@@ -352,7 +352,7 @@ database.connection.NAME.password=XXXX</code></pre>
   </xs:complexType>
 
   <xs:element name="csv-source" type="tns:csvSourceType" substitutionGroup="tns:abstract-source" />
-  
+
   <!-- CSV Target -->
   <xs:element name="csv-target" type="tns:csvTargetType" substitutionGroup="tns:abstract-target" />
 
@@ -377,27 +377,27 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:attribute name="columns" type="xs:string" use="optional">
       <xs:annotation>
         <xs:documentation>
-          A whitespace separated list of field names in the order they should occur in the output 
-          data file. Fields not listed are skipped from the output. A mapping may be applied to the 
+          A whitespace separated list of field names in the order they should occur in the output
+          data file. Fields not listed are skipped from the output. A mapping may be applied to the
           field names by using a <code>recordFieldName=csvFieldName</code> pattern for any of the fields.
           <br/>
           <em>If omitted, field names are copied from the first record written out.</em>
         </xs:documentation>
-      </xs:annotation>      
+      </xs:annotation>
     </xs:attribute>
     <xs:attribute name="empty-value" type="xs:string" use="optional">
       <xs:annotation>
         <xs:documentation>
           Sets the string used in the output file for empty values. <strong>Default is a zero-length string.</strong>
         </xs:documentation>
-      </xs:annotation>      
+      </xs:annotation>
     </xs:attribute>
   </xs:attributeGroup>
 
   <xs:complexType name="csvTargetType">
     <xs:annotation>
       <xs:documentation>
-        The CSV target is the counterpart of the CSV source, and let's you write records into a CSV 
+        The CSV target is the counterpart of the CSV source, and let's you write records into a CSV
         file of your choice. This target can be used with the csv-target element in the process file.
       </xs:documentation>
     </xs:annotation>
@@ -406,7 +406,7 @@ database.connection.NAME.password=XXXX</code></pre>
         <xs:attribute name="name" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Sets the name of the target that selects the <code>csvTarget.&lt;NAME&gt;.Path</code> 
+              Sets the name of the target that selects the <code>csvTarget.&lt;NAME&gt;.Path</code>
               property in the configuration, which in turn specifies the data files to read.
             </xs:documentation>
           </xs:annotation>
@@ -422,7 +422,7 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- Null Target -->
   <xs:element name="null-target" substitutionGroup="tns:abstract-target">
     <xs:annotation>
@@ -436,8 +436,8 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  
-  <!-- Blocks --> 
+
+  <!-- Blocks -->
   <xs:element name="blocks" type="tns:sequenceType">
     <xs:annotation>
       <xs:documentation>
@@ -445,5 +445,5 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  
+
 </xs:schema>
