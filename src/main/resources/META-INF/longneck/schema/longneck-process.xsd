@@ -422,7 +422,21 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
+  
+  <!-- Null Source -->
+  <xs:element name="null-source" substitutionGroup="tns:abstract-source">
+    <xs:annotation>
+      <xs:documentation>
+        This source definition does not read anything at all.
+      </xs:documentation>
+      <xs:documentation d:example="true">
+        <source>
+          <null-source/>
+        </source>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
   <!-- Null Target -->
   <xs:element name="null-target" substitutionGroup="tns:abstract-target">
     <xs:annotation>
