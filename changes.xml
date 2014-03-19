@@ -9,7 +9,16 @@
   </properties>
   
   <body>
-    <release version="1.7.1" date="2013-09-11" description="First GitHub release.">
+    <release version="1.7.3" date="2014-04-01" description="Longneck with testing facilities.">
+      <action dev="geszler" type="update">
+        Null source element added with implementation.
+      </action>        
+      <action dev="geszler" type="update">
+        Core functionalities extended with testing primitives (test-cases element and command line parameters)
+        with implementation.
+      </action>
+    </release>      
+    <release version="1.7.1" date="2013-09-11" description="First GitHub release.">        
       <action dev="molnarp" type="update">
         Removed parent POM.
       </action>
