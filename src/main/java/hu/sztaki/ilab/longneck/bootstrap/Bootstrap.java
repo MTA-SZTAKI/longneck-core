@@ -75,6 +75,10 @@ public class Bootstrap {
         CompactProcess process = sourceLoader.getCompactProcess(
                 runtimeProperties.getProperty("processFile"), runtimeProperties);
 
+        // Run process tests
+        
+        
+
         threadManager = new ThreadManager(runtimeProperties);
         
         // Set process
