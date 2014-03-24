@@ -32,6 +32,9 @@
           <blocks>
             &lt;!-- transformations... --&gt;
           </blocks>
+          <test-cases>
+            &lt;!-- test cases... --&gt;
+          </test-cases>
         &lt;/process&gt;
       </xs:documentation>
     </xs:annotation>
@@ -39,6 +42,7 @@
       <xs:element ref="tns:source"/>
       <xs:element ref="tns:target"/>
       <xs:element ref="tns:error-target" minOccurs="0"/>
+      <xs:element ref="tns:test-cases" minOccurs="0"/>
       <xs:element ref="tns:blocks"/>
     </xs:sequence>
   </xs:complexType>
@@ -451,6 +455,53 @@ database.connection.NAME.password=XXXX</code></pre>
     </xs:annotation>
   </xs:element>
   
+  <!-- Source Record -->
+  <xs:element name="source-record" >
+    <xs:annotation>
+      <xs:documentation>
+        Source record.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Target Record -->
+  <xs:element name="target-record" >
+    <xs:annotation>
+      <xs:documentation>
+        Target record.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Error Target Record -->
+  <xs:element name="error-target-record" >
+    <xs:annotation>
+      <xs:documentation>
+        Error target record.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="testType" >    
+    <xs:sequence>
+      <xs:element ref="tns:source-record" />
+      <xs:element ref="tns:target-record" />
+      <xs:element ref="tns:error-target-record" />
+    </xs:sequence>
+	<xs:attribute name="id" type="xs:string" use="required"/>
+    <xs:attribute name="summary" type="xs:string" use="optional"/>
+    <xs:attribute name="timeout" type="xs:string" use="optional"/>                
+  </xs:complexType>
+
+  <!-- Test -->
+  <xs:element name="test" type="tns:testType">
+    <xs:annotation>
+      <xs:documentation>
+        Contains a test of process.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <!-- Blocks --> 
   <xs:element name="blocks" type="tns:sequenceType">
     <xs:annotation>
@@ -459,5 +510,20 @@ database.connection.NAME.password=XXXX</code></pre>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  
+
+
+  <!-- Test cases --> 
+  <xs:element name="test-cases" >
+    <xs:annotation>
+      <xs:documentation>
+        Contains the test cases of process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:test" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+    
 </xs:schema>
