@@ -455,8 +455,31 @@ database.connection.NAME.password=XXXX</code></pre>
     </xs:annotation>
   </xs:element>
   
+  
+  <xs:complexType name="fieldType">
+	<xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="value" type="xs:string" use="optional"/>
+    <xs:attribute name="flags" type="xs:string" use="optional"/>                  
+    <xs:attribute name="null" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Field -->
+  <xs:element name="field" type="tns:fieldType">
+    <xs:annotation>
+      <xs:documentation>
+        Field of a record.
+      </xs:documentation>
+    </xs:annotation>  
+  </xs:element>
+  
+  <xs:complexType name="recordType" >    
+    <xs:sequence>
+      <xs:element ref="tns:field" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
   <!-- Source Record -->
-  <xs:element name="source-record" >
+  <xs:element name="source-record" type="tns:recordType">
     <xs:annotation>
       <xs:documentation>
         Source record.
@@ -465,7 +488,7 @@ database.connection.NAME.password=XXXX</code></pre>
   </xs:element>
 
   <!-- Target Record -->
-  <xs:element name="target-record" >
+  <xs:element name="target-record" type="tns:recordType">
     <xs:annotation>
       <xs:documentation>
         Target record.
@@ -474,7 +497,7 @@ database.connection.NAME.password=XXXX</code></pre>
   </xs:element>
 
   <!-- Error Target Record -->
-  <xs:element name="error-target-record" >
+  <xs:element name="error-target-record" type="tns:recordType">
     <xs:annotation>
       <xs:documentation>
         Error target record.
@@ -484,9 +507,9 @@ database.connection.NAME.password=XXXX</code></pre>
 
   <xs:complexType name="testType" >    
     <xs:sequence>
-      <xs:element ref="tns:source-record" />
-      <xs:element ref="tns:target-record" />
-      <xs:element ref="tns:error-target-record" />
+      <xs:element ref="tns:source-record" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="tns:target-record" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="tns:error-target-record" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
 	<xs:attribute name="id" type="xs:string" use="required"/>
     <xs:attribute name="summary" type="xs:string" use="optional"/>
