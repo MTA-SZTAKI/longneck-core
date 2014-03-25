@@ -69,6 +69,7 @@ public class EqualsConstraint extends AbstractAtomicConstraint {
         } else {
             results.add(new CheckResult(this, false, null, null, 
                     "No comparison value or field defined."));
+            return new CheckResult(this, false, null, null, null, results);
         }
         
         return new CheckResult(this, true, null, null, null, results);
