@@ -1,11 +1,14 @@
 package hu.sztaki.ilab.longneck.process;
 
+import hu.sztaki.ilab.longneck.TestCase;
 import hu.sztaki.ilab.longneck.process.access.NullTarget;
 import hu.sztaki.ilab.longneck.process.access.Source;
 import hu.sztaki.ilab.longneck.process.access.Target;
 import hu.sztaki.ilab.longneck.process.block.Block;
 import hu.sztaki.ilab.longneck.process.block.Sequence;
+
 import java.util.List;
+
 import org.w3c.dom.Document;
 
 
@@ -26,6 +29,16 @@ public class LongneckProcess implements LongneckSource {
     /** The source dom document. */
     private Document domDocument;
         
+    private List<TestCase> testCases;
+    
+    public List<TestCase> getTestCases() {
+      return testCases;
+    }
+
+    public void setTestCases(List<TestCase> testCases) {
+      this.testCases = testCases;
+    }
+
     public LongneckProcess() {
         topLevelBlocks = new Sequence();
     }

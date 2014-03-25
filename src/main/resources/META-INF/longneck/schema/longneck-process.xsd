@@ -455,7 +455,7 @@ database.connection.NAME.password=XXXX</code></pre>
   
   
   <xs:complexType name="fieldType">
-	<xs:attribute name="name" type="xs:string" use="optional"/>
+	<xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="value" type="xs:string" use="optional"/>
     <xs:attribute name="flags" type="xs:string" use="optional"/>                  
     <xs:attribute name="null" type="xs:boolean" use="optional"/>
@@ -505,7 +505,7 @@ database.connection.NAME.password=XXXX</code></pre>
 
   <xs:complexType name="testType" >    
     <xs:sequence>
-      <xs:element ref="tns:source-record" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="tns:source-record" />
       <xs:element ref="tns:target-record" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element ref="tns:error-target-record" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
