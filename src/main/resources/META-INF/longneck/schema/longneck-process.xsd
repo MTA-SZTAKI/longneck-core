@@ -299,10 +299,8 @@ database.connection.NAME.password=XXXX</code></pre>
           <csv-source name="test" delimiter=";"/>
         </source>
       </xs:documentation>
-      <xs:documentation d:example="true">
-        <p>
+      <xs:documentation>
            In another example show, how the source file is given by inline.:
-        </p>
       </xs:documentation>
       <xs:documentation d:example="true">
         <source>

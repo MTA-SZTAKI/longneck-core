@@ -1676,10 +1676,17 @@
     <xs:complexContent>
       <xs:extension base="tns:andTypefree">
         <xs:attributeGroup ref="tns:atomicConstraintAttrGroup"/>
-        <xs:attribute name="regexp" type="xs:string" use="required">
+        <xs:attribute name="regexp" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
               A regular expression.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="regexp-field" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              A field which contain regular expression.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -1696,6 +1703,13 @@
         </xs:documentation>
         <xs:documentation d:example="true">
           <match apply-to="unit" regexp="(?i:hrsz?(:|.)?)"/>
+        </xs:documentation>
+        <xs:documentation>
+          It has the possibility to give the regexp implicit instead of explicit in the above example.
+          The <code>regexp-field</code> attributum contain a filed which contain the desired regular expression.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <match apply-to="unit" regexp-field="myregexp"/>
         </xs:documentation>
       </xs:annotation>
   </xs:element>

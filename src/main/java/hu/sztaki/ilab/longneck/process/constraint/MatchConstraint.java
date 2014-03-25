@@ -22,6 +22,8 @@ public class MatchConstraint extends AndOperator implements Atomic {
     private List<String> applyTo;
     /** The regular expression used in the block. */
     protected String regexp;
+    /** A field which contain the the regular expression used in the block. */
+    protected String regexpfield;
     /** The matcher object used for matching. */
     protected Pattern pattern;
 
@@ -29,7 +31,19 @@ public class MatchConstraint extends AndOperator implements Atomic {
     public CheckResult check(Record record, VariableSpace scope) {
         // Prepare result variable
         List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
-        String details = String.format("Regexp: '%1$s'.", regexp);
+        if(regexp == null && regexpfield == null) {
+            results.add(new CheckResult(this, false, null, null, 
+                    "No regexp value or field defined."));
+            return new CheckResult(this, false, null, null, null, results);
+        }
+        String details;
+        if(regexp != null) {
+            details = String.format("Regexp: '%1$s'.", regexp);
+        } else {
+            String regexpfromfield = BlockUtils.getValue(regexpfield, record, scope);
+            details = String.format("Regexp: '%1$s'.", regexpfromfield);
+            pattern = Pattern.compile(regexpfromfield);
+        }
         
         for (String fieldName : applyTo) {
             
@@ -81,6 +95,14 @@ public class MatchConstraint extends AndOperator implements Atomic {
 
     public String getRegexp() {
         return regexp;
+    }
+    
+    public String getRegexpfield() {
+        return regexpfield;
+    }
+
+    public void setRegexpfield(String regexpfield) {
+        this.regexpfield = regexpfield;
     }
 
     @Override

@@ -797,6 +797,10 @@
       <c:bind-xml name="regexp" node="attribute"/>
     </c:field>
     
+    <c:field name="regexpfield" type="string">
+      <c:bind-xml name="regexp-field" node="attribute"/>
+    </c:field>
+    
     <c:field name="applyTo" type="string" set-method="setApplyTo">
       <c:bind-xml name="apply-to" node="attribute"/>
     </c:field>
