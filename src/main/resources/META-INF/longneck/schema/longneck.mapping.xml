@@ -68,6 +68,10 @@
       <c:bind-xml auto-naming="deriveByClass" node="element" location="error-target"/>
     </c:field>
 
+    <c:field name="testCases" type="hu.sztaki.ilab.longneck.TestCase" collection="arraylist">
+      <c:bind-xml auto-naming="deriveByClass" node="element" location="test-cases"/>
+    </c:field>
+
     <c:field name="blocks" type="hu.sztaki.ilab.longneck.process.block.Block" collection="arraylist">
       <c:bind-xml auto-naming="deriveByClass" node="element" location="blocks"/>
     </c:field>
@@ -904,7 +908,7 @@
     </c:field>
   </c:class>
   
-   <c:class name="hu.sztaki.ilab.longneck.process.block.Caching" 
+  <c:class name="hu.sztaki.ilab.longneck.process.block.Caching" 
            extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
     <c:map-to xml="caching" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
@@ -926,4 +930,34 @@
     
   </c:class>
   
+  <!--Test Case-->  
+  <c:class name="hu.sztaki.ilab.longneck.TestCase" >
+    <c:map-to xml="test" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    
+    <c:field name="sourceRecord" type="hu.sztaki.ilab.longneck.RecordImpl" >
+      <c:bind-xml name="source-record" node="element"/>
+    </c:field>  
+  </c:class> 
+  
+  <!--Record-->
+  <c:class name="hu.sztaki.ilab.longneck.RecordImpl" >
+    <c:map-to xml="souce-record" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    <c:field name="fields" type="hu.sztaki.ilab.longneck.Field" set-method="add">
+      <c:bind-xml name="field" node="element"/>
+    </c:field>  
+  </c:class> 
+
+  <!--Field-->
+  <c:class name="hu.sztaki.ilab.longneck.Field" >
+    <c:map-to xml="field" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    <c:field name="name" type="string" >
+      <c:bind-xml name="name" node="attribute"/>
+    </c:field>  
+
+    <c:field name="value" type="string" >
+      <c:bind-xml name="value" node="attribute"/>
+    </c:field>  
+
+  </c:class> 
+
 </c:mapping>
