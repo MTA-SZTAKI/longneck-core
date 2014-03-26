@@ -936,17 +936,24 @@
   
   <!--Test Case-->  
   <c:class name="hu.sztaki.ilab.longneck.TestCase" >
-    <c:map-to xml="test" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
-    <c:field name="sourceRecord" type="hu.sztaki.ilab.longneck.RecordImpl" >
-      <c:bind-xml name="source-record" node="element"/>
+    <c:map-to xml="test" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>     
+
+    <c:field name="records" type="hu.sztaki.ilab.longneck.RecordImplForTest" collection="arraylist" set-method="addRecord">
+      <c:bind-xml name="field" node="element"/>
     </c:field>  
+
   </c:class> 
   
   <!--Record-->
-  <c:class name="hu.sztaki.ilab.longneck.RecordImpl" >
-    <c:map-to xml="souce-record" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    <c:field name="fields" type="hu.sztaki.ilab.longneck.Field" set-method="add">
+  
+  <c:class name="hu.sztaki.ilab.longneck.RecordImplForTest" >
+    <c:map-to xml="record" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    
+    <c:field name="role" type="string" set-method="setRole" get-method="getRoleStr">
+      <c:bind-xml name="role" node="attribute"/>
+    </c:field>  
+
+    <c:field name="fields" type="hu.sztaki.ilab.longneck.Field" collection="map" set-method="add">
       <c:bind-xml name="field" node="element"/>
     </c:field>  
   </c:class> 

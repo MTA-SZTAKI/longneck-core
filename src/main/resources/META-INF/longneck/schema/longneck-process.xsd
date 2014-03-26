@@ -474,10 +474,11 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:sequence>
       <xs:element ref="tns:field" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:attribute name="role" type="xs:string" use="required"/>
   </xs:complexType>
   
-  <!-- Source Record -->
-  <xs:element name="source-record" type="tns:recordType">
+  <!-- Record -->
+  <xs:element name="record" type="tns:recordType">
     <xs:annotation>
       <xs:documentation>
         Source record.
@@ -485,29 +486,9 @@ database.connection.NAME.password=XXXX</code></pre>
     </xs:annotation>
   </xs:element>
 
-  <!-- Target Record -->
-  <xs:element name="target-record" type="tns:recordType">
-    <xs:annotation>
-      <xs:documentation>
-        Target record.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
-  <!-- Error Target Record -->
-  <xs:element name="error-target-record" type="tns:recordType">
-    <xs:annotation>
-      <xs:documentation>
-        Error target record.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:complexType name="testType" >    
     <xs:sequence>
-      <xs:element ref="tns:source-record" />
-      <xs:element ref="tns:target-record" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element ref="tns:error-target-record" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="tns:record" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
 	<xs:attribute name="id" type="xs:string" use="required"/>
     <xs:attribute name="summary" type="xs:string" use="optional"/>
