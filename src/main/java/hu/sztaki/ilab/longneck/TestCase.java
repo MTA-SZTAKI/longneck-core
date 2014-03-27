@@ -7,35 +7,41 @@ import java.util.List;
 
 public class TestCase {
 
-  private List<Record> records = new ArrayList<Record>();
-  private Record sourceRecord;
-  private List<Record> targetRecords = new ArrayList<Record>();
-  private List<Record> errorTargetRecords = new ArrayList<Record>();
-
-  public Record getSourceRecord() {
-    return sourceRecord;
+  private List<RecordImplForTest> records = new ArrayList<RecordImplForTest>();
+  private List<Record> outRecords = new ArrayList<Record>();
+  
+  public List<Record> getOutRecords() {
+    return outRecords;
   }
 
   public void addRecord(RecordImplForTest record) {
     records.add(record);
-    if (record.getRole().equals(Role.SOURCE)) {
-      setSourceRecord(record);
-    } else if (record.getRole().equals(Role.TARGET)) {
-      addTargetRecord(record);
-    } else if (record.getRole().equals(Role.ERROR)) {
-      addErrorTargetRecord(record);
-    } 
   }
 
-  public void setSourceRecord(Record sourceRecord) {
-    this.sourceRecord = sourceRecord;
+  public Record getSourceRecord() {
+    Record source = null;
+    for (RecordImplForTest record : records) {
+      if (record.getRole().equals(Role.SOURCE))
+        source = record;
+    }
+    return source;
   }
 
-  public void addTargetRecord(Record record) {
-    targetRecords.add(record);
+  public List<Record> getTargetRecords() {
+    ArrayList<Record> targets = new ArrayList<Record>();
+    for (RecordImplForTest record : records) {
+      if (record.getRole().equals(Role.TARGET))
+        targets.add(record);
+    }
+    return targets;    
   }
 
-  public void addErrorTargetRecord(Record record) {
-    errorTargetRecords.add(record);
+  public List<Record> getErrorRecords() {
+    ArrayList<Record> errors = new ArrayList<Record>();
+    for (RecordImplForTest record : records) {
+      if (record.getRole().equals(Role.ERROR))
+        errors.add(record);
+    }
+    return errors;    
   }
 }

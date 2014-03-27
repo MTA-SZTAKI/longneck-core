@@ -961,6 +961,7 @@
   <!--Field-->
   <c:class name="hu.sztaki.ilab.longneck.Field" >
     <c:map-to xml="field" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    
     <c:field name="name" type="string" >
       <c:bind-xml name="name" node="attribute"/>
     </c:field>  

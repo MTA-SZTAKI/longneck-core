@@ -1,9 +1,12 @@
 package hu.sztaki.ilab.longneck.bootstrap;
 
+import hu.sztaki.ilab.longneck.process.task.ProcessTester;
 import hu.sztaki.ilab.longneck.process.task.ThreadManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -75,9 +78,11 @@ public class Bootstrap {
         CompactProcess process = sourceLoader.getCompactProcess(
                 runtimeProperties.getProperty("processFile"), runtimeProperties);
 
-        // Run process tests
-        
-        
+        // Run tests
+        if (!process.getProcess().getTestCases().isEmpty()){
+          ProcessTester tester = new ProcessTester(process);
+          tester.testAll();
+        }
 
         threadManager = new ThreadManager(runtimeProperties);
         
