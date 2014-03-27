@@ -128,6 +128,7 @@ public class CliRunner {
                 "Define runtime property <name>.");
         options.addOption("l", "maxErrorEventLevel", true,
                 "The maximum level of errors written by the error writer.");
+        options.addOption("s", "testingBehavior", true, "Define how to handle test cases: normal, skip, tolerant");
         return options;
     }
 

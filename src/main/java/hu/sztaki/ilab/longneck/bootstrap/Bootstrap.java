@@ -30,9 +30,9 @@ public class Bootstrap {
     private ThreadManager threadManager;
 
     public Bootstrap(Properties runtimeProperties) {
-        
+
         this.runtimeProperties = runtimeProperties;
-        
+
         try {
             // Prepare parent application context
             PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
@@ -41,19 +41,17 @@ public class Bootstrap {
             // Preconfigured beans are installed into parent bean factory
             DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
             parentBeanFactory.registerSingleton("runtime-properties", runtimeProperties);
-            GenericApplicationContext parentContext =
-                    new GenericApplicationContext(parentBeanFactory);
+            GenericApplicationContext parentContext = new GenericApplicationContext(
+                parentBeanFactory);
             parentContext.refresh();
 
             // Create primary application context
-            applicationContext = new ClassPathXmlApplicationContext(
-                    new String[] {
-                        "META-INF/longneck/spring/root.xml", 
-                        "classpath*:META-INF/longneck/spring/*.xml"
-                    }, 
-                    false, parentContext);
+            applicationContext = new ClassPathXmlApplicationContext(new String[] {
+                "META-INF/longneck/spring/root.xml",
+                "classpath*:META-INF/longneck/spring/*.xml" }, false, parentContext);
             applicationContext.addBeanFactoryPostProcessor(ppc);
-            applicationContext.registerShutdownHook(); //needed for bean destroy methods
+            applicationContext.registerShutdownHook(); // needed for bean
+                                                       // destroy methods
 
             applicationContext.refresh();
 
@@ -63,29 +61,49 @@ public class Bootstrap {
             for (Hook h : hooks) {
                 h.init(runtimeProperties, applicationContext);
             }
-            
+
             sourceLoader = (SourceLoader) applicationContext.getBean("source-loader");
-            
+
         } catch (Exception ex) {
             throw new RuntimeException("Bootstrap initialization error.", ex);
         }
     }
 
     /**
-     * Initializes and runs the Longneck process in a single or multithreaded way
+     * Initializes and runs the Longneck process in a single or multithreaded
+     * way
      */
     public void run() {
         CompactProcess process = sourceLoader.getCompactProcess(
-                runtimeProperties.getProperty("processFile"), runtimeProperties);
+            runtimeProperties.getProperty("processFile"), runtimeProperties);
 
         // Run tests
-        if (!process.getProcess().getTestCases().isEmpty()){
-          ProcessTester tester = new ProcessTester(process);
-          tester.testAll();
+
+        String testingBehavior = runtimeProperties.getProperty("testingBehavior");
+        boolean testSuccess = false;
+
+        if (testingBehavior.equals("tolerant")) {
+            if (!process.getProcess().getTestCases().isEmpty()) {
+                ProcessTester tester = new ProcessTester(process);
+                testSuccess = tester.testAll();
+            }
+        } else if (testingBehavior.equals("normal")) {
+            if (!process.getProcess().getTestCases().isEmpty()) {
+                ProcessTester tester = new ProcessTester(process);
+                testSuccess = tester.testAll();
+            }
+            if (!testSuccess) {
+                System.err.println("Halt on failed test");
+                System.exit(1);
+
+            }
+        } else if (!testingBehavior.equals("skip")) {
+            System.err.println("testingBehavior must be normal, tolerant or skip!");
+            System.exit(1);
         }
 
         threadManager = new ThreadManager(runtimeProperties);
-        
+
         // Set process
         threadManager.setProcess(process);
 
@@ -94,7 +112,7 @@ public class Bootstrap {
         threadManager.addShutdownHook();
         threadManager.run();
     }
-    
+
     public void close() {
         threadManager = null;
         sourceLoader = null;
