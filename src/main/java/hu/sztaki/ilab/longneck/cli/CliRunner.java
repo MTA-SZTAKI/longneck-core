@@ -5,10 +5,12 @@ import hu.sztaki.ilab.longneck.bootstrap.PropertyUtils;
 import hu.sztaki.ilab.longneck.util.OsType;
 import hu.sztaki.ilab.longneck.util.OsUtils;
 import hu.sztaki.ilab.longneck.util.UtilityRunner;
+
 import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.cli.*;
 import org.apache.log4j.*;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -16,7 +18,7 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * CLI runner for longneck.
- *
+ * 
  * @author Molnár Péter <molnar.peter@sztaki.mta.hu>
  */
 public class CliRunner {
@@ -39,15 +41,15 @@ public class CliRunner {
 
         // Config file blacklist
         Set<String> blacklist = new HashSet(
-                Arrays.asList(new String[] { "log4j.properties" }));
+            Arrays.asList(new String[] {"log4j.properties" }));
 
         // Read configuration files from project config/
-        runtimeProperties.putAll(
-                PropertyUtils.readPropertyFiles(new File("config/"), blacklist));
+        runtimeProperties.putAll(PropertyUtils.readPropertyFiles(new File("config/"),
+            blacklist));
 
         // Read configuration files from per-user directory
         runtimeProperties.putAll(PropertyUtils.readPropertyFiles(
-                new File(OsUtils.getHomeDirectoryPath(OsType.getCurrent())), blacklist));
+            new File(OsUtils.getHomeDirectoryPath(OsType.getCurrent())), blacklist));
 
         try {
             // Parse command line
@@ -60,7 +62,22 @@ public class CliRunner {
                 System.exit(0);
             }
 
-            // Copy command line parameters
+            // Copy command line parameters and set default testing behavior
+            
+            if (!cli.hasOption('s'))
+                runtimeProperties.setProperty("testingBehavior", "normal");
+            else {
+                String testOptVal = cli.getOptionValue('s');
+                if (!testOptVal.equals("normal") && !testOptVal.equals("skip") &&
+                    !testOptVal.equals("tolerant")) {
+                    System.err.println("Command line parameter failure!!!");
+                    System.err
+                        .println("    --testingBehavior should be either of normal, tolerant or skip!");
+                    System.exit(1);
+                }
+
+            }
+
             for (Option o : cli.getOptions()) {
                 if (cli.hasOption(o.getOpt())) {
                     if (o.hasArg()) {
@@ -79,11 +96,12 @@ public class CliRunner {
             // Create and initialize bootstrap
             Bootstrap bootstrap = new Bootstrap(runtimeProperties);
 
-            if (! runtimeProperties.containsKey("executeUtility")) {
+            if (!runtimeProperties.containsKey("executeUtility")) {
                 bootstrap.run();
             } else {
                 ApplicationContext context = bootstrap.getApplicationContext();
-                UtilityRunner ur = (UtilityRunner) context.getBean(runtimeProperties.getProperty("executeUtility"));
+                UtilityRunner ur = (UtilityRunner) context.getBean(runtimeProperties
+                    .getProperty("executeUtility"));
                 ur.run(runtimeProperties);
             }
 
@@ -115,20 +133,20 @@ public class CliRunner {
         options.addOption("h", "help", false, "Prints this help screen.");
         options.addOption("p", "processFile", true, "Specifes the process file URL.");
         options.addOption("t", "workerThreadsNum", true,
-                "Number of worker threads on which the process is running. Default: 1");
+            "Number of worker threads on which the process is running. Default: 1");
         options.addOption("T", "truncateBeforeWrite", false,
-                "Truncate the target datastore before processing records.");
+            "Truncate the target datastore before processing records.");
         options.addOption("E", "errorTruncateBeforeWrite", false,
-                "Truncate the error datastore before processing records.");
+            "Truncate the error datastore before processing records.");
         options.addOption("m", "measureTimeEnabled", false,
-                "Enables time management on threads.");
+            "Enables time management on threads.");
         options.addOption("X", "executeUtility", true,
-                "Execute built-in utility <name> instead of running a process.");
-        options.addOption("D", "define", true,
-                "Define runtime property <name>.");
+            "Execute built-in utility <name> instead of running a process.");
+        options.addOption("D", "define", true, "Define runtime property <name>.");
         options.addOption("l", "maxErrorEventLevel", true,
-                "The maximum level of errors written by the error writer.");
-        options.addOption("s", "testingBehavior", true, "Define how to handle test cases: normal, skip, tolerant");
+            "The maximum level of errors written by the error writer.");
+        options.addOption("s", "testingBehavior", true,
+            "Define how to handle test cases: normal, skip, tolerant");
         return options;
     }
 
@@ -150,20 +168,19 @@ public class CliRunner {
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.removeAllAppenders();
         rootLogger.setLevel(Level.INFO);
-        Appender consoleAppender = new ConsoleAppender(
-                new PatternLayout("%-5p [%C line %L] [%t]: %m%n%throwable"));
+        Appender consoleAppender = new ConsoleAppender(new PatternLayout(
+            "%-5p [%C line %L] [%t]: %m%n%throwable"));
         rootLogger.addAppender(consoleAppender);
     }
+
     public static void printHelp(Options options) {
         HelpFormatter hf = new HelpFormatter();
         hf.printHelp("longneck-app <OPTIONS>", "\nLongneck data transformation.\n\n",
-                options,
-                "\nmore info: http://longneck.sztaki.hu/\n\n");
+            options, "\nmore info: http://longneck.sztaki.hu/\n\n");
     }
 
     public static Map<String, String> parseAdditionalParameters(String[] args) {
         Pattern pattern = Pattern.compile("^-D([\\w\\.]+)=(.+)$");
-
 
         Map<String, String> params = new HashMap<String, String>();
         for (String arg : args) {
@@ -181,12 +198,13 @@ public class CliRunner {
             throw new IllegalArgumentException("Property name must not be null.");
         }
 
-        if (! option.contains("=")) {
+        if (!option.contains("=")) {
             runtimeProperties.setProperty(option, "true");
         } else {
             String[] parts = option.split("=", 2);
             if (parts[0] == null || "".equals(parts[0])) {
-                throw new IllegalArgumentException("Property name before = must not be null.");
+                throw new IllegalArgumentException(
+                    "Property name before = must not be null.");
             }
             runtimeProperties.setProperty(parts[0], parts[1]);
         }

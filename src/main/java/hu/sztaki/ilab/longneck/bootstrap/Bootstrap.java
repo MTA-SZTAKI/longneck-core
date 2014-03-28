@@ -82,24 +82,14 @@ public class Bootstrap {
         String testingBehavior = runtimeProperties.getProperty("testingBehavior");
         boolean testSuccess = false;
 
-        if (testingBehavior.equals("tolerant")) {
-            if (!process.getProcess().getTestCases().isEmpty()) {
-                ProcessTester tester = new ProcessTester(process);
-                testSuccess = tester.testAll();
-            }
-        } else if (testingBehavior.equals("normal")) {
-            if (!process.getProcess().getTestCases().isEmpty()) {
-                ProcessTester tester = new ProcessTester(process);
-                testSuccess = tester.testAll();
-            }
-            if (!testSuccess) {
+        if (!testingBehavior.equals("skip") &&
+            !process.getProcess().getTestCases().isEmpty()) {
+            ProcessTester tester = new ProcessTester(process);
+            testSuccess = tester.testAll();
+            if (testingBehavior.equals("normal") && !testSuccess) {
                 System.err.println("Halt on failed test");
                 System.exit(1);
-
             }
-        } else if (!testingBehavior.equals("skip")) {
-            System.err.println("testingBehavior must be normal, tolerant or skip!");
-            System.exit(1);
         }
 
         threadManager = new ThreadManager(runtimeProperties);
