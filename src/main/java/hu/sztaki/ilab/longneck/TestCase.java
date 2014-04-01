@@ -13,15 +13,15 @@ import java.util.List;
 public class TestCase {
 
     private List<RecordImplForTest> records = new ArrayList<RecordImplForTest>();
-    private List<Record> outRecords = new ArrayList<Record>();
-    private List<Record> outErrorRecords = new ArrayList<Record>();
+    private List<Record> observedTargetRecords = new ArrayList<Record>();
+    private List<Record> observedErrorRecords = new ArrayList<Record>();
 
-    public List<Record> getOutRecords() {
-        return outRecords;
+    public List<Record> getObservedTargetRecords() {
+        return observedTargetRecords;
     }
 
-    public List<Record> getOutErrorRecords() {
-        return outErrorRecords;
+    public List<Record> getObservedErrorRecords() {
+        return observedErrorRecords;
     }
 
     public void addRecord(RecordImplForTest record) {
@@ -37,7 +37,7 @@ public class TestCase {
         return source;
     }
 
-    public List<Record> getTargetRecords() {
+    public List<Record> getExpectedTargetRecords() {
         ArrayList<Record> targets = new ArrayList<Record>();
         for (RecordImplForTest record : records) {
             if (record.getRole().equals(Role.TARGET))
@@ -46,7 +46,7 @@ public class TestCase {
         return targets;
     }
 
-    public List<Record> getErrorRecords() {
+    public List<Record> getExpectedErrorRecords() {
         ArrayList<Record> errors = new ArrayList<Record>();
         for (RecordImplForTest record : records) {
             if (record.getRole().equals(Role.ERROR))

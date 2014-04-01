@@ -12,6 +12,8 @@ import hu.sztaki.ilab.longneck.process.ImmutableErrorRecordImpl;
 import hu.sztaki.ilab.longneck.process.Kernel;
 import hu.sztaki.ilab.longneck.process.LongneckProcess;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
+import hu.sztaki.ilab.longneck.util.MaxMatching;
+import hu.sztaki.ilab.longneck.util.TestUtil;
 
 /**
  * 
@@ -37,7 +39,7 @@ public class ProcessTester {
             for (Record record : queue) {
                 try {
                     kernel.process(record);
-                    testCase.getOutRecords().add(record);
+                    testCase.getObservedTargetRecords().add(record);
                 } catch (Exception e) {
                     // TODO filter,fail stb
                 }
@@ -48,7 +50,7 @@ public class ProcessTester {
             }
             localCloneQueue.clear();
         }
-        for (Record record : testCase.getOutRecords()) {
+        for (Record record : testCase.getObservedTargetRecords()) {
             for (CheckResult c : record.getErrors()) {
                 // Flatten tree to list and assign keys
                 List<CheckTreeItem> results = CheckTreeItem.flatten(c, nodeKeyGenerator,
@@ -56,8 +58,7 @@ public class ProcessTester {
 
                 for (CheckTreeItem treeItem : results) {
                     Record errorRecord = new ImmutableErrorRecordImpl(record, treeItem);
-                    System.out.println(errorRecord);
-                    testCase.getOutErrorRecords().add(errorRecord);
+                    testCase.getObservedErrorRecords().add(errorRecord);
                 }
             }
         }
@@ -65,9 +66,44 @@ public class ProcessTester {
     }
 
     private boolean check(TestCase testCase) {
-        // TODO Ezt bizony meg kell csinalni
+        return checkErrorRecords(testCase) && checkTargetRecords(testCase);
+    }
 
+    private boolean checkErrorRecords(TestCase testCase) {
+        for (Record expected : testCase.getExpectedErrorRecords()) {
+            boolean fit = false;
+            for (Record observed : testCase.getObservedErrorRecords()) {
+                if (TestUtil.fit(expected, observed)) {
+                    fit = true;
+                    break;
+                }
+            }
+            if (!fit)
+                return false;
+        }
         return true;
+    }
+
+    private boolean checkTargetRecords(TestCase testCase) {
+        List<Record> expectedRecords = testCase.getExpectedTargetRecords();
+        List<Record> observedRecords = testCase.getObservedTargetRecords();
+
+        if (observedRecords.size() != expectedRecords.size())
+            return false;
+
+        int size = expectedRecords.size();
+        boolean[][] graphOfRecords = new boolean[size][size];
+
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                graphOfRecords[i][j] = TestUtil.fit(expectedRecords.get(i),
+                    observedRecords.get(j));
+            }
+        }
+
+        int maxMatching = MaxMatching.maxMatching(graphOfRecords);
+
+        return (maxMatching == size);
     }
 
     public boolean testAll() {
