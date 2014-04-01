@@ -121,6 +121,7 @@ public class ProcessWorker extends AbstractTask implements Runnable {
                     }  catch (FailException ex) {                        
                         LOG.debug(ex.getMessage(), ex);
                         stats.failed += 1;
+                        errorRecords.add(record);
                     } catch (FilterException ex) {
                         // LOG.info(ex.getMessage(), ex);
                         LOG.trace(ex.getMessage()) ;
