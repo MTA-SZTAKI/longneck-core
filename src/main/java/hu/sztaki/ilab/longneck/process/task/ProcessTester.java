@@ -36,9 +36,7 @@ public class ProcessTester {
         while (!queue.isEmpty()) {
             for (Record record : queue) {
                 try {
-                    System.out.println(record);
                     kernel.process(record);
-                    System.out.println(record);
                     testCase.getOutRecords().add(record);
                 } catch (Exception e) {
                     // TODO filter,fail stb

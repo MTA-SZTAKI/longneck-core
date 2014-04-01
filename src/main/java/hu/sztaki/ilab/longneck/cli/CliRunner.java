@@ -63,10 +63,8 @@ public class CliRunner {
             }
 
             // Copy command line parameters and set default testing behavior
-            
-            if (!cli.hasOption('s'))
-                runtimeProperties.setProperty("testingBehavior", "normal");
-            else {
+
+            if (cli.hasOption('s')) {
                 String testOptVal = cli.getOptionValue('s');
                 if (!testOptVal.equals("normal") && !testOptVal.equals("skip") &&
                     !testOptVal.equals("tolerant")) {

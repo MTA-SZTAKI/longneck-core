@@ -79,7 +79,8 @@ public class Bootstrap {
 
         // Run tests
 
-        String testingBehavior = runtimeProperties.getProperty("testingBehavior");
+        String testingBehavior = PropertyUtils.getStringProperty(runtimeProperties,
+            "testingBehavior", "normal");
         boolean testSuccess = false;
 
         if (!testingBehavior.equals("skip") &&
