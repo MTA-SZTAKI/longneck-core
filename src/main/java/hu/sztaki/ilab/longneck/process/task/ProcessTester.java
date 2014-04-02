@@ -37,9 +37,10 @@ public class ProcessTester {
             process.getFrameAddressResolver(), localCloneQueue);
     }
 
-    private void process(TestCase testCase) {
+    private boolean process(TestCase testCase) {
         List<Record> queue = new ArrayList<Record>();
         queue.add(testCase.getSourceRecord());
+        long startTime = System.currentTimeMillis();
         while (!queue.isEmpty()) {
             for (Record record : queue) {
                 try {
@@ -58,6 +59,12 @@ public class ProcessTester {
             }
             localCloneQueue.clear();
         }
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        if (elapsedTime > testCase.getTimeout()) {
+            LOG.error("Process for test " + testCase.getId() + " timeout");
+            return false;
+        } else
+            return true;
 
     }
 
@@ -89,7 +96,7 @@ public class ProcessTester {
                 }
             }
             if (!fit) {
-                LOG.warn("For expected error-record " + expected.toString() +
+                LOG.error("For expected error-record " + expected.toString() +
                     " does not fit any of the observed ones in test " + testCase.getId());
                 return false;
             }
@@ -118,17 +125,16 @@ public class ProcessTester {
 
         boolean check = (maxMatching == size);
         if (!check)
-            LOG.warn("Observed target-records do not match expected ones in test " +
+            LOG.error("Observed target-records do not match expected ones in test " +
                 testCase.getId());
         return check;
     }
 
     public boolean testAll() {
         for (TestCase testCase : longneckProcess.getTestCases()) {
-            process(testCase);
-            if (!check(testCase)) {
-                LOG.warn("Test " +testCase.getId() + " failed");
-                return false;                
+            if (!process(testCase) || !check(testCase)) {
+                LOG.error("Test " + testCase.getId() + " failed");
+                return false;
             }
         }
         return true;

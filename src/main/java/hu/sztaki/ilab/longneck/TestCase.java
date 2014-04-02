@@ -16,7 +16,8 @@ public class TestCase {
     private List<Record> observedTargetRecords = new ArrayList<Record>();
     private List<Record> observedErrorRecords = new ArrayList<Record>();
     private String id;
-    
+    private long timeout = Long.MAX_VALUE;
+
     public String getId() {
         return id;
     }
@@ -62,5 +63,13 @@ public class TestCase {
                 errors.add(record);
         }
         return errors;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }

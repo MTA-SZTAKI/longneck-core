@@ -946,6 +946,10 @@
       <c:bind-xml name="id" node="attribute"/>
     </c:field>  
 
+    <c:field name="timeout" type="long" >
+      <c:bind-xml name="timeout" node="attribute"/>
+    </c:field>  
+
   </c:class> 
   
   <!--Record-->
