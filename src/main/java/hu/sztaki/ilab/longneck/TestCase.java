@@ -15,6 +15,15 @@ public class TestCase {
     private List<RecordImplForTest> records = new ArrayList<RecordImplForTest>();
     private List<Record> observedTargetRecords = new ArrayList<Record>();
     private List<Record> observedErrorRecords = new ArrayList<Record>();
+    private String id;
+    
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public List<Record> getObservedTargetRecords() {
         return observedTargetRecords;
