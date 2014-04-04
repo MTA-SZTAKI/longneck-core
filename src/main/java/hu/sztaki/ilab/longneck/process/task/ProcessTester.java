@@ -10,6 +10,8 @@ import hu.sztaki.ilab.longneck.TestCase;
 import hu.sztaki.ilab.longneck.bootstrap.CompactProcess;
 import hu.sztaki.ilab.longneck.bootstrap.DecimalKeyGenerator;
 import hu.sztaki.ilab.longneck.bootstrap.KeyGenerator;
+import hu.sztaki.ilab.longneck.process.FailException;
+import hu.sztaki.ilab.longneck.process.FilterException;
 import hu.sztaki.ilab.longneck.process.ImmutableErrorRecordImpl;
 import hu.sztaki.ilab.longneck.process.Kernel;
 import hu.sztaki.ilab.longneck.process.LongneckProcess;
@@ -46,7 +48,9 @@ public class ProcessTester {
                 try {
                     kernel.process(record);
                     testCase.getObservedTargetRecords().add(record);
-                } catch (Exception e) {
+                } catch (FailException e) {
+                    ;
+                } catch (FilterException e) {
                     ;
                 } finally {
                     for (Record errorRecord : createErrorRecords(record))
