@@ -65,7 +65,7 @@ public class ProcessTester {
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
         if (elapsedTime > testCase.getTimeout()) {
-            LOG.error("Process for test " + testCase.getId() + " timeout");
+            LOG.error("Processing test " + testCase.getId() + " timed out.");
             return false;
         } else
             return true;
@@ -100,8 +100,8 @@ public class ProcessTester {
                 }
             }
             if (!fit) {
-                LOG.error("For expected error-record " + expected.toString() +
-                    " does not fit any of the observed ones in test " + testCase.getId());
+                LOG.error("Expected error record " + expected.toString() +
+                    " does not match any of the observed error recods of test " + testCase.getId() + "." ) ;
                 return false;
             }
         }
@@ -129,15 +129,15 @@ public class ProcessTester {
 
         boolean check = (maxMatching == size);
         if (!check)
-            LOG.error("Observed target-records do not match expected ones in test " +
-                testCase.getId());
+            LOG.error("Observed target records do not match expected ones in test " +
+                testCase.getId() + ".");
         return check;
     }
 
     public boolean testAll() {
         for (TestCase testCase : longneckProcess.getTestCases()) {
             if (!process(testCase) || !check(testCase)) {
-                LOG.error("Test " + testCase.getId() + " failed");
+                LOG.error("Test " + testCase.getId() + " failed.");
                 return false;
             }
         }

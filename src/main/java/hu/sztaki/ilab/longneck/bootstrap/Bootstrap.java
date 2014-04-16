@@ -88,7 +88,7 @@ public class Bootstrap {
             ProcessTester tester = new ProcessTester(process);
             testSuccess = tester.testAll();
             if (testingBehavior.equals("normal") && !testSuccess) {
-                System.err.println("Halt on failed test");
+                System.err.println("Test failed, exiting.");
                 System.exit(1);
             }
         }
