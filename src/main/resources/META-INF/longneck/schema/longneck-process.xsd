@@ -455,10 +455,23 @@ database.connection.NAME.password=XXXX</code></pre>
   
   
   <xs:complexType name="fieldType">
-	<xs:attribute name="name" type="xs:string" use="required"/>
-    <xs:attribute name="value" type="xs:string" use="optional"/>
+	<xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+		  Name of field.
+        </xs:documentation>
+      </xs:annotation>            
+    </xs:attribute>                    
+
+    <xs:attribute name="value" type="xs:string" use="optional">
+          <xs:annotation>
+        <xs:documentation>
+		  Value of field. If not specified, then value is null.
+        </xs:documentation>
+      </xs:annotation>            
+    </xs:attribute>                    
+    
     <xs:attribute name="flags" type="xs:string" use="optional"/>                  
-    <xs:attribute name="null" type="xs:boolean" use="optional"/>
   </xs:complexType>
   
   <!-- Field -->
@@ -474,7 +487,14 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:sequence>
       <xs:element ref="tns:field" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="role" type="xs:string" use="required"/>
+    <xs:attribute name="role" type="xs:string" use="required">
+	  <xs:annotation>
+        <xs:documentation>
+		  Specifies the role of record. It can be source, target or error-target.
+        </xs:documentation>
+      </xs:annotation>            
+    </xs:attribute>                    
+	
   </xs:complexType>
   
   <!-- Record -->
@@ -490,9 +510,29 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:sequence>
       <xs:element ref="tns:record" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
-	<xs:attribute name="id" type="xs:string" use="required"/>
-    <xs:attribute name="summary" type="xs:string" use="optional"/>
-    <xs:attribute name="timeout" type="xs:long" use="optional"/>                
+	<xs:attribute name="id" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+		  Id for test case.
+        </xs:documentation>
+      </xs:annotation>            
+    </xs:attribute>                    
+    
+    <xs:attribute name="summary" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+		  Summary of test case.
+        </xs:documentation>
+      </xs:annotation>            
+    </xs:attribute>                    
+    
+    <xs:attribute name="timeout" type="xs:long" use="optional">                
+      <xs:annotation>
+        <xs:documentation>
+		  Timeout limit for process.
+        </xs:documentation>
+      </xs:annotation>            
+    </xs:attribute>                    
   </xs:complexType>
 
   <!-- Test -->
@@ -514,7 +554,7 @@ database.connection.NAME.password=XXXX</code></pre>
   </xs:element>
 
   <!-- Test cases --> 
-  <xs:element name="test-cases" >
+  <xs:element name="test-cases">
     <xs:annotation>
       <xs:documentation>
         Contains the test cases of process.
