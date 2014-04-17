@@ -9,14 +9,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class CloneRecord extends AbstractSourceInfoContainer implements Block {
-    
+
     /** The field added when record is cloned. */
     private String fieldName;
     /** The value of the newly added field. */
     private String fieldValue;
     /** The number of records cloned. */
     private long cloneCount = 0;
-   
+
     public String getFieldName() {
         return fieldName;
     }
@@ -32,24 +32,25 @@ public class CloneRecord extends AbstractSourceInfoContainer implements Block {
     public void setFieldValue(String fieldValue) {
         this.fieldValue = fieldValue;
     }
-    
+
     @Override
     public void apply(Record record, VariableSpace parentScope) {
     }
-    
+
     public Record getClonedRecord(Record record, VariableSpace parentScope) {
         Record clone = new RecordImpl();
         for (Map.Entry<String, Field> entry : record.getFields().entrySet()) {
             clone.add(new Field(entry.getValue()));
         }
 
-        BlockUtils.setValue(fieldName, fieldValue, clone, parentScope);
-        
+        if (fieldName != null)
+            BlockUtils.setValue(fieldName, fieldValue, clone, parentScope);
+
         ++cloneCount;
-        
+
         return clone;
     }
-    
+
     @Override
     public CloneRecord clone() {
         return (CloneRecord) super.clone();
@@ -57,7 +58,7 @@ public class CloneRecord extends AbstractSourceInfoContainer implements Block {
 
     public void destroy() throws Exception {
         Logger.getLogger(CloneRecord.class).info(
-                String.format("CloneRecord has created %1$d records.", cloneCount));
+            String.format("CloneRecord has created %1$d records.", cloneCount));
     }
 
     @Override
@@ -80,16 +81,15 @@ public class CloneRecord extends AbstractSourceInfoContainer implements Block {
         if (super.equals(obj) == false) {
             return false;
         }
-        if ((this.fieldName == null) ? (other.fieldName != null) : !this.fieldName.equals(other.fieldName)) {
+        if ((this.fieldName == null) ? (other.fieldName != null) : !this.fieldName
+            .equals(other.fieldName)) {
             return false;
         }
-        if ((this.fieldValue == null) ? (other.fieldValue != null) : !this.fieldValue.equals(other.fieldValue)) {
+        if ((this.fieldValue == null) ? (other.fieldValue != null) : !this.fieldValue
+            .equals(other.fieldValue)) {
             return false;
         }
         return true;
     }
-    
-    
 
-    
 }
