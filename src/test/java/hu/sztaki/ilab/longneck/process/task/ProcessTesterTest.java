@@ -13,7 +13,6 @@ import hu.sztaki.ilab.longneck.process.FrameAddressResolver;
 import hu.sztaki.ilab.longneck.process.LongneckProcess;
 import hu.sztaki.ilab.longneck.process.block.Block;
 import hu.sztaki.ilab.longneck.process.block.CloneRecord;
-import hu.sztaki.ilab.longneck.process.block.Copy;
 import hu.sztaki.ilab.longneck.process.block.SetNull;
 
 import org.junit.*;
