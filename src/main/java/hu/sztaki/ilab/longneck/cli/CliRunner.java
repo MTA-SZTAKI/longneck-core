@@ -67,8 +67,8 @@ public class CliRunner {
             if (cli.hasOption('s')) {
                 String testOptVal = cli.getOptionValue('s');
                 if (!testOptVal.equals("normal") && !testOptVal.equals("skip") &&
-                    !testOptVal.equals("tolerant")) {
-                    System.err.println("Command line parameter failure!!!");
+                    !testOptVal.equals("tolerant") && !testOptVal.equals("only")) {
+                    System.err.println("Command line parameter failure!");
                     System.err
                         .println("    --testingBehavior should be either of normal, tolerant or skip!");
                     System.exit(1);
