@@ -84,6 +84,7 @@ public class Bootstrap {
         boolean testSuccess = false;
 
         if (!testingBehavior.equals("skip") &&
+            !(process.getProcess().getTestCases() == null) &&
             !process.getProcess().getTestCases().isEmpty()) {
             ProcessTester tester = new ProcessTester(process);
             testSuccess = tester.testAll();
@@ -94,10 +95,10 @@ public class Bootstrap {
             if (testingBehavior.equals("only")) {
                 if (testSuccess) {
                     System.err.println("All tests passed.");
-                    System.exit(0);                    
+                    System.exit(0);
                 } else {
                     System.err.println("Test failed, exiting.");
-                    System.exit(1);                    
+                    System.exit(1);
                 }
             }
         }
