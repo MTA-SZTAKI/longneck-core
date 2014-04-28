@@ -130,12 +130,13 @@ public class CsvSource implements Source {
 
         if ((sourcePath = path) == null) {
             // Read source path from runtime properties
-            sourcePath = runtimeProperties.getProperty(String.format("csvSource.%1$s.Path", name));
+            sourcePath = runtimeProperties.getProperty(String.format("csvSource.%1$s.path", name));
         }
 
         // Check source path is set
         if (sourcePath == null || "".equals(sourcePath)) {
-            throw new RuntimeException(name!= null?String.format("csvSource.%1$s.Path is undefined.", name):"Path is undefined");
+            throw new RuntimeException(name!= null ? 
+                    String.format("csvSource.%1$s.path is undefined.", name):"path is undefined");
         }
 
 
