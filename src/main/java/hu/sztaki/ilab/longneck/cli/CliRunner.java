@@ -70,7 +70,7 @@ public class CliRunner {
                     !testOptVal.equals("tolerant") && !testOptVal.equals("alone")) {
                     System.err.println("Command line parameter failure!");
                     System.err
-                        .println("    --testingBehavior should be either of normal, tolerant or skip!");
+                        .println("    --testingBehavior should be either of alone, normal, skip or tolerant!");
                     System.exit(1);
                 }
 
