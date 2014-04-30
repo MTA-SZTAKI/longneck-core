@@ -67,7 +67,7 @@ public class CliRunner {
             if (cli.hasOption('s')) {
                 String testOptVal = cli.getOptionValue('s');
                 if (!testOptVal.equals("normal") && !testOptVal.equals("skip") &&
-                    !testOptVal.equals("tolerant") && !testOptVal.equals("only")) {
+                    !testOptVal.equals("tolerant") && !testOptVal.equals("alone")) {
                     System.err.println("Command line parameter failure!");
                     System.err
                         .println("    --testingBehavior should be either of normal, tolerant or skip!");
@@ -144,7 +144,7 @@ public class CliRunner {
         options.addOption("l", "maxErrorEventLevel", true,
             "The maximum level of errors written by the error writer.");
         options.addOption("s", "testingBehavior", true,
-            "Define how to handle test cases: normal, skip, tolerant");
+            "Define how to handle test cases: normal (default), alone, skip, tolerant");
         return options;
     }
 

@@ -92,7 +92,7 @@ public class Bootstrap {
                 System.err.println("Test failed, exiting.");
                 System.exit(1);
             }
-            if (testingBehavior.equals("only")) {
+            if (testingBehavior.equals("alone")) {
                 if (testSuccess) {
                     System.err.println("All tests passed.");
                     System.exit(0);
