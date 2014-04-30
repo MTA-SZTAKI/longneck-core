@@ -1686,7 +1686,7 @@
         <xs:attribute name="regexp-field" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
-              A field which contain regular expression.
+              A field containing a regular expression.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -1705,8 +1705,8 @@
           <match apply-to="unit" regexp="(?i:hrsz?(:|.)?)"/>
         </xs:documentation>
         <xs:documentation>
-          It has the possibility to give the regexp implicit instead of explicit in the above example.
-          The <code>regexp-field</code> attributum contain a filed which contain the desired regular expression.
+          It is possible to give the regexp implicitly instead of explicit case in the above example.
+          The <code>regexp-field</code> attribute contains a filed with the desired regular expression.
         </xs:documentation>
         <xs:documentation d:example="true">
           <match apply-to="unit" regexp-field="myregexp"/>

@@ -145,7 +145,7 @@ public class CsvTarget implements Target {
         
         if(path == null) {
             // Read target path from runtime properties
-            path = runtimeProperties.getProperty(String.format("csvTarget.%1$s.Path", name));
+            path = runtimeProperties.getProperty(String.format("csvTarget.%1$s.path", name));
         }
         
         try {

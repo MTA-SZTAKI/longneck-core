@@ -287,9 +287,10 @@ database.connection.NAME.password=XXXX</code></pre>
           The CSV source is defined with the csv-source element, and it reads one or more CSV files
           from a path specified in the configuration. The path in the following example shows,
           how the source file is configured either in a configuration file, or on the command line
-          with the "-D" switch.
+          with the "-D" switch. NAME will be the name of the data source as it is referenced in the
+          process definition, eg. in the following example "test". 
         </p>
-        <pre class="prettyprint"><code>csvSource.NAME.sourcePath=data/myfile.csv</code></pre>
+        <pre class="prettyprint"><code>csvSource.NAME.path=data/myfile.csv</code></pre>
         <p>
           The following example shows a common usage of the CSV source:
         </p>
@@ -300,7 +301,7 @@ database.connection.NAME.password=XXXX</code></pre>
         </source>
       </xs:documentation>
       <xs:documentation>
-           In another example show, how the source file is given by inline.:
+        The following example shows, how the source file is given inline:
       </xs:documentation>
       <xs:documentation d:example="true">
         <source>
@@ -313,7 +314,7 @@ database.connection.NAME.password=XXXX</code></pre>
         <xs:attribute name="name" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Sets the name of the source that selects the <code>csvSource.&lt;NAME&gt;.sourcePath</code>
+              Sets the name of the source that selects the <code>csvSource.&lt;NAME&gt;.path</code>
               property in the configuration, which in turn specifies the data files to read.
             </xs:documentation>
           </xs:annotation>
@@ -408,7 +409,7 @@ database.connection.NAME.password=XXXX</code></pre>
         <xs:attribute name="name" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Sets the name of the target that selects the <code>csvTarget.&lt;NAME&gt;.Path</code>
+              Sets the name of the target that selects the <code>csvTarget.&lt;NAME&gt;.path</code>
               property in the configuration, which in turn specifies the data files to read.
             </xs:documentation>
           </xs:annotation>
@@ -458,7 +459,7 @@ database.connection.NAME.password=XXXX</code></pre>
 	<xs:attribute name="name" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation>
-		  Name of field.
+        Name of the field.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
@@ -466,7 +467,7 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:attribute name="value" type="xs:string" use="optional">
           <xs:annotation>
         <xs:documentation>
-		  Value of field. If not specified, then value is null.
+        Value of the field. If not specified, then value is considered to be null.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
@@ -478,7 +479,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:element name="field" type="tns:fieldType">
     <xs:annotation>
       <xs:documentation>
-        Field of a record.
+        A field of a record.
       </xs:documentation>
     </xs:annotation>  
   </xs:element>
@@ -490,7 +491,7 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:attribute name="role" type="xs:string" use="required">
 	  <xs:annotation>
         <xs:documentation>
-		  Specifies the role of record. It can be source, target or error-target.
+        Specifies the role of record: can be source, target or error-target.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
@@ -513,7 +514,7 @@ database.connection.NAME.password=XXXX</code></pre>
 	<xs:attribute name="id" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation>
-		  Id for test case.
+        Unique id of the test case.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
@@ -521,7 +522,7 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:attribute name="summary" type="xs:string" use="optional">
       <xs:annotation>
         <xs:documentation>
-		  Summary of test case.
+        Summary of the test case.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
@@ -529,7 +530,7 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:attribute name="timeout" type="xs:long" use="optional">                
       <xs:annotation>
         <xs:documentation>
-		  Timeout limit for process.
+        Timeout threshold for the process.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
@@ -539,7 +540,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:element name="test" type="tns:testType">
     <xs:annotation>
       <xs:documentation>
-        Contains a test of process.
+        Contains a test case of the process.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -548,7 +549,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:element name="blocks" type="tns:sequenceType">
     <xs:annotation>
       <xs:documentation>
-        Contains the transformation steps of the process.
+        Contains the transformation steps (processing blocks) of the process.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -557,7 +558,7 @@ database.connection.NAME.password=XXXX</code></pre>
   <xs:element name="test-cases">
     <xs:annotation>
       <xs:documentation>
-        Contains the test cases of process.
+        Contains the test cases of the process.
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
