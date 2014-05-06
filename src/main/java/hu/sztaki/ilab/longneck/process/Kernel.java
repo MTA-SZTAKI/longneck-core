@@ -233,7 +233,7 @@ public class Kernel {
         // Resolve symbolic address
         if (FrameAddress.RETURN.equals(redirectAddress)) {
             // Set to end of compound
-            currentFrame.position = currentFrame.hostBlock.getBlocks().size();
+            currentFrame.position = (currentFrame.hostBlock.getBlocks() != null)?currentFrame.hostBlock.getBlocks().size():0;
             return;
         }
         
