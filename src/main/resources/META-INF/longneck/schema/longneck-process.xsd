@@ -530,7 +530,7 @@ database.connection.NAME.password=XXXX</code></pre>
     <xs:attribute name="timeout" type="xs:long" use="optional">                
       <xs:annotation>
         <xs:documentation>
-        Timeout threshold for the process.
+        Timeout limit for the process.
         </xs:documentation>
       </xs:annotation>            
     </xs:attribute>                    
