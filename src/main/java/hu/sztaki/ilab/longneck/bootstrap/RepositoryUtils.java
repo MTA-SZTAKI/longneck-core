@@ -1,6 +1,5 @@
 package hu.sztaki.ilab.longneck.bootstrap;
 
-import hu.sztaki.ilab.longneck.process.AbstractReference;
 import hu.sztaki.ilab.longneck.process.FileType;
 import hu.sztaki.ilab.longneck.process.SplitId;
 import java.util.HashSet;
@@ -13,14 +12,12 @@ import java.util.Set;
  */
 public class RepositoryUtils {
 
-    public static Set<String> getPackageNames(List<AbstractReference> references) {
-        Set<String> retval = new HashSet<String>();
-        
-        for (AbstractReference ref : references) {
-            SplitId splitId = new SplitId(ref.getId());
-            retval.add(FileType.forReference(ref).getFileName(splitId.pkg));
+    public static Set<PathToDirPair> getPackageNames(List<RefToDirPair> references) {
+        Set<PathToDirPair> retval = new HashSet<PathToDirPair>();
+        for (RefToDirPair reftodir : references) {
+            retval.add(new PathToDirPair((new SplitId(reftodir.getRef().getId())).pkg, 
+                    reftodir.getDefaultdirectory(),FileType.forReference(reftodir.getRef())));
         }
-        
         return retval;
     }
 }
