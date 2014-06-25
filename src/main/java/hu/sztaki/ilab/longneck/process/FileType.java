@@ -4,6 +4,7 @@ import hu.sztaki.ilab.longneck.process.block.BlockReference;
 import hu.sztaki.ilab.longneck.process.constraint.ConstraintReference;
 import hu.sztaki.ilab.longneck.process.constraint.EntityReference;
 import java.io.File;
+import java.nio.file.FileSystems;
 import org.w3c.dom.Document;
 
 /**
@@ -54,14 +55,21 @@ public enum FileType {
     }
     
     public static String getPackageId(String path) {
-        int slashIndex = path.indexOf(File.separatorChar);
-        int dotIndex  = path.indexOf('.', slashIndex + 1);
-        return path.substring(slashIndex + 1, dotIndex).replaceAll(File.separator, "/");
+        int dotIndex  = path.lastIndexOf('.', path.lastIndexOf('.')-1);
+        return path.substring(0, dotIndex).replaceAll(File.separator, "/");
     }
     
     
-    public static String getFullPakageId(String defaultdirectory, String pkg) {
-        return pkg.startsWith("/") ? pkg.substring(1):(defaultdirectory == null ?"":defaultdirectory.replace(File.separatorChar, '/'))+pkg;
+    public static String getFullPackageId(String defaultdirectory, String pkg) {
+        return pkg.startsWith("/") ? pkg.substring(1):(defaultdirectory == null ?"":
+                defaultdirectory.replace(File.separatorChar, '/'))+pkg;
+    }
+    
+    public static String normalizePackageId(String fullpackageid, String repositoryPath, 
+            AbstractReference ref) {
+        return getPackageId(FileSystems.getDefault().getPath(
+                repositoryPath, forReference(ref).getFileName(fullpackageid)).normalize().toString()
+                .replaceFirst(repositoryPath+File.separator, ""));
     }
     
     public String getFileName(String baseName) {

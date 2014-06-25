@@ -7,6 +7,7 @@ import hu.sztaki.ilab.longneck.process.constraint.ConstraintReference;
 import hu.sztaki.ilab.longneck.process.constraint.EntityReference;
 import hu.sztaki.ilab.longneck.process.constraint.GenericConstraint;
 import hu.sztaki.ilab.longneck.process.constraint.GenericEntity;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,13 +117,14 @@ public class Repository {
         }
     }
     
-    public void updateReferences(List<RefToDirPair> refdirlist) {
+    public void updateReferences(List<RefToDirPair> refdirlist, String repositoryPath) throws IOException {
         for (RefToDirPair refdir : refdirlist) {
             AbstractReference ref = refdir.getRef();
             SplitId splitId = new SplitId(ref.getId());
             String pkg = splitId.pkg;
             String id = splitId.id;
-            String packageid = FileType.getFullPakageId(refdir.getDefaultdirectory(), pkg);
+            String packageid = FileType.normalizePackageId(
+                    FileType.getFullPackageId(refdir.getDefaultdirectory(), pkg), repositoryPath, ref);
             if (ref instanceof BlockReference) {
                 ((BlockReference) ref).setReferredBlock(getBlock(packageid, id, ref.getVersion()));
             }

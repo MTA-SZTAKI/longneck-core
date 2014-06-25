@@ -43,18 +43,15 @@ public class SourceLoader implements ResourceLoaderAware {
         return process;
     }
 
-    public LongneckPackage getPackage(String packagePath) throws MappingException, IOException,
+    public LongneckPackage getPackage(String path) throws MappingException, IOException,
             MarshalException, ValidationException, ParserConfigurationException, SAXException {
         Unmarshaller unmarshaller = unmarshallerLoader.getUnmarshaller();
-
-        FileType type = FileType.forPath(packagePath);
-        Document pkgDoc = xmlDocumentLoader.getDocument(resourceLoader.getResource(packagePath), type);
-        
-//        resourceLoader.getResource(packagePath).getFile().getAbsolutePath();
-
+        Document pkgDoc = xmlDocumentLoader.getDocument(
+                resourceLoader.getResource(repositoryPath + File.separator + path), 
+                FileType.forPath(path));
         // Add package id to root element
         pkgDoc.getDocumentElement().setAttributeNS(
-                XMLDocumentLoader.NS, "package-id", FileType.getPackageId(packagePath));
+                XMLDocumentLoader.NS, "package-id", FileType.getPackageId(path));
 
         LongneckPackage pkg = (LongneckPackage) unmarshaller.unmarshal(pkgDoc);
         pkg.setDomDocument(pkgDoc);
@@ -77,8 +74,9 @@ public class SourceLoader implements ResourceLoaderAware {
             Set<PathToDirPair> loadedpathSet = new HashSet<PathToDirPair>();
             
             while(!unsolvedref.isEmpty()) {
-                 // Create unloaded packages set from references minus already loaded packages.
-                Set<PathToDirPair> pathSet = RepositoryUtils.getPackageNames(unsolvedref);
+                // Create unloaded packages set from references and update path if nessesary minus already loaded packages.
+                Set<PathToDirPair> pathSet = RepositoryUtils.getPackageNames(unsolvedref, 
+                        repositoryPath);
                 pathSet.removeAll(loadedpathSet);
                 
                 // Add the loaded reff to done list and remove loaded ref
@@ -86,10 +84,12 @@ public class SourceLoader implements ResourceLoaderAware {
                 unsolvedref.clear();
                 
                 for(PathToDirPair pathdir:pathSet) {
-                    LongneckPackage pkg = getPackage(repositoryPath + File.separator + pathdir.getPath());
+                    // load package
+                    LongneckPackage pkg = getPackage(pathdir.getPath());
                     packages.add(pkg);
                     for (AbstractReference ref : 
-                            unmarshalListener.getReferences().subList(loadedReferenceCount, unmarshalListener.getReferences().size())) {
+                            unmarshalListener.getReferences().subList(loadedReferenceCount, 
+                                    unmarshalListener.getReferences().size())) {
                         unsolvedref.add(new RefToDirPair(ref, pathdir.getDirectory()));
                     }
                     loadedReferenceCount = unmarshalListener.getReferences().size();
@@ -101,7 +101,7 @@ public class SourceLoader implements ResourceLoaderAware {
             
             CompactProcess cp = new CompactProcess(process, packages,
                     unmarshalListener.getFrameAddressResolver(), runtimeProperties);
-            cp.getRepository().updateReferences(doneref);
+            cp.getRepository().updateReferences(doneref, repositoryPath);
 
             return cp;
 
