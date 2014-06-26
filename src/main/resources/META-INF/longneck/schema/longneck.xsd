@@ -128,8 +128,34 @@
 
   <!-- Repository item reference attribute group -->
   <xs:attributeGroup name="referenceAttrGroup">
-    <xs:attribute name="id" type="tns:referenceIdType" use="required"/>
-    <xs:attribute name="version" type="tns:genericVersionType" use="optional"/>
+    <xs:attribute name="id" type="tns:referenceIdType" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Identifier of the package, followed by ':' and the name of the referred block.
+          Identifier of the package is the name file, which contains the referred block, 
+          with the reltive path from the current- or the repository directory 
+          (begin the path with a '/').
+          <p>
+            
+            <p>Some example for packageid: </p>
+            Relative packageid from <strong>Repository</strong> dirctory as a root directory of repository files:
+            <p><code>/location/postal-address/hu/zip-code:zip-code.lookup</code>.</p>
+            Other way to refer a package is the relative reference from the given directory; 
+            for example the reference is in <strong>Repository/location/postal-address/hu/</strong>
+:            <p><code>zip-code:zip-code.lookup</code></p> 
+            or
+            <p><code>../en/zip-code:zip-code.lookup</code></p>
+          </p>
+        </xs:documentation>
+      </xs:annotation>   
+    </xs:attribute>
+    <xs:attribute name="version" type="tns:genericVersionType" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The version of the block, to distinguish variants of the same transformation.
+        </xs:documentation>
+      </xs:annotation>   
+    </xs:attribute>
   </xs:attributeGroup>
 
   <!-- Referred repository item attribute group -->
