@@ -145,6 +145,8 @@ public class CliRunner {
             "The maximum level of errors written by the error writer.");
         options.addOption("s", "testingBehavior", true,
             "Define how to handle test cases: normal (default), alone, skip, tolerant");
+        options.addOption("v", "verbose", false,
+            "Verbose testing");        
         return options;
     }
 

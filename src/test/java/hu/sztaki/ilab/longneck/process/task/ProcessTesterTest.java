@@ -64,7 +64,7 @@ public class ProcessTesterTest {
         CompactProcess cProcess = new CompactProcess(process, repository,
             frameAddressResolver, runtimeProperties);
 
-        ProcessTester tester = new ProcessTester(cProcess);
+        ProcessTester tester = new ProcessTester(cProcess, true);
 
         assertTrue(tester.testAll());
 
@@ -124,7 +124,7 @@ public class ProcessTesterTest {
         CompactProcess cProcess = new CompactProcess(process, repository,
             frameAddressResolver, runtimeProperties);
 
-        ProcessTester tester = new ProcessTester(cProcess);
+        ProcessTester tester = new ProcessTester(cProcess, true);
 
         assertTrue(tester.testAll());
 
@@ -176,7 +176,7 @@ public class ProcessTesterTest {
         CompactProcess cProcess = new CompactProcess(process, repository,
             frameAddressResolver, runtimeProperties);
 
-        ProcessTester tester = new ProcessTester(cProcess);
+        ProcessTester tester = new ProcessTester(cProcess, true);
 
         /* The process test fails, because there is no perfect 
          * matching in the observed-expected target record graph.
