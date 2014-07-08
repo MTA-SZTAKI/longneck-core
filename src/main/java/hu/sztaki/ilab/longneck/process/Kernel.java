@@ -47,9 +47,7 @@ public class Kernel {
         
         // Create new kernel state, if record doesn't carry one
         if (kernelState == null || kernelState.isAfterProcessing()) {
-            kernelState = new KernelState();
-            ExecutionFrame currentFrame = new ExecutionFrame(topLevelSequence, new ExecutionFrame());
-            kernelState.frameStack.addLast(currentFrame);
+            kernelState = newKernelState();
         }
         
         RecordContainer rc = new RecordContainer(record);
@@ -649,7 +647,7 @@ public class Kernel {
     
     private static class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, BreakHandler {
         private final BlockReference blockRef;
-        private boolean wasErrror;
+        private boolean wasError;
         private boolean breaked;
 
         public BlockReferenceControl(BlockReference blockRef) {
@@ -676,7 +674,7 @@ public class Kernel {
             }
             
             kernelState.handleError(rc.record);
-            wasErrror = true;
+            wasError = true;
             throw new RedirectException(FrameAddress.RETURN);
         }
 
@@ -684,7 +682,7 @@ public class Kernel {
         public void afterChildren(KernelState kernelState, RecordContainer rc) throws CheckError {
 
             GenericBlock referredBlock = blockRef.getReferredBlock();
-            if (referredBlock.getOutputConstraints() != null && !wasErrror && !breaked) {
+            if (referredBlock.getOutputConstraints() != null && !wasError && !breaked) {
                 referredBlock.getOutputConstraints().apply(rc.record, kernelState.frameStack.getLast().variables);
             }
 
