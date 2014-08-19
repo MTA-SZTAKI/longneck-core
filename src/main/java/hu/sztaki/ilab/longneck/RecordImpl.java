@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author András Molnár
  */
-public class RecordImpl extends AbstractRecord implements Record {
+public class RecordImpl extends AbstractRecord {
 
     public Map<String,String> getAsMap() {
         HashMap<String,String> values = new HashMap<String,String>(fields.size());

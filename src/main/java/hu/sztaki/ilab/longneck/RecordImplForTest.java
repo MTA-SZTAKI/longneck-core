@@ -5,7 +5,7 @@ package hu.sztaki.ilab.longneck;
 * @author Geszler Döme <gdome@ilab.sztaki.hu>
 */
 
-public class RecordImplForTest extends RecordImpl implements Record {
+public class RecordImplForTest extends RecordImpl {
 
   public enum Role {
     SOURCE, TARGET, ERROR

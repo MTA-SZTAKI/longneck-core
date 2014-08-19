@@ -384,6 +384,14 @@
   <c:class name="hu.sztaki.ilab.longneck.process.block.Fail"
            extends="hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer">
     <c:map-to xml="fail" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    
+    <c:field name="summary" type="string">
+      <c:bind-xml name="summary" type="string" node="attribute"/>
+    </c:field>
+
+    <c:field name="faildField" type="string">
+      <c:bind-xml name="faildfield" type="string" node="attribute"/>
+    </c:field>
   </c:class>
 
   <!-- Filter -->

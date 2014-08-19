@@ -56,9 +56,9 @@ public class ProcessTester {
                     kernel.process(record);
                     testCase.getObservedTargetRecords().add(record);
                 } catch (FailException e) {
-                    ;
+//                    do nothing
                 } catch (FilterException e) {
-                    ;
+//                    do nothing
                 } finally {
                     for (Record errorRecord : createErrorRecords(record)) {
                         testCase.getObservedErrorRecords().add(errorRecord);
