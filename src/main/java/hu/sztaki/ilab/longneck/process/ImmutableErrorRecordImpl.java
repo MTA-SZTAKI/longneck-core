@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import hu.sztaki.ilab.longneck.Field;
 import hu.sztaki.ilab.longneck.ImmutableFieldImpl;
 import hu.sztaki.ilab.longneck.Record;
-import hu.sztaki.ilab.longneck.process.Kernel.KernelState;
+import hu.sztaki.ilab.longneck.process.kernel.KernelState;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
 import hu.sztaki.ilab.longneck.process.task.CheckTreeItem;
 import java.util.List;
@@ -118,6 +118,7 @@ public class ImmutableErrorRecordImpl implements Record {
                 result.append(", ");
             }
         }
+        result.delete(result.length() - 2, result.length());
         result.append("}");
 
         return result.toString();
@@ -136,6 +137,16 @@ public class ImmutableErrorRecordImpl implements Record {
 
     @Override
     public void setKernelState(KernelState kernelState) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Record clone() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addError(CheckResult error) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

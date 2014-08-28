@@ -1,6 +1,6 @@
 package hu.sztaki.ilab.longneck;
 
-import hu.sztaki.ilab.longneck.process.Kernel.KernelState;
+import hu.sztaki.ilab.longneck.process.kernel.KernelState;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
 import java.util.*;
 
@@ -23,9 +23,9 @@ abstract public class AbstractRecord implements Record {
     protected Stack<Integer> constraintFailureHistory;
 
     public AbstractRecord() {
-        fields = new HashMap<String, Field>();
-        constraintFailures = new ArrayList<CheckResult>();
-        constraintFailureHistory = new Stack<Integer>();
+        fields = new HashMap<>();
+        constraintFailures = new ArrayList<>();
+        constraintFailureHistory = new Stack<>();
     }
 
     @Override
@@ -104,6 +104,7 @@ abstract public class AbstractRecord implements Record {
             result.append(f.getValue().toString());
             result.append(", ");
         }
+        result.delete(result.length() - 2, result.length());
         result.append("}");
 
         return result.toString();
@@ -111,7 +112,12 @@ abstract public class AbstractRecord implements Record {
 
     @Override
     public List<CheckResult> getErrors() {
-        return constraintFailures;
+        return Collections.unmodifiableList(constraintFailures);
+    }
+    
+    @Override
+    public void addError(CheckResult error) {
+        constraintFailures.add(error);
     }
 
     @Override
@@ -122,5 +128,46 @@ abstract public class AbstractRecord implements Record {
     @Override
     public void setKernelState(KernelState kernelState) {
         this.kernelState = kernelState;
+    }
+  
+    @Override
+    public AbstractRecord clone() {
+        AbstractRecord clone;
+        try {
+            clone = (AbstractRecord) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new AssertionError(ex);
+        }
+        // Clone fields
+        clone.fields = new HashMap<String, Field>();
+        if (fields != null) {
+            for (Map.Entry<String, Field> entry : fields.entrySet()) {
+                clone.add(new Field(entry.getValue()));
+            }
+        }
+        // Clone errors
+        clone.constraintFailures = new ArrayList<CheckResult>();
+        if (constraintFailures != null) {
+            clone.constraintFailures.addAll(Collections.unmodifiableList(constraintFailures));
+        }
+        // Clone the current kernel state
+        if (kernelState != null) {
+            KernelState cloneState = new KernelState(kernelState);
+            clone.setKernelState(cloneState);
+        }
+        // Clone historys
+        clone.constraintFailureHistory = (Stack<Integer>) constraintFailureHistory.clone();
+        if (history != null) {
+            clone.history = new Stack<Map<String, Field>>();
+            for (Map<String, Field> map : history) {
+                Map<String, Field> save = new HashMap<String, Field>();
+                for (Map.Entry<String, Field> entry : map.entrySet()) {
+                    Field f = new Field(entry.getValue());
+                    save.put(entry.getKey(), f);
+                }
+                clone.history.push(save);
+            }
+        }
+        return clone;
     }
 }

@@ -8,7 +8,7 @@ import org.json.JSONObject;
  *
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
-abstract public class AbstractSourceInfoContainer implements SourceInfoContainer {
+abstract public class AbstractSourceInfoContainer implements SourceInfoContainer, Cloneable {
     
     protected SourceInfo sourceInfo;
     protected FrameAddress frameAddress;
@@ -54,11 +54,19 @@ abstract public class AbstractSourceInfoContainer implements SourceInfoContainer
     
     @Override
     protected AbstractSourceInfoContainer clone() {
+        AbstractSourceInfoContainer clone;
         try {
-            return (AbstractSourceInfoContainer) super.clone();
+            clone = (AbstractSourceInfoContainer) super.clone();
         } catch (CloneNotSupportedException ex) {
             throw new AssertionError(ex);
         }
+        if (sourceInfo != null) {
+            clone.sourceInfo = new SourceInfo(sourceInfo);
+        }
+        if (frameAddress != null) {
+            clone.frameAddress = new FrameAddress(frameAddress.getFileId(), frameAddress.getSequenceId());
+        }
+        return clone;
     }
 
     @Override

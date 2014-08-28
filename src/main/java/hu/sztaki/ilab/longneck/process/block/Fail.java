@@ -19,7 +19,7 @@ public class Fail extends AbstractSourceInfoContainer implements Block {
     
     @Override
     public void apply(Record record, VariableSpace parentScope) throws FailException {
-        record.getErrors().add(new CheckResult(this, false,
+        record.addError(new CheckResult(this, false,
                 faildField == null || !BlockUtils.exists(faildField, record, parentScope)?null:faildField, 
                 faildField == null? null:BlockUtils.getValue(faildField, record, parentScope), 
                 summary == null?"Intentional failure.":summary));

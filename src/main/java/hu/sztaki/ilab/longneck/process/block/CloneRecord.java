@@ -1,11 +1,8 @@
 package hu.sztaki.ilab.longneck.process.block;
 
-import hu.sztaki.ilab.longneck.Field;
 import hu.sztaki.ilab.longneck.Record;
-import hu.sztaki.ilab.longneck.RecordImpl;
 import hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer;
 import hu.sztaki.ilab.longneck.process.VariableSpace;
-import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class CloneRecord extends AbstractSourceInfoContainer implements Block {
@@ -38,11 +35,7 @@ public class CloneRecord extends AbstractSourceInfoContainer implements Block {
     }
 
     public Record getClonedRecord(Record record, VariableSpace parentScope) {
-        Record clone = new RecordImpl();
-        for (Map.Entry<String, Field> entry : record.getFields().entrySet()) {
-            clone.add(new Field(entry.getValue()));
-        }
-
+        Record clone = record.clone();
         if (fieldName != null)
             BlockUtils.setValue(fieldName, fieldValue, clone, parentScope);
 

@@ -19,7 +19,6 @@ public class Case extends Sequence {
     
     @Override
     public Case clone() {
-        Case copy = (Case) super.clone();
-        return copy;
+        return (Case) super.clone();
     }    
 }

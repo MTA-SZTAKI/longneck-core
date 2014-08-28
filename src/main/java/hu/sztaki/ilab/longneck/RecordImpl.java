@@ -1,6 +1,5 @@
 package hu.sztaki.ilab.longneck;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,4 +19,10 @@ public class RecordImpl extends AbstractRecord {
 
         return values;
     }
+
+    @Override
+    public RecordImpl clone() {
+        return (RecordImpl) super.clone();
+    }
+    
 }

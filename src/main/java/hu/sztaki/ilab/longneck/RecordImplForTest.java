@@ -31,4 +31,10 @@ public class RecordImplForTest extends RecordImpl {
       throw new RuntimeException();
     }
   }
+
+    @Override
+    public RecordImplForTest clone() {
+        return (RecordImplForTest) super.clone();
+    }
+  
 }

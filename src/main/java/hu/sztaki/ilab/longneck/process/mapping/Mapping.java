@@ -2,6 +2,7 @@ package hu.sztaki.ilab.longneck.process.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
@@ -63,6 +64,14 @@ public class Mapping implements Cloneable {
         
         return name;        
     }
+
+    public Map<String, String> getNames() {
+        if (dirty) {
+            loadNames();
+        }
+        return names;
+    }
+    
     
     @Override
     public Mapping clone() {
