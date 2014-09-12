@@ -43,6 +43,10 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
     private Map<String,Integer> typeMap = new HashMap<String,Integer>();
     /** The total number of inserted records. */
     private long insertedRecords = 0;
+    /** Threshold for error line. */
+    protected Integer threshold;
+    /** Count error. */
+    protected int error_count;
     
     @Override
     public void truncate() {
@@ -123,8 +127,11 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
                     insertCount += DatabaseUtils.getAffectedRowsNumber(affectedRows);
                     
                 } catch (RuntimeException ex2) {
-                    log.warn("Could not insert record: " + 
-                            DatabaseUtils.sqlParameterSourceToText(parameters.get(i)), ex2);
+                    log.warn("Could not insert record: "
+                            + DatabaseUtils.sqlParameterSourceToText(parameters.get(i)), ex2);
+                    if (threshold != null && ++error_count >= threshold) {
+                        throw new RuntimeException(new ThresHoldException("Reach the error line count database target threshold: " + threshold));
+                    }
                 }
             }
 
@@ -229,6 +236,14 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
 
     public void setPlaceholders(List<String> placeholders) {
         this.placeholders = placeholders;
+    }
+
+    public Integer getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Integer threshold) {
+        this.threshold = threshold;
     }
     
 }

@@ -235,6 +235,14 @@ database.connection.NAME.password=XXXX</code></pre>
           </xs:element>
         </xs:sequence>
         <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
+        <xs:attribute name="threshold" type="xs:integer" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Sets the treshold of the error lines. If the error line counter reach the limit 
+              than it stop the longneck process and log it.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

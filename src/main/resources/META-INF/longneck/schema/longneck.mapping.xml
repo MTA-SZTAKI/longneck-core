@@ -111,6 +111,11 @@
            extends="hu.sztaki.ilab.longneck.process.access.AbstractDatabaseAccessor">
 
     <c:map-to xml="database-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+    
+    <c:field name="threshold" type="integer">
+      <c:bind-xml name="threshold" node="attribute" type="integer"/>
+    </c:field>
+    
     <c:field name="truncateQuery" type="string">
       <c:bind-xml name="truncate-query" node="element"/>
     </c:field>    
