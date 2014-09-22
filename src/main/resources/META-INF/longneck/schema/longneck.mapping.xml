@@ -112,8 +112,8 @@
 
     <c:map-to xml="database-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
     
-    <c:field name="threshold" type="integer">
-      <c:bind-xml name="threshold" node="attribute" type="integer"/>
+    <c:field name="errorthreshold" type="integer">
+      <c:bind-xml name="error-threshold" node="attribute" type="integer"/>
     </c:field>
     
     <c:field name="truncateQuery" type="string">

@@ -50,7 +50,7 @@
   <bean id="database-target" class="hu.sztaki.ilab.longneck.process.access.SimpleDatabaseTarget" 
     init-method="afterPropertiesSet" lazy-init="true">
     <property name="databaseConnectionManager" ref="database-connection-manager"/>
-    
+    <property name="runtimeProperties" ref="runtime-properties"/>
   </bean>
   
   <bean id="database-source" class="hu.sztaki.ilab.longneck.process.access.DatabaseSource"

@@ -43,8 +43,10 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
     private Map<String,Integer> typeMap = new HashMap<String,Integer>();
     /** The total number of inserted records. */
     private long insertedRecords = 0;
+    /** The runtime properties. */
+    protected Properties runtimeProperties;
     /** Threshold for error line. */
-    protected Integer threshold;
+    protected Integer errorthreshold;
     /** Count error. */
     protected int error_count;
     
@@ -129,8 +131,8 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
                 } catch (RuntimeException ex2) {
                     log.warn("Could not insert record: "
                             + DatabaseUtils.sqlParameterSourceToText(parameters.get(i)), ex2);
-                    if (threshold != null && ++error_count >= threshold) {
-                        throw new RuntimeException(new ThresHoldException("Reach the error line count database target threshold: " + threshold));
+                    if (errorthreshold != null && ++error_count >= errorthreshold) {
+                        throw new RuntimeException(new ThresHoldException("Reach the error line count database target threshold: " + errorthreshold));
                     }
                 }
             }
@@ -140,7 +142,16 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
     }
 
     @Override
-    public void init() {        
+    public void init() {
+        // Read treshold from runtime properties if it's present
+        if(runtimeProperties.getProperty("databaseTarget.errorThreshold") != null) {
+            try {
+                errorthreshold = Integer.parseInt(runtimeProperties.getProperty("databaseTarget.errorThreshold"));
+            } catch (NumberFormatException e) {
+                log.warn(String.format("Threshold value isn't a number: %1$s", 
+                        runtimeProperties.getProperty("databaseTarget.errorThreshold")));
+            }
+        }
         // Try to parse column placeholders
         try {
             placeholders = getPlaceholders(insertQuery.getSql());
@@ -238,12 +249,20 @@ public class SimpleDatabaseTarget extends AbstractDatabaseAccessor implements Ta
         this.placeholders = placeholders;
     }
 
-    public Integer getThreshold() {
-        return threshold;
+    public Integer getErrorthreshold() {
+        return errorthreshold;
     }
 
-    public void setThreshold(Integer threshold) {
-        this.threshold = threshold;
+    public void setErrorthreshold(Integer errorthreshold) {
+        this.errorthreshold = errorthreshold;
+    }
+
+    public Properties getRuntimeProperties() {
+        return runtimeProperties;
+    }
+
+    public void setRuntimeProperties(Properties runtimeProperties) {
+        this.runtimeProperties = runtimeProperties;
     }
     
 }

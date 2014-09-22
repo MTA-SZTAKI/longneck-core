@@ -235,11 +235,14 @@ database.connection.NAME.password=XXXX</code></pre>
           </xs:element>
         </xs:sequence>
         <xs:attributeGroup ref="tns:databaseAccessorAttrGroup"/>
-        <xs:attribute name="threshold" type="xs:integer" use="optional">
+        <xs:attribute name="error-threshold" type="xs:integer" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Sets the treshold of the error lines. If the error line counter reach the limit 
-              than it stop the longneck process and log it.
+              <p>Sets a treshold for the erroneous lines which cannot be inserted into the target table (for any reasons, eg.
+                because of type mismatch, violating constraints etc.)
+                When exceeding the limit the longneck process stops and writes an error log message.</p>
+                <p>Am other way to set this threshold value is to provide to the cli parameters <code>-DdatabaseTarget.errorThreshold=<i>(SomeInteger)</i></code></p>
+                CLI parameters override XML attributes.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
