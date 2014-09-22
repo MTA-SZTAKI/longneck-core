@@ -132,8 +132,8 @@
   <!-- Simple file target -->
   <c:class name="hu.sztaki.ilab.longneck.process.access.SimpleFileTarget">
     <c:map-to xml="simple-file-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    <c:field name="target" type="string">
-      <c:bind-xml name="target" node="attribute" type="string"/>
+    <c:field name="path" type="string">
+      <c:bind-xml name="path" node="attribute" type="string"/>
     </c:field>
   </c:class>
   
