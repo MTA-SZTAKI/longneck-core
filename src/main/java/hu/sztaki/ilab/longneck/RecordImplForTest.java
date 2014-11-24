@@ -5,7 +5,7 @@ package hu.sztaki.ilab.longneck;
 * @author Geszler Döme <gdome@ilab.sztaki.hu>
 */
 
-public class RecordImplForTest extends RecordImpl implements Record {
+public class RecordImplForTest extends RecordImpl {
 
   public enum Role {
     SOURCE, TARGET, ERROR
@@ -31,4 +31,10 @@ public class RecordImplForTest extends RecordImpl implements Record {
       throw new RuntimeException();
     }
   }
+
+    @Override
+    public RecordImplForTest clone() {
+        return (RecordImplForTest) super.clone();
+    }
+  
 }

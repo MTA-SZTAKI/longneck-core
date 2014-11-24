@@ -107,6 +107,11 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
         copy.localCache = new CacheMapBuilder(size);
         copy.cache = null;
         
+        if (outputFields != null) {
+            copy.outputFields =  new ArrayList<String>(outputFields.size());
+            copy.outputFields.addAll(outputFields);
+        }
+        
         return copy;
     }
     

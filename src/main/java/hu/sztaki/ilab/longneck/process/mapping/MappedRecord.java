@@ -1,120 +1,135 @@
 package hu.sztaki.ilab.longneck.process.mapping;
 
+import hu.sztaki.ilab.longneck.AbstractRecord;
 import hu.sztaki.ilab.longneck.Field;
 import hu.sztaki.ilab.longneck.Record;
-import hu.sztaki.ilab.longneck.process.Kernel.KernelState;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 /**
+ *  Record Implementation for blockref and mapping.
  *
- * @author Molnár Péter <molnarp@sztaki.mta.hu>
+ * @author Lukacs Gabor <lukacsg@sztaki.mta.hu>
  */
-public class MappedRecord implements Record {
+public class MappedRecord extends AbstractRecord {
     
     /** The parent record which is mapped. */
-    private Record parent;
+    protected Record parent;
     /** The mapping of field names. */
-    private Mapping mapping;
-    /** The record that is unmapped. */
-    //private Record root;
-    /** The mapping for the root record. */
-    //private Mapping rootMapping;
-    
-    public MappedRecord() {}
+    protected Mapping mapping;
     
     public MappedRecord(Record parent, Mapping mapping) {
+        super();
         this.parent = parent;
         this.mapping = mapping;
+        init();
+    }
+    
+    
+    private void init() {
+        if (mapping != null) {
+            Map<String, String> alias = mapping.getNames();
+            for (Map.Entry<String, String> entry : alias.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if(parent.has(value)) {
+                    fields.put(key, new Field(key, parent.get(value).getValue()));
+                }
+            }
+        }
     }
 
     public Record getParent() {
         return parent;
     }
 
-    public void setParent(Record parent) {
-        this.parent = parent;
-    }
-
     public Mapping getMapping() {
         return mapping;
+    } 
+    
+    // Manage the step back.
+    /**
+     * Restore the parent record and change according to actual fileds and mapping.
+     */
+    public Record restoreRecord() {
+        if (mapping != null) {
+            Map<String, String> alias = mapping.getNames();
+            for (Map.Entry<String, String> entry : alias.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (this.has(key)) {
+                    try {
+                        // Assign value to existsing field
+                        parent.get(value).setValue(this.get(key).getValue());
+
+                    } catch (NullPointerException ex) {
+                        // Create new field with specified value
+                        parent.add(new Field(value, this.get(key).getValue()));
+                    }
+                } else if (parent.has(value)) {
+                    // Questioned: Not neccesary to remove.
+                    parent.remove(value);
+                } else {
+                    // Do nothing if wrong mapping occour: none of mappig filed (from, to) exist
+                    Logger.getLogger(this.getClass().getName()).warn(
+                            String.format("None of mappig filed (from, to) exist: from = %1$s, to = %2$s!",
+                                    value, key));
+                }
+            }
+        }
+        for (CheckResult e : constraintFailures) {
+            parent.addError(e);
+        }
+        return parent;
     }
 
-    public void setMapping(Mapping mapping) {
-        this.mapping = mapping;
+    /** Get the first parent, who hasn't a parent.
+     * @return  the first parent.
+     */
+    public Record getAncestor() {
+        return (parent instanceof MappedRecord)?((MappedRecord)parent).getAncestor():parent;
     }
     
-    @Override
-    public void add(Field field) {
-        String name = mapping.getName(field.getName());
-        field.setName(name);
-        parent.add(field);
+    public Map<String,String> getAsMap() {
+        HashMap<String,String> values = new HashMap<String,String>(fields.size());
+
+        for (Map.Entry<String,Field> entry : fields.entrySet()) {
+            values.put(entry.getKey(), entry.getValue().getValue());
+        }
+
+        return values;
     }
 
+    // Clone
+    /** Deep copying the object. */
     @Override
-    public void clearHistory() {
-        parent.clearHistory();
-    }
-
-    @Override
-    public Field get(String fieldName) {
-        String name = mapping.getName(fieldName);
-        return parent.get(name);
+    public MappedRecord clone() {
+        MappedRecord clone = (MappedRecord) super.clone();
+        // clone parent
+        clone.parent = parent.clone();
+        // clone mapping
+        clone.mapping = mapping.clone();
         
-    }
-
-    @Override
-    public Map<String, Field> getFields() {
-        return parent.getFields();
-    }
-
-    @Override
-    public boolean has(String fieldName) {
-        String name = mapping.getName(fieldName);
-        return parent.has(name);
-    }
-
-    @Override
-    public void remove(String fieldName) {
-        String name = mapping.getName(fieldName);
-        parent.remove(name);
-    }
-
-    @Override
-    public void removeState() {
-        parent.removeState();
-    }
-
-    @Override
-    public void restoreState() {
-        parent.restoreState();
-    }
-
-    @Override
-    public void saveState() {
-        parent.saveState();
-    }
-
-    @Override
-    public void setFields(Map<String, Field> fields) {
-        parent.setFields(fields);
-    }
-
-    @Override
-    public List<CheckResult> getErrors() {
-        return parent.getErrors();
-    }
-
-    @Override
-    public void setKernelState(KernelState kernelState) {
-        parent.setKernelState(kernelState);
-    }
-
-    @Override
-    public KernelState getKernelState() {
-        return parent.getKernelState();
+        return clone;
     }
     
-    
+    /** ToString with the parent. */
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("Mapped record: {")
+                .append("\nlocal fields: { ");
+        for (Map.Entry f : fields.entrySet()) {
+            result.append(f.getValue().toString());
+            result.append(", ");
+        }
+        result.delete(result.length() - 2, result.length());
+        result.append("}");
+        result.append("\n parents: { ").append(parent.toString()).append(" }").append("\n}");
+
+        return result.toString();
+    }
+
 }

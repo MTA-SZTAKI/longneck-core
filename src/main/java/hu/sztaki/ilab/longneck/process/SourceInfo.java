@@ -42,11 +42,11 @@ public class SourceInfo implements JSONString {
     }
 
     public SourceInfo(SourceInfo sourceInfo) {
-        documentUrl = sourceInfo.documentUrl;
-        containerBlockId = sourceInfo.containerBlockId;
-        sequenceId = sourceInfo.sequenceId;
-        line = sourceInfo.line;
-        column = sourceInfo.column;
+            documentUrl = sourceInfo.documentUrl;
+            containerBlockId = sourceInfo.containerBlockId;
+            sequenceId = sourceInfo.sequenceId;
+            line = sourceInfo.line;
+            column = sourceInfo.column;
     }
     
 

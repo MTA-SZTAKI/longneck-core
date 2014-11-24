@@ -5,8 +5,9 @@ import hu.sztaki.ilab.longneck.bootstrap.PropertyUtils;
 import hu.sztaki.ilab.longneck.process.FailException;
 import hu.sztaki.ilab.longneck.process.FilterException;
 import hu.sztaki.ilab.longneck.process.FrameAddressResolver;
-import hu.sztaki.ilab.longneck.process.Kernel;
 import hu.sztaki.ilab.longneck.process.block.Sequence;
+import hu.sztaki.ilab.longneck.process.kernel.Kernel;
+import hu.sztaki.ilab.longneck.process.mapping.MappedRecord;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -34,9 +35,9 @@ public class ProcessWorker extends AbstractTask implements Runnable {
     /** Enable running of thread. */
     private volatile boolean running = true;    
     /** The bulk size. */
-    private int bulkSize = 100;
+    private final int bulkSize = 100;
     
-    private Kernel kernel;
+    private final Kernel kernel;
 
     public ProcessWorker(BlockingQueue<QueueItem> sourceQueue, BlockingQueue<QueueItem> targetQueue, 
             BlockingQueue<QueueItem> errorQueue, FrameAddressResolver frameAddressResolver, 
@@ -113,6 +114,8 @@ public class ProcessWorker extends AbstractTask implements Runnable {
                     try {
                         // Process with kernel
                         kernel.process(record);
+                        // Beacause the cloned records
+                        if(record instanceof MappedRecord) record = ((MappedRecord)record).getAncestor();
 
                         // Add record to output
                         targetRecords.add(record);
@@ -121,11 +124,14 @@ public class ProcessWorker extends AbstractTask implements Runnable {
                     }  catch (FailException ex) {                        
                         LOG.debug(ex.getMessage(), ex);
                         stats.failed += 1;
+                        // Beacause the cloned records
+                        if(record instanceof MappedRecord) record = ((MappedRecord)record).getAncestor();
                         errorRecords.add(record);
                     } catch (FilterException ex) {
-                        // LOG.info(ex.getMessage(), ex);
-                        LOG.trace(ex.getMessage()) ;
+                        LOG.debug(ex.getMessage()) ;
                         stats.filtered += 1;
+                        // Beacause the cloned records
+                        if(record instanceof MappedRecord) record = ((MappedRecord)record).getAncestor();
                         errorRecords.add(record);
                     }
                 }

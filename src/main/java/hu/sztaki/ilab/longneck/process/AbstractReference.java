@@ -98,4 +98,12 @@ abstract public class AbstractReference extends AbstractSourceInfoContainer impl
         }
         return true;
     }
+
+    protected AbstractReference clone() {
+        AbstractReference clone = (AbstractReference) super.clone();
+        clone.mapping = mapping.clone();
+        return clone;
+    }
+    
+    
 }

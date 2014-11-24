@@ -9,13 +9,24 @@
   </properties>
   
   <body>
-    <release version="1.7.3" date="2014-04-01" description="Longneck with testing facilities.">
+    <release version="1.7.4" date="2014-08-28" description="Longneck with new fileds mapping logic.">
+      <action dev="lukacsg" type="update">
+        Refactor the omipotens kernel class.
+      </action>    
+      <action dev="lukacsg" type="update">
+        Fileds mapping logic was changed..
+      </action>    
+    </release> 
+    <release version="1.7.3" date="2014-08-28" description="Longneck with testing facilities.">
       <action dev="geszler" type="update">
         Null source element added with implementation.
       </action>        
       <action dev="geszler" type="update">
         Core functionalities extended with testing primitives (test-cases element and command line parameters)
         with implementation.
+      </action>
+      <action dev="lukacsg" type="update">
+        Fail element extend to description fields.
       </action>
     </release>      
     <release version="1.7.1" date="2013-09-11" description="First GitHub release.">        

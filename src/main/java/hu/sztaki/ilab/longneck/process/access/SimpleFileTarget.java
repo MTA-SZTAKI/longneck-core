@@ -18,16 +18,16 @@ import java.util.Map;
  */
 public class SimpleFileTarget implements Target {
 
-	/** Name of the target file */
-	private String target;
+	/** Name of the path file */
+	private String path;
 	private BufferedWriter bufferedWriter;
 
-	public String getTarget() {
-		return target;
+	public String getPath() {
+		return path;
 	}
 
-	public void setTarget(String target) {
-		this.target = target;
+	public void setPath(String target) {
+		this.path = target;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class SimpleFileTarget implements Target {
     @Override
     public void init() {
 		try {
-			bufferedWriter = new BufferedWriter(new FileWriter(target));
+			bufferedWriter = new BufferedWriter(new FileWriter(path));
 		} catch (IOException e) {
             throw new RuntimeException(e);
 		}

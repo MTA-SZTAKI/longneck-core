@@ -1,4 +1,6 @@
-package hu.sztaki.ilab.longneck.process;
+package hu.sztaki.ilab.longneck.process.kernel;
+
+import hu.sztaki.ilab.longneck.process.FrameAddress;
 
 /**
  *

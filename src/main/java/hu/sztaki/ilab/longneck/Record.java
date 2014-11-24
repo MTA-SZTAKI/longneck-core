@@ -1,6 +1,6 @@
 package hu.sztaki.ilab.longneck;
 
-import hu.sztaki.ilab.longneck.process.Kernel.KernelState;
+import hu.sztaki.ilab.longneck.process.kernel.KernelState;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Péter Molnár <molnarp@sztaki.mta.hu>
  */
-public interface Record {
+public interface Record extends Cloneable{
 
     /**
      * Adds a field to the record.
@@ -105,4 +105,13 @@ public interface Record {
      * @return The list of constraint failures.
      */
     public List<CheckResult> getErrors();
+    
+    /**
+     * Add the given error to the record.
+     * 
+     * @param error The given error.
+     */
+    public void addError(CheckResult error);
+    
+    public Record clone();
 }

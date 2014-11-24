@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import junit.framework.Assert;
 import org.exolab.castor.mapping.MappingException;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
@@ -16,6 +15,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import static org.junit.Assert.*;
 
 /**
  *
@@ -43,11 +43,11 @@ public class CopyTest extends AbstractBlockTest {
         // Unmarshal document
         LongneckProcess process = (LongneckProcess) unmarshaller.unmarshal(doc);
         
-        Assert.assertTrue((process.getBlocks().get(0) instanceof Copy));
+        assertTrue((process.getBlocks().get(0) instanceof Copy));
         
         Copy testedCopy = (Copy) process.getBlocks().get(0);
-        Assert.assertEquals(applyTo, testedCopy.getApplyTo());
-        Assert.assertEquals(copy.getFrom(), testedCopy.getFrom());
+        assertEquals(applyTo, testedCopy.getApplyTo());
+        assertEquals(copy.getFrom(), testedCopy.getFrom());
     }
     
     @Test
@@ -72,9 +72,38 @@ public class CopyTest extends AbstractBlockTest {
         // Perform copy
         copy.apply(r, new VariableSpace());
         
-        Assert.assertEquals("ddd", r.get("a").getValue());
-        Assert.assertEquals("ddd", r.get("b").getValue());
-        Assert.assertEquals("ccc", r.get("c").getValue());        
+        assertEquals("ddd", r.get("a").getValue());
+        assertEquals("ddd", r.get("b").getValue());
+        assertEquals("ccc", r.get("c").getValue());        
+    }
+    
+    @Test
+    public void testCopyCloning() throws BlockError {
+        Copy copy = new Copy();
+        
+        List<String> applyTo = new ArrayList<String>(3);
+        applyTo.add("a");
+        applyTo.add("b");
+        
+        copy.setApplyTo(applyTo);
+        copy.setFrom("d");
+        
+        // Prepare record
+        RecordImpl r = new RecordImpl();
+        r.add(new Field("a", "aaa"));
+        r.add(new Field("b", "bbb"));
+        r.add(new Field("c", "ccc"));
+        r.add(new Field("d", "ddd"));
+        
+        Copy clone = copy.clone();
+        
+        // Perform clone of copy
+        clone.apply(r, new VariableSpace());
+        
+        
+        assertEquals("ddd", r.get("a").getValue());
+        assertEquals("ddd", r.get("b").getValue());
+        assertEquals("ccc", r.get("c").getValue());  
     }
     
     @Test
@@ -103,9 +132,9 @@ public class CopyTest extends AbstractBlockTest {
         // Perform copy
         copy.apply(r, scope);
         
-        Assert.assertEquals("eee", r.get("a").getValue());
-        Assert.assertEquals("eee", r.get("b").getValue());
-        Assert.assertEquals("ccc", r.get("c").getValue());
+        assertEquals("eee", r.get("a").getValue());
+        assertEquals("eee", r.get("b").getValue());
+        assertEquals("ccc", r.get("c").getValue());
     }
     
     @Test
@@ -135,9 +164,9 @@ public class CopyTest extends AbstractBlockTest {
         // Perform copy
         copy.apply(r, scope);
         
-        Assert.assertEquals("aaa", scope.getVariable("e"));
-        Assert.assertEquals("aaa", scope.getVariable("f"));
-        Assert.assertEquals("ggg", scope.getVariable("g"));
+        assertEquals("aaa", scope.getVariable("e"));
+        assertEquals("aaa", scope.getVariable("f"));
+        assertEquals("ggg", scope.getVariable("g"));
     }
     
     @Test
@@ -168,9 +197,9 @@ public class CopyTest extends AbstractBlockTest {
         // Perform copy
         copy.apply(r, scope);
         
-        Assert.assertEquals("hhh", scope.getVariable("e"));
-        Assert.assertEquals("hhh", scope.getVariable("f"));
-        Assert.assertEquals("ggg", scope.getVariable("g"));
+        assertEquals("hhh", scope.getVariable("e"));
+        assertEquals("hhh", scope.getVariable("f"));
+        assertEquals("ggg", scope.getVariable("g"));
     }
 
     @Test
@@ -197,7 +226,7 @@ public class CopyTest extends AbstractBlockTest {
             // Perform copy
             copy.apply(r, scope);       
         } catch (Exception ex) {
-            Assert.fail("Method must not raise exception.");            
+            fail("Method must not raise exception.");            
         }
     }
     
@@ -245,8 +274,8 @@ public class CopyTest extends AbstractBlockTest {
         // Perform copy
         copy.apply(r, scope);
         
-        Assert.assertEquals("ddd", r.get("a").getValue());
-        Assert.assertEquals("ddd", r.get("b").getValue());
-        Assert.assertEquals("ccc", r.get("c").getValue());        
+        assertEquals("ddd", r.get("a").getValue());
+        assertEquals("ddd", r.get("b").getValue());
+        assertEquals("ccc", r.get("c").getValue());        
     }    
 } 

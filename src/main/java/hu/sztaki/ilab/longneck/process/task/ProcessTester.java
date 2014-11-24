@@ -1,10 +1,5 @@
 package hu.sztaki.ilab.longneck.process.task;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import hu.sztaki.ilab.longneck.Record;
 import hu.sztaki.ilab.longneck.TestCase;
 import hu.sztaki.ilab.longneck.bootstrap.CompactProcess;
@@ -13,11 +8,15 @@ import hu.sztaki.ilab.longneck.bootstrap.KeyGenerator;
 import hu.sztaki.ilab.longneck.process.FailException;
 import hu.sztaki.ilab.longneck.process.FilterException;
 import hu.sztaki.ilab.longneck.process.ImmutableErrorRecordImpl;
-import hu.sztaki.ilab.longneck.process.Kernel;
 import hu.sztaki.ilab.longneck.process.LongneckProcess;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
+import hu.sztaki.ilab.longneck.process.kernel.Kernel;
+import hu.sztaki.ilab.longneck.process.mapping.MappedRecord;
 import hu.sztaki.ilab.longneck.util.MaxMatching;
 import hu.sztaki.ilab.longneck.util.TestUtil;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * 
@@ -28,18 +27,25 @@ public class ProcessTester {
 
     private final static Logger LOG = Logger.getLogger(ProcessTester.class);
 
-    private Kernel kernel;
-    private LongneckProcess longneckProcess;
-    private List<Record> localCloneQueue = new ArrayList<Record>();
-    private KeyGenerator nodeKeyGenerator = new DecimalKeyGenerator();
+    private final Kernel kernel;
+    private final LongneckProcess longneckProcess;
+    private final List<Record> localCloneQueue = new ArrayList<Record>();
+    private final KeyGenerator nodeKeyGenerator = new DecimalKeyGenerator();
+    private final boolean verbose;
 
-    public ProcessTester(CompactProcess process) {
+    public ProcessTester(CompactProcess process, boolean verbose) {
         longneckProcess = process.getProcess();
         kernel = new Kernel(longneckProcess.getTopLevelBlocks(),
             process.getFrameAddressResolver(), localCloneQueue);
+        this.verbose = verbose;
     }
 
     private boolean process(TestCase testCase) {
+        if (verbose) {
+            showAndLog("Testing " + testCase.getId() + " ...");
+            showAndLog("Source record for " + testCase.getId() + " :");
+            showAndLog(testCase.getSourceRecord().toString());
+        }
         List<Record> queue = new ArrayList<Record>();
         queue.add(testCase.getSourceRecord());
         long startTime = System.currentTimeMillis();
@@ -47,14 +53,22 @@ public class ProcessTester {
             for (Record record : queue) {
                 try {
                     kernel.process(record);
+                    // Beacause the cloned records
+                    if(record instanceof MappedRecord) record = ((MappedRecord)record).getAncestor();
                     testCase.getObservedTargetRecords().add(record);
                 } catch (FailException e) {
-                    ;
+                    // Beacause the cloned records
+                        if(record instanceof MappedRecord) record = ((MappedRecord)record).getAncestor();
+//                    do nothing
                 } catch (FilterException e) {
-                    ;
+                    // Beacause the cloned records
+                        if(record instanceof MappedRecord) record = ((MappedRecord)record).getAncestor();
+//                    do nothing
                 } finally {
-                    for (Record errorRecord : createErrorRecords(record))
+                    for (Record errorRecord : createErrorRecords(record)) {
                         testCase.getObservedErrorRecords().add(errorRecord);
+
+                    }
                 }
             }
             queue.clear();
@@ -64,6 +78,17 @@ public class ProcessTester {
             localCloneQueue.clear();
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
+
+        if (verbose) {
+            showAndLog("Target records for " + testCase.getId() + " :");
+            for (Record rec : testCase.getObservedTargetRecords())
+                showAndLog(rec.toString());
+            showAndLog("Error records for " + testCase.getId() + " :");
+            for (Record rec : testCase.getObservedErrorRecords())
+                showAndLog(rec.toString());
+            showAndLog("Testing " + testCase.getId() + " took " + elapsedTime + " ms.");
+        }
+
         if (elapsedTime > testCase.getTimeout()) {
             LOG.error("Processing test " + testCase.getId() + " timed out.");
             return false;
@@ -101,7 +126,8 @@ public class ProcessTester {
             }
             if (!fit) {
                 LOG.error("Expected error record " + expected.toString() +
-                    " does not match any of the observed error recods of test " + testCase.getId() + "." ) ;
+                    " does not match any of the observed error recods of test " +
+                    testCase.getId() + ".");
                 return false;
             }
         }
@@ -112,8 +138,11 @@ public class ProcessTester {
         List<Record> expectedRecords = testCase.getExpectedTargetRecords();
         List<Record> observedRecords = testCase.getObservedTargetRecords();
 
-        if (observedRecords.size() != expectedRecords.size())
+        if (observedRecords.size() != expectedRecords.size()) {
+            LOG.error("Size of observed target records do not match size of expected ones in test " +
+                testCase.getId() + ".");
             return false;
+        }
 
         int size = expectedRecords.size();
         boolean[][] graphOfRecords = new boolean[size][size];
@@ -142,5 +171,10 @@ public class ProcessTester {
             }
         }
         return true;
+    }
+
+    public void showAndLog(String message) {
+        LOG.debug(message);
+        System.out.println(message);
     }
 }

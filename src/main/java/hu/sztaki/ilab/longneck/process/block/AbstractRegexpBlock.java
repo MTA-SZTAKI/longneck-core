@@ -15,8 +15,6 @@ public abstract class AbstractRegexpBlock extends AbstractAtomicBlock {
     protected String regexp;
     /** The matcher object used for matching. */
     protected Pattern pattern;
-    /** Matcher for this pattern. */
-    protected Matcher matcher;
     
     /**
      * Sets the regular expression.

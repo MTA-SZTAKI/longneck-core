@@ -26,7 +26,6 @@ public class BlockReference extends AbstractReference implements Block {
         BlockReference copy = (BlockReference) super.clone();
         
         copy.referredBlock = referredBlock == null ? null : referredBlock.clone();
-        copy.mapping = mapping.clone();
 
         return copy;
     }

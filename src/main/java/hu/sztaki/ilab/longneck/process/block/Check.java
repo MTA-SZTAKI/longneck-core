@@ -7,7 +7,6 @@ import hu.sztaki.ilab.longneck.process.VariableSpace;
 import hu.sztaki.ilab.longneck.process.constraint.AndOperator;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
 import hu.sztaki.ilab.longneck.process.constraint.Constraint;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,8 +24,6 @@ public class Check extends AbstractSourceInfoContainer implements Block {
     
     @Override
     public void apply(Record record, VariableSpace parentScope) throws CheckError {
-        List<CheckResult> results = 
-                new ArrayList<CheckResult>(1);
         CheckResult res;
         if (checkedField == null || !BlockUtils.exists(checkedField, record, parentScope)) {
             res = new CheckResult(constraints.check(record, parentScope), this, summary);

@@ -7,6 +7,7 @@ import hu.sztaki.ilab.longneck.process.constraint.ConstraintReference;
 import hu.sztaki.ilab.longneck.process.constraint.EntityReference;
 import hu.sztaki.ilab.longneck.process.constraint.GenericConstraint;
 import hu.sztaki.ilab.longneck.process.constraint.GenericEntity;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,12 +59,10 @@ public class Repository {
         }
     }
     
-    public GenericEntity getEntity(String id, String version) {
-        SplitId splitId = new SplitId(id);
-        
+    public GenericEntity getEntity(String packageid, String id, String version) {
         GenericEntity entity = null;
         try {
-            entity = entities.get(splitId.pkg).getEntity(splitId.id, version);
+            entity = entities.get(packageid).getEntity(id, version);
         } catch (NullPointerException ex) {
             throw new RuntimeException("Entity package not found: " + id + ":" + version, ex);
         }
@@ -75,12 +74,10 @@ public class Repository {
         return entity;
     }
     
-    public GenericConstraint getConstraint(String id, String version) {
-        SplitId splitId = new SplitId(id);
-        
+    public GenericConstraint getConstraint(String packageid, String id, String version) {
         GenericConstraint constraint = null;
         try {
-            constraint = constraints.get(splitId.pkg).getConstraint(splitId.id, version);
+            constraint = constraints.get(packageid).getConstraint(id, version);
         } catch (NullPointerException ex) {
             throw new RuntimeException("Constraint package not found: " + id + ":" + version, ex);
         }
@@ -92,12 +89,10 @@ public class Repository {
         return constraint;
     }
     
-    public GenericBlock getBlock(String id, String version) {
-        SplitId splitId = new SplitId(id);
-        
+    public GenericBlock getBlock(String packageid, String id, String version) {
         GenericBlock block = null;
         try {
-             block = blocks.get(splitId.pkg).getBlock(splitId.id, version);
+             block = blocks.get(packageid).getBlock(id, version);
         } catch (NullPointerException ex) {
             throw new RuntimeException("Block package not found: " + id + ":" + version, ex);
         }
@@ -122,17 +117,23 @@ public class Repository {
         }
     }
     
-    public void updateReferences(List<AbstractReference> references) {
-        for (AbstractReference ref : references) {
+    public void updateReferences(List<RefToDirPair> refdirlist, String repositoryPath) throws IOException {
+        for (RefToDirPair refdir : refdirlist) {
+            AbstractReference ref = refdir.getRef();
+            SplitId splitId = new SplitId(ref.getId());
+            String pkg = splitId.pkg;
+            String id = splitId.id;
+            String packageid = FileType.normalizePackageId(
+                    FileType.getFullPackageId(refdir.getDefaultdirectory(), pkg), repositoryPath, ref);
             if (ref instanceof BlockReference) {
-                ((BlockReference) ref).setReferredBlock(getBlock(ref.getId(), ref.getVersion()));
+                ((BlockReference) ref).setReferredBlock(getBlock(packageid, id, ref.getVersion()));
             }
             else if (ref instanceof ConstraintReference) {
                 ((ConstraintReference) ref).setReferredConstraint(
-                        getConstraint(ref.getId(), ref.getVersion()));
+                        getConstraint(packageid, id, ref.getVersion()));
             }
             else if (ref instanceof EntityReference) {
-                ((EntityReference) ref).setReferredEntity(getEntity(ref.getId(), ref.getVersion()));
+                ((EntityReference) ref).setReferredEntity(getEntity(packageid, id, ref.getVersion()));
             }
         }
     }
