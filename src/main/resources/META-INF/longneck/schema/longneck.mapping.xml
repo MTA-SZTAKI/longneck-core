@@ -148,6 +148,14 @@
       <c:bind-xml name="delimiter" node="attribute" type="char"/>
     </c:field>
     
+    <c:field name="textQualifier" type="char">
+      <c:bind-xml name="text-qualifier" node="attribute" type="char"/>
+    </c:field>
+    
+    <c:field name="useTextQualifier" type="boolean">
+      <c:bind-xml name="use-text-qualifier" node="attribute"/>
+    </c:field>
+    
     <c:field name="hasHeaders" type="boolean">
       <c:bind-xml name="has-headers" node="attribute"/>
     </c:field>

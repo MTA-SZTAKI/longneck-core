@@ -333,6 +333,20 @@ database.connection.NAME.password=XXXX</code></pre>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="use-text-qualifier" type="xs:boolean" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Sets the character to use as a text qualifier in the data. Default: '"'.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="text-qualifier" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Sets whether text qualifiers will be used while parsing or not. Default: true.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="has-headers" type="xs:boolean" use="optional">
           <xs:annotation>
             <xs:documentation>
