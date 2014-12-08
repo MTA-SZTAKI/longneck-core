@@ -31,12 +31,16 @@ public class CsvSource implements Source {
     private String path;
 	/** The delimiter used to separate the records. */
 	private Character delimiter = ';';
+	/** The character to use as a text qualifier in the data. */
+	private Character textQualifier;
     /** The character set to use when reading the file. */
     private String characterSet = "UTF-8";
 	/** Column names. */
 	private String[] columns = null;
     /** The input files have headers. */
     private boolean hasHeaders = true;
+    /** The input files use textQualifier or not. */
+    private boolean useTextQualifier = true;
     /** The CSV reader. */
     private CsvReader csvReader;
     /** The runtime properties. */
@@ -103,6 +107,8 @@ public class CsvSource implements Source {
         // Create new reader
         csvReader = new CsvReader(sourceFiles.get(currentFileIndex),
                 delimiter, Charset.forName(characterSet));
+        csvReader.setUseTextQualifier(useTextQualifier);
+        if(textQualifier != null) csvReader.setTextQualifier(textQualifier);
 
         // Try to set column names from the first file
         if (hasHeaders) {
@@ -224,6 +230,22 @@ public class CsvSource implements Source {
 
     public void setHasHeaders(boolean hasHeaders) {
         this.hasHeaders = hasHeaders;
+    }
+
+    public Character getTextQualifier() {
+        return textQualifier;
+    }
+
+    public void setTextQualifier(Character textQualifier) {
+        this.textQualifier = textQualifier;
+    }
+
+    public boolean isUseTextQualifier() {
+        return useTextQualifier;
+    }
+
+    public void setUseTextQualifier(boolean useTextQualifier) {
+        this.useTextQualifier = useTextQualifier;
     }
 
     public Properties getRuntimeProperties() {
