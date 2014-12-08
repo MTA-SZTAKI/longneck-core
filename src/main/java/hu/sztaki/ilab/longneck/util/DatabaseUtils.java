@@ -63,7 +63,7 @@ public class DatabaseUtils {
             s.append(source.getValue(key) == null?"null":source.getValue(key).toString());
             s.append("\", ");
         }
-        
+        s.delete(s.length()-2 , s.length());
         s.append("}");
         
         return s.toString();
