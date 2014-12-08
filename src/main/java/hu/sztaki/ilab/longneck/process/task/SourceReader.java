@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 public class SourceReader extends AbstractTask implements Runnable {
-    
+
     /** Log to write messages to. */
     private final Logger LOG = Logger.getLogger(SourceReader.class);
     /** Waiting time for source read in milliseconds. */
@@ -39,7 +39,7 @@ public class SourceReader extends AbstractTask implements Runnable {
     public SourceReader(BlockingQueue<QueueItem> sourceQueue, Source source, Properties runtimeProperties) {
         this.sourceQueue = sourceQueue;
         this.source = source;
-        
+
         measureTimeEnabled = PropertyUtils.getBooleanProperty(
                 runtimeProperties, "measureTimeEnabled", false);
         sourceReadTimeout = PropertyUtils.getIntProperty(
@@ -51,26 +51,27 @@ public class SourceReader extends AbstractTask implements Runnable {
         bulkSize = PropertyUtils.getIntProperty(
                 runtimeProperties, "sourceReader.bulkSize", 100);
     }
-    
+
     @Override
     public void run() {
         super.run();
         LOG.info("Starting up.");
-        
-        source.init();
-        
-        List<Record> records = new ArrayList<Record>(bulkSize);
-        boolean waitForMoreRecords = true;        
+
 		try {
+            List<Record> records = new ArrayList<Record>(bulkSize);
+            boolean waitForMoreRecords = true;
+
+            source.init();
+
             while (running && waitForMoreRecords) {
 
-                // Get a record and add to queue item pack                    
-                try {                        
+                // Get a record and add to queue item pack
+                try {
                     Record r = source.getRecord();
                     if (r != null) {
                         // Insert into records store
                         records.add(r);
-                        
+
                         stats.in += 1;
                     } else {
                         Thread.sleep(sourceReadTimeout);
@@ -84,11 +85,11 @@ public class SourceReader extends AbstractTask implements Runnable {
                 if (records.size() >= bulkSize || ! waitForMoreRecords) {
 
                     // Insert into source queue
-                    boolean inserted = false;                            
-                    while (running && ! inserted) {                        
+                    boolean inserted = false;
+                    while (running && ! inserted) {
                         inserted = sourceQueue.offer(
-                                new QueueItem(records, (! waitForMoreRecords)), 
-                                targetQueueWriteTimeout, TimeUnit.MILLISECONDS);                          
+                                new QueueItem(records, (! waitForMoreRecords)),
+                                targetQueueWriteTimeout, TimeUnit.MILLISECONDS);
                     }
 
                     stats.out += records.size();
@@ -100,18 +101,18 @@ public class SourceReader extends AbstractTask implements Runnable {
         } catch (Exception ex) {
             LOG.fatal("Fatal error during processing.", ex);
         }
-        
+
         // Close source
-    	source.close();        
-        
+    	source.close();
+
         // Log timings
         if (measureTimeEnabled) {
             stats.totalTimeMillis = this.getTotalTime();
-            stats.blockedTimeMillis = 
+            stats.blockedTimeMillis =
                     mxBean.getThreadInfo(Thread.currentThread().getId()).getBlockedTime();
         }
         stats.setMeasureTimeEnabled(measureTimeEnabled);
-        
+
         LOG.info(stats.toString());
         LOG.info("Shutting down.");
     }
