@@ -5,14 +5,14 @@ import hu.sztaki.ilab.longneck.process.VariableSpace;
 
 /**
  * Matches against regular expression and replaces the first occurence of the match.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class AddPostfix extends AbstractAtomicBlock {
 
     /** Replacement string. */
     private String text;
-    
+
     @Override
     public void apply(Record record, VariableSpace parentScope) {
         for (String fName : applyTo) {
@@ -37,6 +37,6 @@ public class AddPostfix extends AbstractAtomicBlock {
     public AddPostfix clone() {
         return (AddPostfix) super.clone();
     }
-    
+
 
 }

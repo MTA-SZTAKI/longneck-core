@@ -9,18 +9,18 @@ import java.util.List;
 
 /**
  * If-then-else control structure.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class If extends Sequence {
-    
+
     /** The condition constraints. */
     private AndOperator condition = new AndOperator();
     /** The then branch. */
     private Sequence thenBranch;
     /** Blocks, that are executed, if the condition constraint fails. */
     private Sequence elseBranch;
-    
+
     public If() {
         blocks = new ArrayList<Block>(2);
     }
@@ -36,7 +36,7 @@ public class If extends Sequence {
     public List<Constraint> getConstraints() {
         return condition.getConstraints();
     }
-    
+
     public void setConstraints(List<Constraint> constraints) {
         condition.setConstraints(constraints);
     }
@@ -50,7 +50,7 @@ public class If extends Sequence {
         this.elseBranch = elseBranch;
     }
 
-    public Sequence getThenBranch() {        
+    public Sequence getThenBranch() {
         return thenBranch;
     }
 
@@ -58,28 +58,30 @@ public class If extends Sequence {
         ((List<Block>) blocks).add(thenBranch);
         this.thenBranch = thenBranch;
     }
-    
+
     @Override
-    public void apply(Record record, VariableSpace parentScope) {}
+    public void apply(Record record, VariableSpace parentScope) { }
 
     @Override
     public If clone() {
         If copy = (If) super.clone();
         if (condition != null) {
-            copy.condition = condition.clone(); 
+            copy.condition = condition.clone();
         }
-        
+
         copy.blocks = new ArrayList<Block>(2);
-        if (thenBranch != null) {            
+        if (thenBranch != null) {
             copy.thenBranch = thenBranch.clone();
+            if (context != null) copy.thenBranch.setContext(context);
             ((List<Block>) copy.blocks).add(copy.thenBranch);
         }
-        
+
         if (elseBranch != null) {
             copy.elseBranch = elseBranch.clone();
             ((List<Block>) copy.blocks).add(copy.elseBranch);
         }
-        
-        return copy;       
+        copy.setContext(this.context);
+        return copy;
     }
+
 }

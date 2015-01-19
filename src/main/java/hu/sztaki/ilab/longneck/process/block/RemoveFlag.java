@@ -18,7 +18,7 @@ public class RemoveFlag extends AbstractFlagBlock {
                 }
 
                 record.get(fieldName).removeFlag(flag);
-            }        
+            }
         } catch (NullPointerException ex) {
                log.error(String.format("%1$s %2$s", this, sourceInfo.getLocationString()), ex);
         }
@@ -29,5 +29,5 @@ public class RemoveFlag extends AbstractFlagBlock {
     public RemoveFlag clone() {
         return (RemoveFlag) super.clone();
     }
-    
+
 }

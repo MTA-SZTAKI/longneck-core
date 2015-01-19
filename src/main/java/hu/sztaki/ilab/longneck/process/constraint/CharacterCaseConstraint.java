@@ -8,11 +8,11 @@ import java.util.List;
 
 /**
  * Checks, if the input is in the specified character case.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class CharacterCaseConstraint extends AbstractAtomicConstraint {
-    
+
     /** The enforced character case. */
     private CharacterCase charCase;
 
@@ -23,13 +23,13 @@ public class CharacterCaseConstraint extends AbstractAtomicConstraint {
     public void setCase(CharacterCase charCase) {
         this.charCase = charCase;
     }
-    
+
     @Override
     public CheckResult check(Record record, VariableSpace scope) {
         String details = String.format("Character case: %1$s", charCase.toString());
         // Prepare result variable
         List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
-        
+
         for (String fieldName : applyTo) {
             String value = BlockUtils.getValue(fieldName, record, scope);
             // Skip null or empty fields
@@ -44,7 +44,7 @@ public class CharacterCaseConstraint extends AbstractAtomicConstraint {
                 return new CheckResult(this, false, null, null, null, results);
             }
         }
-        
+
         return new CheckResult(this, true, null, null, null, results);
     }
 

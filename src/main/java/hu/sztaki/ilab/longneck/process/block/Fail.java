@@ -11,19 +11,19 @@ import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 public class Fail extends AbstractSourceInfoContainer implements Block {
-    
+
     /** The summary of implemented checks as a short text. */
     private String summary;
     /* The checked field, what we want to test in the check box.*/
     private String faildField;
-    
+
     @Override
     public void apply(Record record, VariableSpace parentScope) throws FailException {
         record.addError(new CheckResult(this, false,
-                faildField == null || !BlockUtils.exists(faildField, record, parentScope)?null:faildField, 
-                faildField == null? null:BlockUtils.getValue(faildField, record, parentScope), 
-                summary == null?"Intentional failure.":summary));
-        
+                faildField == null || !BlockUtils.exists(faildField, record, parentScope)?null:faildField,
+                faildField == null? null:BlockUtils.getValue(faildField, record, parentScope),
+                summary == null ? "Intentional failure." : summary));
+
         throw new FailException(summary == null?"Intentional failure.":summary);
     }
 
@@ -42,7 +42,7 @@ public class Fail extends AbstractSourceInfoContainer implements Block {
     public void setFaildField(String faildField) {
         this.faildField = faildField;
     }
-    
+
     @Override
     public Fail clone() {
         return (Fail) super.clone();
@@ -76,7 +76,7 @@ public class Fail extends AbstractSourceInfoContainer implements Block {
         hash = 67 * hash + (this.faildField != null ? this.faildField.hashCode() : 0);
         return hash;
     }
-    
-    
-    
+
+
+
 }

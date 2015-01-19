@@ -13,11 +13,11 @@ import org.apache.commons.collections.map.LRUMap;
 /**
  * Block that caches block outputs as key-value pairs it contains.
  *
- * Each thread has its own internal cache (LRUMap). Cache key is the field 
- * value defined in the "apply-to" parameter. Note that only one field name 
- * is permitted here! Cache value is a list of fields defined in the 
+ * Each thread has its own internal cache (LRUMap). Cache key is the field
+ * value defined in the "apply-to" parameter. Note that only one field name
+ * is permitted here! Cache value is a list of fields defined in the
  * "output-fields" parameter
- * 
+ *
  * @author Bendig Loránd <lbendig@ilab.sztaki.hu>
  */
 public class Caching extends AbstractAtomicBlock implements CompoundBlock {
@@ -36,7 +36,7 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
     public Caching() {
         localCache = new CacheMapBuilder(size);
     }
-    
+
     public int getSize() {
         return size;
     }
@@ -44,7 +44,7 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
     public void setSize(int size) {
         this.size = size;
     }
-    
+
     @Override
     public List<Block> getBlocks() {
         return (List<Block>) blocks;
@@ -59,7 +59,7 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
     public boolean hasPosition(int pos) {
         return (blocks.size() - 1 >= pos);
     }
-    
+
     public void setOutputFields(List<String> outputFields) {
         this.outputFields = outputFields;
     }
@@ -81,7 +81,7 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
         if (cache == null) {
             cache = localCache.get();
         }
-        
+
         return cache.get(sourceInfo.getLine() + "_" + key);
     }
 
@@ -89,10 +89,10 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
         if (cache == null) {
             cache = localCache.get();
         }
-        
+
         cache.put((sourceInfo.getLine() + "_" + key) , value);
     }
-    
+
     @Override
     public Caching clone() {
         Caching copy = (Caching) super.clone();
@@ -103,18 +103,18 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
                 ((List<Block>) copy.blocks).add(b.clone());
             }
         }
-        
+
         copy.localCache = new CacheMapBuilder(size);
         copy.cache = null;
-        
+
         if (outputFields != null) {
             copy.outputFields =  new ArrayList<String>(outputFields.size());
             copy.outputFields.addAll(outputFields);
         }
-        
+
         return copy;
     }
-    
+
     public static class CacheMapBuilder extends ThreadLocal<Map> {
         private final int size;
 
@@ -125,7 +125,7 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
         public int getSize() {
             return size;
         }
-        
+
         @Override
         protected Map initialValue() {
             return new LRUMap(size);
@@ -164,6 +164,6 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
         }
         return true;
     }
-    
-    
+
+
 }

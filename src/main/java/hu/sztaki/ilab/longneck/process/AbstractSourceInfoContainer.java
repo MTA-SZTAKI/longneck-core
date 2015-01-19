@@ -9,11 +9,11 @@ import org.json.JSONObject;
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 abstract public class AbstractSourceInfoContainer implements SourceInfoContainer, Cloneable {
-    
+
     protected SourceInfo sourceInfo;
     protected FrameAddress frameAddress;
     protected final Logger log = Logger.getLogger(this.getClass());
-    
+
     public AbstractSourceInfoContainer() {
     }
 
@@ -26,7 +26,7 @@ abstract public class AbstractSourceInfoContainer implements SourceInfoContainer
     public void setSourceInfo(SourceInfo sourceInfo) {
         this.sourceInfo = sourceInfo;
     }
-    
+
     public void setSourceInfo(String jsonSource) {
         try {
             JSONObject jsonObj = new JSONObject(jsonSource);
@@ -45,13 +45,13 @@ abstract public class AbstractSourceInfoContainer implements SourceInfoContainer
     public void setFrameAddress(FrameAddress frameAddress) {
         this.frameAddress = frameAddress;
     }
-    
+
 
     @Override
     public String toString() {
         return this.getClass().getName();
     }
-    
+
     @Override
     protected AbstractSourceInfoContainer clone() {
         AbstractSourceInfoContainer clone;

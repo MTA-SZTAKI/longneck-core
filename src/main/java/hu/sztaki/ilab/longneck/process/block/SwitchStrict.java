@@ -5,10 +5,10 @@ import hu.sztaki.ilab.longneck.process.VariableSpace;
 
 /**
  * Strict switch control structure.
- * 
+ *
  * It provides the same functionality as the Switch class, but it fails, if no cases are
  * executed due to constraint or block failures.
- * 
+ *
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 public class SwitchStrict extends AbstractSwitch {
@@ -19,8 +19,11 @@ public class SwitchStrict extends AbstractSwitch {
 
     @Override
     public SwitchStrict clone() {
-        return (SwitchStrict) super.clone();
+        SwitchStrict copy = (SwitchStrict) super.clone();
+        copy.setContext(this.context) ;
+        return copy ;
+
     }
-    
-    
+
+
 }

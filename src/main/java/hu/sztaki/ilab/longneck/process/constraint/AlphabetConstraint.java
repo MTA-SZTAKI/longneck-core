@@ -10,14 +10,14 @@ import java.util.List;
 
 /**
  * Checks input against an alphabet.
- * 
+ *
  * The alphabet defines the characters, that are checked. The policy defines
  * if the alphabet specified is allowed in the input, or denied.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class AlphabetConstraint extends AbstractAtomicConstraint {
-    
+
     /** Allow or deny policy for character containment. */
     private Policy policy = Policy.Allow;
     /** Character classes checked in this constraint. */
@@ -30,14 +30,14 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
     public void setClasses(List<CharacterClass> classes) {
         this.classes = classes;
     }
-    
+
     public void setClasses(String classes) {
         List<CharacterClass> cls = new ArrayList<CharacterClass>();
-        
+
         for (String c : Arrays.asList(classes.split("\\s+"))) {
             cls.add(CharacterClass.valueOf(c));
         }
-        
+
         this.classes = cls;
     }
 
@@ -50,13 +50,13 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
     }
 
     @Override
-    public CheckResult check(Record record, VariableSpace scope) {        
-        String details = String.format("Policy %1$s, Character classes: %2$s", 
+    public CheckResult check(Record record, VariableSpace scope) {
+        String details = String.format("Policy %1$s, Character classes: %2$s",
                 policy.toString(), LongneckStringUtils.getEnumList(classes));
-        
+
         // Prepare result variable
         List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
-        
+
         for (String fieldName : applyTo) {
             // Perform check
             String s = BlockUtils.getValue(fieldName, record, scope);
@@ -64,7 +64,7 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
                 continue;
             }
             char[] characters = s.toCharArray();
-            
+
             // Allow policy
             if (policy == Policy.Allow) {
                 for (int i = 0; i < characters.length; ++i) {
@@ -79,13 +79,13 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
                         }
                     }
 
-                    if (ok) { 
+                    if (ok) {
                         results.add(new CheckResult(this, true, fieldName, s, details));
                     } else {
                         results.add(new CheckResult(this, false, fieldName, s, details));
                         return new CheckResult(this, false, null, null, null, results);
                     }
-                }                
+                }
             } else {
                 // Deny policy
                 for (int i = 0; i < characters.length; ++i) {
@@ -100,7 +100,7 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
                         }
                     }
 
-                    if (ok) { 
+                    if (ok) {
                         results.add(new CheckResult(this, true, fieldName, s, details));
                     } else {
                         results.add(new CheckResult(this, false, fieldName, s, details));
@@ -109,7 +109,7 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
                 }
             }
         }
-        
+
         return new CheckResult(this, true, null, null, null, results);
     }
 
@@ -120,7 +120,7 @@ public class AlphabetConstraint extends AbstractAtomicConstraint {
             copy.classes = new ArrayList<CharacterClass>(classes.size());
             copy.classes.addAll(classes);
         }
-        
+
         return copy;
-    }    
+    }
 }

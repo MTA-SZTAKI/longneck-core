@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <c:mapping xmlns:c="http://castor.exolab.org/"
            xmlns:l="urn:hu.sztaki.ilab.longneck:1.0">
-  
+
   <!-- Castor mapping for Longneck -->
   <!-- Version 1.0 -->
 
@@ -103,25 +103,25 @@
       <c:bind-xml name="numeric-fields-to-convert" node="attribute" type="string"/>
     </c:field>
     <c:field name="sql" type="string">
-      <c:bind-xml node="text"/>  
-    </c:field>        
+      <c:bind-xml node="text"/>
+    </c:field>
   </c:class>
-  
+
   <c:class name="hu.sztaki.ilab.longneck.process.access.SimpleDatabaseTarget"
            extends="hu.sztaki.ilab.longneck.process.access.AbstractDatabaseAccessor">
 
     <c:map-to xml="database-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="errorthreshold" type="integer">
       <c:bind-xml name="error-threshold" node="attribute" type="integer"/>
     </c:field>
-    
+
     <c:field name="truncateQuery" type="string">
       <c:bind-xml name="truncate-query" node="element"/>
-    </c:field>    
+    </c:field>
     <c:field name="insertQuery" type="hu.sztaki.ilab.longneck.process.access.SimpleDatabaseTargetSQL">
-    </c:field>    
-    
+    </c:field>
+
   </c:class>
 
   <!-- Console target -->
@@ -136,61 +136,61 @@
       <c:bind-xml name="path" node="attribute" type="string"/>
     </c:field>
   </c:class>
-  
+
   <!-- Csv file source -->
   <c:class name="hu.sztaki.ilab.longneck.process.access.CsvSource">
     <c:map-to xml="csv-source" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="name" type="string">
       <c:bind-xml name="name" node="attribute"/>
     </c:field>
-    
+
     <c:field name="path" type="string">
       <c:bind-xml name="path" node="attribute"/>
     </c:field>
-    
+
     <c:field name="delimiter" type="char">
       <c:bind-xml name="delimiter" node="attribute" type="char"/>
     </c:field>
-    
+
     <c:field name="textQualifier" type="char">
       <c:bind-xml name="text-qualifier" node="attribute" type="char"/>
     </c:field>
-    
+
     <c:field name="useTextQualifier" type="boolean">
       <c:bind-xml name="use-text-qualifier" node="attribute"/>
     </c:field>
-    
+
     <c:field name="hasHeaders" type="boolean">
       <c:bind-xml name="has-headers" node="attribute"/>
     </c:field>
-    
+
     <c:field name="columns" type="string" set-method="setColumns">
       <c:bind-xml name="columns" node="attribute" />
-    </c:field>        
+    </c:field>
   </c:class>
-  
+
 
   <!-- Csv file target -->
   <c:class name="hu.sztaki.ilab.longneck.process.access.CsvTarget">
     <c:map-to xml="csv-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="delimiter" type="string">
       <c:bind-xml name="delimiter" node="attribute" type="char"/>
     </c:field>
-    
+
     <c:field name="emptyValue" type="string">
       <c:bind-xml name="empty-value" node="attribute" type="string"/>
     </c:field>
-    
+
     <c:field name="columns" collection="array" type="strings">
       <c:bind-xml name="columns" node="attribute" />
     </c:field>
-        
+
     <c:field name="path" type="string">
       <c:bind-xml name="path" node="attribute" type="string"/>
     </c:field>
-    
+
     <c:field name="name" type="string">
       <c:bind-xml name="name" node="attribute"/>
     </c:field>
@@ -205,11 +205,11 @@
   <c:class name="hu.sztaki.ilab.longneck.process.access.NullTarget">
     <c:map-to xml="null-target" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
   </c:class>
-  
+
   <!-- Entity package -->
   <c:class name="hu.sztaki.ilab.longneck.process.EntityPackage">
     <c:map-to xml="entity-package"  ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="packageId" type="string">
       <c:bind-xml name="package-id" node="attribute"/>
     </c:field>
@@ -240,14 +240,15 @@
       <c:bind-xml name="package-id" node="attribute"/>
     </c:field>
 
-    <c:field name="map" type="hu.sztaki.ilab.longneck.process.block.GenericBlock" collection="map" set-method="addGenericBlock">
+    <c:field name="map" type="hu.sztaki.ilab.longneck.process.block.GenericBlock"
+             collection="map" set-method="addGenericBlock">
       <c:bind-xml name="block" node="element"/>
     </c:field>
   </c:class>
 
   <!-- Abstract flag block -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.AbstractFlagBlock"
-           extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">    
+           extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
 
     <c:field name="flag" type="hu.sztaki.ilab.longneck.process.constraint.ConstraintFlag">
       <c:bind-xml name="flag" type="string" node="attribute"/>
@@ -268,6 +269,10 @@
     <c:field name="propagateFailure" type="boolean">
       <c:bind-xml name="propagate-failure" node="attribute" type="boolean"/>
     </c:field>
+
+    <c:field name="context" type="string">
+      <c:bind-xml name="context" node="attribute" type="string"/>
+    </c:field>
   </c:class>
 
   <!-- Break -->
@@ -286,11 +291,11 @@
   <c:class name="hu.sztaki.ilab.longneck.process.constraint.OrCase"
            extends="hu.sztaki.ilab.longneck.process.constraint.AbstractCompoundConstraint">
         <c:map-to xml="orcase" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="then" type="hu.sztaki.ilab.longneck.process.constraint.AndOperator">
       <c:bind-xml name="then" node="element"/>
     </c:field>
-    
+
   </c:class>
 
   <!-- Check -->
@@ -305,7 +310,11 @@
     <c:field name="checkedField" type="string">
       <c:bind-xml name="checkedfield" type="string" node="attribute"/>
     </c:field>
-    
+
+    <c:field name="contextField" type="string">
+      <c:bind-xml name="context-field" type="string" node="attribute"/>
+    </c:field>
+
     <c:field name="constraints" type="hu.sztaki.ilab.longneck.process.constraint.Constraint" collection="arraylist">
       <c:bind-xml auto-naming="deriveByClass" node="element"/>
     </c:field>
@@ -359,12 +368,12 @@
     <c:field name="fromPattern" type="string">
       <c:bind-xml name="from-pattern" type="string" node="attribute"/>
     </c:field>
-    
+
     <c:field name="toPattern" type="string">
       <c:bind-xml name="to-pattern" type="string" node="attribute"/>
     </c:field>
   </c:class>
-  
+
   <!-- DateTime To Milliseconds -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.DateTimeToMilliseconds"
            extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
@@ -378,7 +387,7 @@
       <c:bind-xml name="pattern" type="string" node="attribute"/>
     </c:field>
   </c:class>
-  
+
   <!-- Milliseconds To DateTime -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.MillisecondsToDateTime"
            extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
@@ -397,7 +406,7 @@
   <c:class name="hu.sztaki.ilab.longneck.process.block.Fail"
            extends="hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer">
     <c:map-to xml="fail" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="summary" type="string">
       <c:bind-xml name="summary" type="string" node="attribute"/>
     </c:field>
@@ -412,7 +421,7 @@
            extends="hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer">
     <c:map-to xml="filter" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
   </c:class>
- 
+
   <!-- Generic Block -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.GenericBlock"
            extends="hu.sztaki.ilab.longneck.process.block.Sequence">
@@ -440,9 +449,9 @@
            extends="hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer">
     <c:map-to xml="if" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
-    <c:field name="constraints" type="hu.sztaki.ilab.longneck.process.constraint.Constraint" 
+    <c:field name="constraints" type="hu.sztaki.ilab.longneck.process.constraint.Constraint"
         collection="arraylist">
-            
+
       <c:bind-xml auto-naming="deriveByClass" node="element"/>
     </c:field>
 
@@ -467,7 +476,7 @@
     <c:field name="sources" type="string" set-method="setSources">
       <c:bind-xml name="sources" node="attribute"/>
     </c:field>
-    
+
     <c:field name="skipEmptyStrings" type="boolean">
       <c:bind-xml name="skip-empty-strings" node="attribute"/>
     </c:field>
@@ -495,7 +504,7 @@
   </c:class>
 
   <!-- Match Extract -->
-  <c:class name="hu.sztaki.ilab.longneck.process.block.MatchExtract" 
+  <c:class name="hu.sztaki.ilab.longneck.process.block.MatchExtract"
            extends="hu.sztaki.ilab.longneck.process.block.AbstractRegexpBlock">
     <c:map-to xml="match-extract" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
@@ -503,10 +512,10 @@
       <c:bind-xml auto-naming="deriveByClass" node="element"/>
     </c:field>
   </c:class>
-  
+
   <!-- Remove -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.Remove"
-           extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">    
+           extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
     <c:map-to xml="remove" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
   </c:class>
 
@@ -559,7 +568,7 @@
       <c:bind-xml name="characters" node="attribute"/>
     </c:field>
   </c:class>
-  
+
   <!-- Set Null -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.SetNull"
            extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
@@ -631,7 +640,7 @@
   </c:class>
 
   <!-- Extract Unix timestamp -->
-  <c:class name="hu.sztaki.ilab.longneck.process.block.ExtractUnixtimestamp" 
+  <c:class name="hu.sztaki.ilab.longneck.process.block.ExtractUnixtimestamp"
            extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
     <c:map-to xml="extract-timestamp" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
@@ -648,18 +657,18 @@
     <c:field name="fieldName" type="string">
       <c:bind-xml name="set-field" node="attribute"/>
     </c:field>
-    
+
     <c:field name="fieldValue" type="string">
       <c:bind-xml name="set-value" node="attribute"/>
     </c:field>
-    
+
   </c:class>
 
   <!-- CONSTRAINTS -->
-  
+
   <!-- Abstract compound constraint -->
   <c:class name="hu.sztaki.ilab.longneck.process.constraint.AbstractCompoundConstraint"
-           extends="hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer">    
+           extends="hu.sztaki.ilab.longneck.process.AbstractSourceInfoContainer">
     <c:field name="constraints" type="hu.sztaki.ilab.longneck.process.constraint.Constraint" collection="arraylist">
       <c:bind-xml auto-naming="deriveByClass" node="element"/>
     </c:field>
@@ -687,7 +696,7 @@
     </c:field>
   </c:class>
 
-   <!--IsLonger Constraint--> 
+   <!--IsLonger Constraint-->
   <c:class name="hu.sztaki.ilab.longneck.process.constraint.IsNotLongerConstraint"
            extends="hu.sztaki.ilab.longneck.process.constraint.AbstractAtomicConstraint">
     <c:map-to xml="is-notlonger" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
@@ -795,7 +804,7 @@
   <c:class name="hu.sztaki.ilab.longneck.process.constraint.HasFlagConstraint"
            extends="hu.sztaki.ilab.longneck.process.constraint.AbstractAtomicConstraint">
     <c:map-to xml="has-flag" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="flag" type="hu.sztaki.ilab.longneck.process.constraint.ConstraintFlag">
       <c:bind-xml name="flag" node="attribute"/>
     </c:field>
@@ -821,15 +830,15 @@
     <c:field name="regexp" type="string">
       <c:bind-xml name="regexp" node="attribute"/>
     </c:field>
-    
+
     <c:field name="regexpfield" type="string">
       <c:bind-xml name="regexp-field" node="attribute"/>
     </c:field>
-    
+
     <c:field name="applyTo" type="string" set-method="setApplyTo">
       <c:bind-xml name="apply-to" node="attribute"/>
     </c:field>
-    
+
   </c:class>
 
   <!-- Not null constraint -->
@@ -850,7 +859,7 @@
     <c:map-to xml="not" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
     <c:field name="constraint" type="hu.sztaki.ilab.longneck.process.constraint.Constraint">
       <c:bind-xml auto-naming="deriveByClass" node="element"/>
-    </c:field>    
+    </c:field>
   </c:class>
 
   <!-- Or operator -->
@@ -878,11 +887,11 @@
       <c:bind-xml name="else" node="element"/>
     </c:field>
   </c:class>
-  
+
   <!-- MAPPING -->
 
   <!-- abstract mapping rule -->
-  <c:class name="hu.sztaki.ilab.longneck.process.mapping.AbstractMappingRule">    
+  <c:class name="hu.sztaki.ilab.longneck.process.mapping.AbstractMappingRule">
     <c:field name="fields" type="string" set-method="setFields">
       <c:bind-xml name="fields" type="string" node="attribute"/>
     </c:field>
@@ -896,7 +905,7 @@
 
   <!-- abstract prefix/postfix -->
   <c:class name="hu.sztaki.ilab.longneck.process.mapping.AbstractFixRule"
-           extends="hu.sztaki.ilab.longneck.process.mapping.AbstractMappingRule">    
+           extends="hu.sztaki.ilab.longneck.process.mapping.AbstractMappingRule">
     <c:field name="text" type="string">
       <c:bind-xml name="text" node="attribute"/>
     </c:field>
@@ -932,73 +941,73 @@
       <c:bind-xml name="to" node="attribute"/>
     </c:field>
   </c:class>
-  
-  <c:class name="hu.sztaki.ilab.longneck.process.block.Caching" 
+
+  <c:class name="hu.sztaki.ilab.longneck.process.block.Caching"
            extends="hu.sztaki.ilab.longneck.process.block.AbstractAtomicBlock">
     <c:map-to xml="caching" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
     <c:field name="applyTo" type="string" set-method="setApplyTo">
       <c:bind-xml name="apply-to" node="attribute"/>
     </c:field>
-    
+
     <c:field name="outputFields" type="string" set-method="setOutputFields">
       <c:bind-xml name="output-fields" node="attribute"/>
     </c:field>
-    
+
     <c:field name="size" type="integer" >
       <c:bind-xml name="size" node="attribute" type="integer"/>
     </c:field>
-    
+
     <c:field name="blocks" type="hu.sztaki.ilab.longneck.process.block.Block" collection="arraylist">
       <c:bind-xml auto-naming="deriveByClass" node="element"/>
     </c:field>
-    
+
   </c:class>
-  
-  <!--Test Case-->  
+
+  <!--Test Case-->
   <c:class name="hu.sztaki.ilab.longneck.TestCase" >
-    <c:map-to xml="test" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>     
+    <c:map-to xml="test" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
     <c:field name="records" type="hu.sztaki.ilab.longneck.RecordImplForTest" collection="arraylist" set-method="addRecord">
       <c:bind-xml name="field" node="element"/>
-    </c:field>  
+    </c:field>
 
     <c:field name="id" type="string" >
       <c:bind-xml name="id" node="attribute"/>
-    </c:field>  
+    </c:field>
 
     <c:field name="timeout" type="long" >
       <c:bind-xml name="timeout" node="attribute"/>
-    </c:field>  
+    </c:field>
 
-  </c:class> 
-  
+  </c:class>
+
   <!--Record-->
-  
+
   <c:class name="hu.sztaki.ilab.longneck.RecordImplForTest" >
     <c:map-to xml="record" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="role" type="string" set-method="setRole" get-method="getRoleStr">
       <c:bind-xml name="role" node="attribute"/>
-    </c:field>  
+    </c:field>
 
     <c:field name="fields" type="hu.sztaki.ilab.longneck.Field" collection="map" set-method="add">
       <c:bind-xml name="field" node="element"/>
-    </c:field>  
-  </c:class> 
+    </c:field>
+  </c:class>
 
   <!--Field-->
   <c:class name="hu.sztaki.ilab.longneck.Field" >
     <c:map-to xml="field" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-    
+
     <c:field name="name" type="string" >
       <c:bind-xml name="name" node="attribute"/>
-    </c:field>  
+    </c:field>
 
     <c:field name="value" type="string" >
       <c:bind-xml name="value" node="attribute"/>
-    </c:field>  
+    </c:field>
 
-  </c:class> 
+  </c:class>
 
 </c:mapping>

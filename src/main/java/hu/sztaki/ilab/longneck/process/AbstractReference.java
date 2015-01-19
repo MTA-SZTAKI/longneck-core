@@ -5,22 +5,22 @@ import hu.sztaki.ilab.longneck.process.mapping.MappingRule;
 
 /**
  * Base class for referenced repository items.
- * 
+ *
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 abstract public class AbstractReference extends AbstractSourceInfoContainer implements Cloneable {
-    
+
     /** The id of the referenced constraint. */
     protected String id;
     /** The version of the referenced constraint. */
     protected String version;
     /** The name mapping used in the call. */
     protected Mapping mapping;
-    
+
     public AbstractReference() {
         mapping = new Mapping();
     }
-    
+
     /**
      * Returns the id of the referenced constraint.
      *
@@ -29,7 +29,7 @@ abstract public class AbstractReference extends AbstractSourceInfoContainer impl
     public String getId() {
         return id;
     }
-    
+
     /**
      * Sets the id of the referenced constraint.
      *
@@ -38,7 +38,7 @@ abstract public class AbstractReference extends AbstractSourceInfoContainer impl
     public void setId (String id) {
         this.id = id;
     }
-    
+
     /**
      * Returns the version of the referenced constraint.
      *
@@ -47,7 +47,7 @@ abstract public class AbstractReference extends AbstractSourceInfoContainer impl
     public String getVersion() {
         return version;
     }
-    
+
     /**
      * Sets the version of the referenced constraint.
      *
@@ -104,6 +104,5 @@ abstract public class AbstractReference extends AbstractSourceInfoContainer impl
         clone.mapping = mapping.clone();
         return clone;
     }
-    
-    
+
 }

@@ -12,13 +12,13 @@ import java.util.List;
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 public class EqualsImplodedConstraint extends AbstractAtomicConstraint {
-    
+
     /** The glue to merge between parts. */
     String glue;
     /** The list of sources. */
-    private List<String> sources; 
+    private List<String> sources;
 
-    
+
     public String getGlue() {
         return glue;
     }
@@ -34,7 +34,7 @@ public class EqualsImplodedConstraint extends AbstractAtomicConstraint {
     public void setSources(List<String> sources) {
         this.sources = sources;
     }
-    
+
     public void setSources(String sources) {
         this.sources = BlockUtils.splitIdentifiers(sources);
     }
@@ -43,27 +43,27 @@ public class EqualsImplodedConstraint extends AbstractAtomicConstraint {
     public CheckResult check(Record record, VariableSpace scope) {
         // Prepare result variable
         List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
-        
+
         List<String> values = new ArrayList(sources.size());
-        
+
         for (int i = 0; i < sources.size(); ++i) {
             values.add(record.get(sources.get(i)).getValue());
         }
-        
+
         String imploded = LongneckStringUtils.implode(glue, values);
         String details = String.format("Imploded value: '%1$s'", imploded);
-        
+
         for (String fieldName : applyTo) {
             if (imploded.equals(BlockUtils.getValue(fieldName, record, scope))) {
-                results.add(new CheckResult(this, true, fieldName, 
+                results.add(new CheckResult(this, true, fieldName,
                         BlockUtils.getValue(fieldName, record, scope), details));
             } else {
-                results.add(new CheckResult(this, false, fieldName, 
+                results.add(new CheckResult(this, false, fieldName,
                         BlockUtils.getValue(fieldName, record, scope), details));
                 return new CheckResult(this, false, null, null, null, results);
             }
         }
-        
+
         return new CheckResult(this, true, null, null, null, results);
     }
 
@@ -72,12 +72,12 @@ public class EqualsImplodedConstraint extends AbstractAtomicConstraint {
         EqualsImplodedConstraint copy = (EqualsImplodedConstraint) super.clone();
         if (sources != null) {
             copy.sources = new ArrayList<String>(sources.size());
-            copy.sources.addAll(sources);            
+            copy.sources.addAll(sources);
         }
-       
+
         return copy;
     }
-    
-    
-    
+
+
+
 }

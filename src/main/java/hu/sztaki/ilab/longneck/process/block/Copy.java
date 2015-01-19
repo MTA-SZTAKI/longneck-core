@@ -8,11 +8,11 @@ import java.util.List;
 
 /**
  * Copies the content of another field.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class Copy extends AbstractAtomicBlock {
-    
+
     /** The name of the field to copy from. */
     private String from;
     /** Also copy source flags if any. */
@@ -61,15 +61,15 @@ public class Copy extends AbstractAtomicBlock {
                log.error(String.format("%1$s %2$s", this, sourceInfo.getLocationString()), ex);
         }
     }
-    
+
     @Override
     public Copy clone() {
-        return (Copy) super.clone();        
+        return (Copy) super.clone();
     }
-    
+
     @Override
     public String toString() {
-        return String.format("<copy apply-to=\"%1$s\" from=\"%2$s\", with-flags=\"%3$b\">", 
+        return String.format("<copy apply-to=\"%1$s\" from=\"%2$s\", with-flags=\"%3$b\">",
                 LongneckStringUtils.implode(" ", applyTo), from, withFlags);
     }
 }

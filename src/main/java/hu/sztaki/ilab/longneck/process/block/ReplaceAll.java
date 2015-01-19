@@ -6,14 +6,14 @@ import java.util.regex.Matcher;
 
 /**
  * Matches against regular expression and replaces all matches against the specified value.
- * 
+ *
  * @author Péter Molnár <molnarp@sztaki.mta.hu>
  */
 public class ReplaceAll extends AbstractRegexpBlock {
 
     /** Replacement string. */
     private String replacement;
-    
+
     @Override
     public void apply(Record record, VariableSpace parentScope) {
         for (String fName : applyTo) {
@@ -39,6 +39,6 @@ public class ReplaceAll extends AbstractRegexpBlock {
     public ReplaceAll clone() {
         return (ReplaceAll) super.clone();
     }
-    
-    
+
+
 }

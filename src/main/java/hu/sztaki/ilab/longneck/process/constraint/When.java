@@ -10,12 +10,12 @@ import java.util.List;
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
 public class When extends AbstractCompoundConstraint {
-    
+
     /** Then branch with additional checks. */
     private AndOperator then;
     /** Else branch with additional checks. */
     private AndOperator elseBranch;
-    
+
     public When() {
         then = new AndOperator();
         elseBranch = new AndOperator();
@@ -29,13 +29,13 @@ public class When extends AbstractCompoundConstraint {
         if (constraints != null) {
             // Prepare result variable
             results = new ArrayList<CheckResult>(constraints.size() + 1);
-            
+
             // Check condition constraints
             for (Constraint c : constraints) {
                 CheckResult res = c.check(record, scope);
                 results.add(res);
 
-                if (! res.isPassed()) {                    
+                if (! res.isPassed()) {
                     whenPasses = false;
                     break;
                 }
@@ -43,12 +43,12 @@ public class When extends AbstractCompoundConstraint {
         } else {
             results = new ArrayList<CheckResult>(1);
         }
-        
+
         if (whenPasses) {
             // On success check then constraints
             CheckResult thenRes = then.check(record, scope);
             results.add(thenRes);
-            
+
             if (! thenRes.isPassed()) {
                 return new CheckResult(this, false, null, null, "Then branch has failed.", results);
             }
@@ -62,22 +62,22 @@ public class When extends AbstractCompoundConstraint {
                 }
             }
         }
-        
+
         return new CheckResult(this, true, null, null, null, results);
     }
-    
+
     public void setThenConstraints(List<Constraint> thenConstraints) {
         then.setConstraints(thenConstraints);
     }
-    
+
     public void setElseConstraints(List<Constraint> elseConstraints) {
         elseBranch.setConstraints(elseConstraints);
     }
-    
+
     public List<Constraint> getThenConstraints() {
         return then.getConstraints();
     }
-    
+
     public List<Constraint> getElseConstraints() {
         return elseBranch.getConstraints();
     }
@@ -97,17 +97,17 @@ public class When extends AbstractCompoundConstraint {
     public void setThen(AndOperator then) {
         this.then = then;
     }
-    
+
     @Override
     public When clone() {
         When copy = (When) super.clone();
         if (then != null) {
-            copy.then = then.clone();            
+            copy.then = then.clone();
         }
         if (elseBranch != null) {
             copy.elseBranch = elseBranch.clone();
         }
-        
+
         return copy;
     }
 }

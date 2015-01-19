@@ -18,7 +18,7 @@
       <xsd:sequence>
         <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
         <xsd:element ref="include" minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element ref="field-handler" minOccurs="0" maxOccurs="unbounded"/>        
+        <xsd:element ref="field-handler" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="class" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="key-generator" minOccurs="0" maxOccurs="unbounded"/>
       </xsd:sequence>
@@ -59,8 +59,8 @@
         <xsd:attribute name="extends" type="xsd:IDREF" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    An optional attribute to specify the extension relationship 
-                    between objects. Used only if mapping of the another object 
+                    An optional attribute to specify the extension relationship
+                    between objects. Used only if mapping of the another object
                     is provided.
                 </xsd:documentation>
             </xsd:annotation>
@@ -68,7 +68,7 @@
         <xsd:attribute name="depends" type="xsd:IDREF" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    An optional attribute to specify that one object depends on 
+                    An optional attribute to specify that one object depends on
                     another object.
                 </xsd:documentation>
             </xsd:annotation>
@@ -76,11 +76,11 @@
         <xsd:attribute name="identity" type="xsd:NMTOKENS" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    An optional attribute for specifying the unique identificator 
-                    of the object within the persistence storage. 
+                    An optional attribute for specifying the unique identificator
+                    of the object within the persistence storage.
                 </xsd:documentation>
             </xsd:annotation>
-        </xsd:attribute>    
+        </xsd:attribute>
         <xsd:attribute name="access" default="shared" use="optional">
            <xsd:simpleType>
               <xsd:restriction base="xsd:string">
@@ -95,7 +95,7 @@
         <xsd:attribute name="auto-complete" type="xsd:boolean" use="optional" default="false">
             <xsd:annotation>
                 <xsd:documentation>
-                    Specifies whether Castor should use reflection to establish XML data 
+                    Specifies whether Castor should use reflection to establish XML data
                     binding information at startup time for those fields that are not
                     mapped explicitly.
                 </xsd:documentation>
@@ -105,7 +105,7 @@
         <xsd:attribute name="version" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    If set to the name of a mapped field, this field will be used for check 
+                    If set to the name of a mapped field, this field will be used for check
                     on object modifications during transactions (Castor JDO only).
                 </xsd:documentation>
             </xsd:annotation>
@@ -119,7 +119,7 @@
         <xsd:attribute name="value" type="xsd:string" use="required"/>
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:element name="named-query">
     <xsd:complexType>
         <xsd:sequence>
@@ -129,7 +129,7 @@
         <xsd:attribute name="name" type="xsd:string" use="required"/>
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:element name="named-native-query">
     <xsd:complexType>
         <xsd:sequence>
@@ -145,7 +145,7 @@
   <xsd:element name="map-to">
     <xsd:annotation>
         <xsd:documentation>
-            The 'map-to' element is used for specifying the name of the item 
+            The 'map-to' element is used for specifying the name of the item
             that should be associated with the given Java object.
         </xsd:documentation>
     </xsd:annotation>
@@ -153,7 +153,7 @@
       <xsd:attribute name="table" type="xsd:NMTOKEN" use="optional">
           <xsd:annotation>
               <xsd:documentation>
-                  An optional attribute used to specify the name of the table 
+                  An optional attribute used to specify the name of the table
                   to which the given Java object is associated.
               </xsd:documentation>
           </xsd:annotation>
@@ -182,18 +182,18 @@
       </xsd:sequence>
 
       <xsd:attribute name="name" type="xsd:string" use="required">
-          <xsd:annotation>
-              <xsd:documentation>
-                  A required attribute used to identify the name of the property. 
-              </xsd:documentation>
-          </xsd:annotation>
+        <xsd:annotation>
+          <xsd:documentation>
+            A required attribute used to identify the name of the property.
+          </xsd:documentation>
+        </xsd:annotation>
       </xsd:attribute>
       <xsd:attribute name="type" type="xsd:string" use="optional">
-          <xsd:annotation>
-              <xsd:documentation>
-                  An optional attribute used to identify the type of the property.
-              </xsd:documentation>
-          </xsd:annotation>
+        <xsd:annotation>
+          <xsd:documentation>
+            An optional attribute used to identify the type of the property.
+          </xsd:documentation>
+        </xsd:annotation>
       </xsd:attribute>
       <xsd:attribute name="required" type="xsd:boolean" use="optional" default="false"/>
       <xsd:attribute name="transient" type="xsd:boolean" use="optional" default="false"/>
@@ -203,8 +203,8 @@
       <xsd:attribute name="container" type="xsd:boolean" use="optional">
         <xsd:annotation>
             <xsd:documentation>
-                Indicates whether the field should be treated as a container, 
-                i.e. only it's fields should be persisted, but not the containing 
+                Indicates whether the field should be treated as a container,
+                i.e. only it's fields should be persisted, but not the containing
                 class itself. In this case, the container attribute should
                 be set to true (supported in Castor XML only).
             </xsd:documentation>
@@ -218,7 +218,7 @@
       <xsd:attribute name="collection" use="optional">
          <xsd:annotation>
             <xsd:documentation>
-                An optional attribute used to specify the type of the collection, if 
+                An optional attribute used to specify the type of the collection, if
                 the property is multi-valued.
             </xsd:documentation>
          </xsd:annotation>
@@ -262,7 +262,7 @@
   <xsd:element name="sql">
     <xsd:annotation>
         <xsd:documentation>
-            The 'sql' element is used to store information about the database 
+            The 'sql' element is used to store information about the database
             column to which a Java object is mapped to.
         </xsd:documentation>
     </xsd:annotation>
@@ -270,7 +270,7 @@
       <xsd:attribute name="name" type="xsd:NMTOKENS" use="optional">
           <xsd:annotation>
               <xsd:documentation>
-                  An optional attribute used to store the name of the column in 
+                  An optional attribute used to store the name of the column in
                   the database table.
               </xsd:documentation>
           </xsd:annotation>
@@ -285,8 +285,8 @@
       <xsd:attribute name="many-table" type="xsd:NMTOKEN" use="optional">
           <xsd:annotation>
               <xsd:documentation>
-                  An optional attribute to specify the name of the bridge table 
-                  containing the primary keys of the object on each side of the 
+                  An optional attribute to specify the name of the bridge table
+                  containing the primary keys of the object on each side of the
                   many to many relationship.
               </xsd:documentation>
           </xsd:annotation>
@@ -294,8 +294,8 @@
       <xsd:attribute name="many-key" type="xsd:NMTOKENS" use="optional">
           <xsd:annotation>
               <xsd:documentation>
-                  An optional attribute to specidy name of the columns that holds 
-                  the foreign key to this object. That column is in the database 
+                  An optional attribute to specidy name of the columns that holds
+                  the foreign key to this object. That column is in the database
                   table that stores objects of the Java type of this field.
               </xsd:documentation>
           </xsd:annotation>
@@ -305,7 +305,7 @@
               <xsd:documentation>
                   An optional attribute to specify cascading support; possible values are
                   'none', 'all', 'create', 'delete' and 'update'; it is possible to use more than one
-                  of those values (when not using 'all' or 'none'), using whitespace as a 
+                  of those values (when not using 'all' or 'none'), using whitespace as a
                   delimiter (as in 'create delete').
               </xsd:documentation>
           </xsd:annotation>

@@ -8,6 +8,7 @@ import hu.sztaki.ilab.longneck.process.block.GenericBlock;
 import hu.sztaki.ilab.longneck.process.mapping.MappedRecord;
 
 /**
+ * TODO: docs
  *
  * @author Lukacs Gabor <lukacsg@sztaki.mta.hu>
  */
@@ -36,7 +37,6 @@ class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, B
         if (blockRef.isPropagateFailure()) {
             throw kernelState.getLastError();
         }
-
         kernelState.handleError(record);
         wasError = true;
         throw new RedirectException(FrameAddress.RETURN);
@@ -49,7 +49,6 @@ class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, B
         if (referredBlock.getOutputConstraints() != null && !wasError && !breaked) {
             referredBlock.getOutputConstraints().apply(record, kernelState.getLastExecutionFrame().getVariables());
         }
-
     }
 
     @Override

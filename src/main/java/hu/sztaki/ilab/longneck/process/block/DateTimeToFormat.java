@@ -10,7 +10,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Converts a date and time string to the given format.
- * 
+ *
  * @author Péter Molnár <molnarp@sztaki.mta.hu>
  */
 public class DateTimeToFormat extends AbstractAtomicBlock {
@@ -21,7 +21,7 @@ public class DateTimeToFormat extends AbstractAtomicBlock {
     private String fromPattern;
     /** The pattern to convert the text to a date object to. */
     private String toPattern;
-    
+
     /** The date formatter class that parses the from date. */
     private DateTimeFormatter fromFormat;
     /** The date formatter class that parses the to date. */
@@ -31,7 +31,7 @@ public class DateTimeToFormat extends AbstractAtomicBlock {
         fromFormat = DateTimeFormat.forPattern(fromPattern);
         toFormat = DateTimeFormat.forPattern(toPattern);
     }
-    
+
     @Override
     public void apply(Record record, VariableSpace parentScope) throws CheckError {
         String dateValue = "";
@@ -41,13 +41,13 @@ public class DateTimeToFormat extends AbstractAtomicBlock {
             if (dateValue != null) {
                 outValue = fromFormat.parseLocalDateTime(dateValue).toString(toFormat);
             }
-            
+
             for (String fieldName : applyTo) {
                 BlockUtils.setValue(fieldName, outValue, record, parentScope);
             }
         } catch (IllegalArgumentException ex) {
-            throw new CheckError(new CheckResult(this, false, from, dateValue, 
-                    String.format("Field '%1$s' content '%2$s' does not match date pattern '%3$s'.", 
+            throw new CheckError(new CheckResult(this, false, from, dateValue,
+                    String.format("Field '%1$s' content '%2$s' does not match date pattern '%3$s'.",
                     from, dateValue, fromPattern)));
         } catch (UnsupportedOperationException ex) {
             log.error("joda-time pattern-based parsing is unsupported.", ex);
@@ -94,10 +94,10 @@ public class DateTimeToFormat extends AbstractAtomicBlock {
         this.toFormat = toFormat;
     }
 
-    
-    
+
+
     @Override
     public DateTimeToFormat clone() {
         return (DateTimeToFormat) super.clone();
-    }   
+    }
 }

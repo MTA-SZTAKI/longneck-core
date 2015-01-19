@@ -6,14 +6,14 @@ import java.util.regex.Matcher;
 
 /**
  * Matches against regular expression and replaces the first occurrence of the match.
- * 
+ *
  * @author Péter Molnár <molnarp@sztaki.mta.hu>
  */
 public class ReplaceFirst extends AbstractRegexpBlock {
 
     /** Replacement string. */
     private String replacement;
-    
+
     @Override
     public void apply(Record record, VariableSpace parentScope) {
         for (String fName : applyTo) {
@@ -39,6 +39,6 @@ public class ReplaceFirst extends AbstractRegexpBlock {
     public ReplaceFirst clone() {
         return (ReplaceFirst) super.clone();
     }
-    
+
 
 }

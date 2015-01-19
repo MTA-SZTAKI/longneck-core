@@ -6,14 +6,15 @@ import java.util.List;
 
 /**
  * Base class for atomic blocks.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
-public abstract class AbstractAtomicBlock extends AbstractSourceInfoContainer implements AtomicBlock, Cloneable {
-    
+public abstract class AbstractAtomicBlock extends AbstractSourceInfoContainer
+        implements AtomicBlock, Cloneable {
+
     /** The list of field names the transformation is applied to. */
     protected List<String> applyTo;
-    
+
     @Override
     public void setApplyTo(List<String> fieldNames) {
         this.applyTo = fieldNames;
@@ -22,12 +23,12 @@ public abstract class AbstractAtomicBlock extends AbstractSourceInfoContainer im
     public List<String> getApplyTo() {
         return applyTo;
     }
-    
+
     public void setApplyTo(String applyTo) {
         // Assign filtered list
         this.applyTo = BlockUtils.splitIdentifiers(applyTo);
     }
-    
+
     @Override
     public AbstractAtomicBlock clone() {
         AbstractAtomicBlock copy = (AbstractAtomicBlock) super.clone();
@@ -35,7 +36,6 @@ public abstract class AbstractAtomicBlock extends AbstractSourceInfoContainer im
             copy.applyTo = new ArrayList<String>(applyTo.size());
             copy.applyTo.addAll(applyTo);
         }
-
         return copy;
     }
 
@@ -55,17 +55,16 @@ public abstract class AbstractAtomicBlock extends AbstractSourceInfoContainer im
             return false;
         }
         final AbstractAtomicBlock other = (AbstractAtomicBlock) obj;
-        
-        if (super.equals(obj) == false) {
+
+        if (! super.equals(obj)) {
             return false;
         }
-        
+
         if (this.applyTo != other.applyTo && (this.applyTo == null || !this.applyTo.equals(other.applyTo))) {
             return false;
         }
         return true;
     }
-    
-    
+
 }
 

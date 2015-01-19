@@ -20,65 +20,65 @@ import org.apache.log4j.Logger;
 
 /**
  * Kernel of the record processing.
- * 
+ *
  * @author Lukacs Gabor <lukacsg@sztaki.mta.hu>
  */
 public class Kernel {
     private final static Logger LOG = Logger.getLogger(Kernel.class);
-    
+
     /** Local queue for cloned records. */
     private final List<Record> localCloneQueue;
-    
+
     /** The top level sequence of blocks. */
     private final Sequence topLevelSequence;
     /** The frame address resolver. */
     private final FrameAddressResolver frameAddressResolver;
-    
-    public Kernel(Sequence topLevelSequence, FrameAddressResolver frameAddressResolver, 
+
+    public Kernel(Sequence topLevelSequence, FrameAddressResolver frameAddressResolver,
             List<Record> localCloneQueue) {
         this.topLevelSequence = topLevelSequence;
         this.frameAddressResolver = frameAddressResolver;
         this.localCloneQueue = localCloneQueue;
     }
-    
+
     private KernelState newKernelState() {
         KernelState kernelState = new KernelState();
         ExecutionFrame currentFrame = new ExecutionFrame(topLevelSequence, new ExecutionFrame());
         kernelState.addLastExecutionFrame(currentFrame);
-        
+
         return kernelState;
     }
 
     public void process(Record record) throws FailException, FilterException {
         // Get kernel state from record
         KernelState kernelState = record.getKernelState();
-        
+
         // Create new kernel state, if record doesn't carry one
         if (kernelState == null || kernelState.isAfterProcessing()) {
             kernelState = newKernelState();
         }
-        
-        Block currentBlock;
+
+        Block currentBlock = null;
         ExecutionFrame currentFrame = null;
-        
+
         // Iterate sequence
         for (;;) {
             try {
                 currentFrame = kernelState.getLastExecutionFrame();
 
-                if (currentFrame.getHostBlock().hasPosition(currentFrame.getPosition())) {                     
+                if (currentFrame.getHostBlock().hasPosition(currentFrame.getPosition())) {
                     currentBlock = currentFrame.getHostBlock().getBlocks().get(currentFrame.getPosition());
 
                     // If compound, go into it
                     if (currentBlock instanceof CompoundBlock) {
-                        ExecutionFrame childFrame = 
+                        ExecutionFrame childFrame =
                                 new ExecutionFrame((CompoundBlock) currentBlock, currentFrame);
                         kernelState.addLastExecutionFrame(childFrame);
                         currentFrame = childFrame;
 
                         // Apply block changes
                         currentBlock.apply(record, currentFrame.getVariables());
-                        
+
                         // Startup changing record
                         if (currentFrame.isRecordchangehandler()) {
                             try {
@@ -100,14 +100,13 @@ public class Kernel {
                                 handleRedirect(kernelState, ex);
                             }
                         }
-                    } 
+                    }
                     else if (currentBlock instanceof BlockReference) {
-                        ExecutionFrame childFrame = new ExecutionFrame(
-                                (BlockReference) currentBlock, currentFrame);
+                        ExecutionFrame childFrame = new ExecutionFrame((BlockReference) currentBlock, currentFrame);
 
                         kernelState.addLastExecutionFrame(childFrame);
                         currentFrame = childFrame;
-                        
+
                         // Startup changing record
                         if (currentFrame.isRecordchangehandler()) {
                             try {
@@ -199,7 +198,7 @@ public class Kernel {
                             ((SuccessHandler) currentFrame.getControl()).onSuccess(kernelState, record);
                         } catch (RedirectException ex) {
                             handleRedirect(kernelState, ex);
-                        }                            
+                        }
                     }
                 }
             } catch (CheckError ex) {
@@ -250,7 +249,7 @@ public class Kernel {
                     // Exit main loop
                     break;
                 }
-                
+
                 // Increase getPosition()
                 kernelState.increasePosition();
 
@@ -282,34 +281,34 @@ public class Kernel {
 
     /**
      * Handles redirects including symbolic address resolving.
-     * 
+     *
      * @param kernelState The current kernel state.
      * @param ex The exception that triggered the redirection.
      */
     private void handleRedirect(KernelState kernelState, RedirectException ex) {
         ExecutionFrame currentFrame = kernelState.getLastExecutionFrame();
         FrameAddress redirectAddress = ex.getAddress();
-        
+
         // Resolve symbolic address
         if (FrameAddress.RETURN.equals(redirectAddress)) {
             // Set to end of compound
             currentFrame.setPosition((currentFrame.getHostBlock().getBlocks() != null)?currentFrame.getHostBlock().getBlocks().size():0);
             return;
         }
-        
+
         // Replace child frame
         ExecutionFrame redirectFrame;
         if (ex.isSubframe()) {
             redirectFrame = new ExecutionFrame(
                     (CompoundBlock) frameAddressResolver.get(redirectAddress), currentFrame);
-        } else { 
+        } else {
             // Inplace redirection
             redirectFrame = new ExecutionFrame(
                     (CompoundBlock) frameAddressResolver.get(redirectAddress), currentFrame.getParentFrame());
             // Remove current frame
             kernelState.removeLastExecutionFrame();
         }
-        
-        kernelState.addLastExecutionFrame(redirectFrame);        
+
+        kernelState.addLastExecutionFrame(redirectFrame);
     }
 }

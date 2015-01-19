@@ -7,21 +7,21 @@ import hu.sztaki.ilab.longneck.bootstrap.RepositoryItem;
 
 /**
  * Generic transformation block.
- * 
+ *
  * Transformation block with custom transformation steps, that has an id and version, and
  * can be retrieved from repository.
- * 
+ *
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class GenericBlock extends Sequence implements RepositoryItem {
-    
+
     /** The id of this block in the repository. */
     private String id;
     /** The block version. */
     private String version;
     /** Allow error propagation. */
     private boolean propagateFailure = false;
-    
+
     /** The input constraints. */
     private Check inputConstraints;
     /** The output constraints. */
@@ -38,6 +38,7 @@ public class GenericBlock extends Sequence implements RepositoryItem {
 
     public void setInputConstraints(Check inputConstraints) {
         this.inputConstraints = inputConstraints;
+        this.inputConstraints.setContext(this.context);
     }
 
     public Check getOutputConstraints() {
@@ -46,8 +47,9 @@ public class GenericBlock extends Sequence implements RepositoryItem {
 
     public void setOutputConstraints(Check outputConstraints) {
         this.outputConstraints = outputConstraints;
+        this.outputConstraints.setContext(this.context);
     }
-    
+
     @Override
     public String getId() {
         return id;
@@ -67,28 +69,31 @@ public class GenericBlock extends Sequence implements RepositoryItem {
     public void setVersion(String version) {
         this.version = version;
     }
-    
+
     public String getKey() {
         return String.format("%1$s:%2$s", id, version);
     }
-    
+
     @Override
     public GenericBlock clone() {
         GenericBlock copy = (GenericBlock) super.clone();
-        
+
         // Version and Id are immutable strings
-        
+
         // Copy input and output constraints
         if (inputConstraints != null) {
             copy.inputConstraints = inputConstraints.clone();
+            copy.inputConstraints.setContext(context);
         }
-        
+
         if (outputConstraints != null) {
             copy.outputConstraints = outputConstraints.clone();
+            copy.outputConstraints.setContext(context);
         }
-        
+        copy.setContext(context);
+
         return copy;
-    }    
+    }
 
     @Override
     public SourceInfo getSourceInfo() {
@@ -101,6 +106,15 @@ public class GenericBlock extends Sequence implements RepositoryItem {
 
     public void setPropagateFailure(boolean propagateFailure) {
         this.propagateFailure = propagateFailure;
-    }    
+    }
+
+    @Override
+    public void setContext(String context) {
+        super.setContext(context);
+        if (inputConstraints!= null) inputConstraints.setContext(context);
+        if (outputConstraints!=null) outputConstraints.setContext(context);
+    }
+
+
 }
 

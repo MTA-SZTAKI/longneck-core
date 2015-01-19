@@ -80,11 +80,11 @@ public class KernelState {
     ExecutionFrame getLastExecutionFrame() {
         return frameStack.getLast();
     }
-    
+
     void addLastExecutionFrame(ExecutionFrame ef) {
         frameStack.addLast(ef);
     }
-    
+
     void removeLastExecutionFrame() {
         frameStack.removeLast();
     }
