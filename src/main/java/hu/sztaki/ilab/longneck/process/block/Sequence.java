@@ -29,13 +29,13 @@ public class Sequence extends AbstractSourceInfoContainer
     @Override
     public void setBlocks(List<? extends Block> blocks) {
         this.blocks = blocks;
-        if (context != null) {
-            for (Block b : blocks) {
-                if (b instanceof ContextualBlock) {
-                    ((ContextualBlock) b).setContext(context);
-                }
-            }
-        }
+//        if (context != null) {
+//            for (Block b : blocks) {
+//                if (b instanceof ContextualBlock) {
+//                    ((ContextualBlock) b).setContext(context);
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -87,13 +87,13 @@ public class Sequence extends AbstractSourceInfoContainer
     public void setContext(String context) {
 
         if (context != null) this.context = context ;
-        if (blocks != null ) {
-            for (Block b : blocks) {
-                if (b instanceof ContextualBlock) {
-                    ((ContextualBlock) b).setContext(context);
-                }
-            }
-        }
+//        if (blocks != null ) {
+//            for (Block b : blocks) {
+//                if (b instanceof ContextualBlock) {
+//                    ((ContextualBlock) b).setContext(context);
+//                }
+//            }
+//        }
 
     }
 

@@ -67,6 +67,8 @@ class ExecutionFrame {
      * Cached is record change handler
      */
     private final boolean recordchangehandler;
+    
+    private final String context;
 
     /**
      * The current position in the parent compound block.
@@ -79,6 +81,7 @@ class ExecutionFrame {
         hostBlock = null;
         control = getControl(null);
         variables = null;
+        context = null;
 
         hasControl = false;
         startHandler = false;
@@ -93,6 +96,7 @@ class ExecutionFrame {
         position = 0;
         this.parentFrame = parentFrame;
         variables = new VariableSpace(parentFrame.variables);
+        context = parentFrame.getContext();
 
         hostBlock = block;
         control = getControl(block);
@@ -110,9 +114,11 @@ class ExecutionFrame {
         position = 0;
         this.parentFrame = parentFrame;
         variables = new VariableSpace(parentFrame.variables);
+        context = blockRef.getContext() != null?blockRef.getContext():parentFrame.getContext();
 
         hostBlock = blockRef.getReferredBlock();
         control = getControl(blockRef);
+        ((BlockReferenceControl) control).setContext(context);
 
         hasControl = (this.control instanceof ControlStructure);
         startHandler = (this.hasControl && this.control instanceof StartHandler);
@@ -138,6 +144,8 @@ class ExecutionFrame {
         } else {
             variables = null;
         }
+        
+        context = other.context;
 
         hostBlock = (CompoundBlock) other.hostBlock.clone();
         control = other.control == null ? null : other.control.clone();
@@ -220,6 +228,10 @@ class ExecutionFrame {
 
     public ControlStructure getControl() {
         return control;
+    }
+
+    public String getContext() {
+        return context;
     }
     
 }

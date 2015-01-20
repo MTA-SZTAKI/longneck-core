@@ -60,9 +60,9 @@ public class BlockReference extends AbstractReference implements Block, Contextu
     public void setContext(String context) {
         if (context != null && this.context != context ) {
             this.context = context ;
-            if (this.referredBlock != null) {
-                this.referredBlock.setContext(context);
-            }
+//            if (this.referredBlock != null) {
+//                this.referredBlock.setContext(context);
+//            }
         }
     }
 }

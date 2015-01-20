@@ -208,7 +208,7 @@ public class Kernel {
                 kernelState.setLastError(ex);
 
                 // Repeat until error has been handled, or no more frames
-                ExecutionFrame errorFrame;
+                ExecutionFrame errorFrame = null;
                 while (kernelState.getLastError() != null && ! kernelState.isAfterProcessing()){
 
                     // Assign error frame
@@ -244,6 +244,7 @@ public class Kernel {
                 }
 
                 if (kernelState.getLastError() != null) {
+                    if (errorFrame != null && errorFrame.getContext() != null) kernelState.getLastError().getCheckResult().setContext(errorFrame.getContext());
                     // Add to record
                     kernelState.handleError(record);
                     // Exit main loop

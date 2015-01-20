@@ -17,6 +17,7 @@ class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, B
     private final BlockReference blockRef;
     private boolean wasError;
     private boolean breaked;
+    private String context;
 
     public BlockReferenceControl(BlockReference blockRef) {
         this.blockRef = blockRef;
@@ -37,7 +38,7 @@ class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, B
         if (blockRef.isPropagateFailure()) {
             throw kernelState.getLastError();
         }
-        if (blockRef.getContext() != null) kernelState.getLastError().getCheckResult().setContext(blockRef.getContext());
+        if (context != null) kernelState.getLastError().getCheckResult().setContext(context);
         kernelState.handleError(record);
         wasError = true;
         throw new RedirectException(FrameAddress.RETURN);
@@ -80,6 +81,14 @@ class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, B
             throw new NoMappingException();
         }
         return ((MappedRecord) record).restoreRecord();
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 
 }
