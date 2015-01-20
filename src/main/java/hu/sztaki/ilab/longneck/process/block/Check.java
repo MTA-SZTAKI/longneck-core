@@ -134,6 +134,12 @@ public class Check extends AbstractSourceInfoContainer implements ContextualBloc
         if (this.constraints != other.constraints && (this.constraints == null || !this.constraints.equals(other.constraints))) {
             return false;
         }
+        if (this.context != other.context && (this.context == null || !this.context.equals(other.context))) {
+            return false;
+        }
+        if (this.contextField != other.contextField && (this.contextField == null || !this.contextField.equals(other.contextField))) {
+            return false;
+        }
         return true;
     }
 

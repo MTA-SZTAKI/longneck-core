@@ -21,7 +21,7 @@ public class CheckResult {
     /** The details of the failure. */
     private final String details;
     /** The context of the given error, aiming to help finding the exact location it occurred */
-    private final String context;
+    private String context;
     /** The causes of this constraint failure, if any. */
     private final List<CheckResult> causes;
 
@@ -120,6 +120,17 @@ public class CheckResult {
      */
     public String getContext() {
         return context;
+    }
+
+    /**
+     * Returns the failure context.
+     *
+     * The details contain the nature of the test performed, that allows the test to be
+     * reconstructed in full.
+     * @return The failure details.
+     */
+    public void setContext(String context) {
+        this.context = context;
     }
 
     /**

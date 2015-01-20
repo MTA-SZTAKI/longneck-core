@@ -37,6 +37,7 @@ class BlockReferenceControl implements StartHandler, ErrorHandler, EndHandler, B
         if (blockRef.isPropagateFailure()) {
             throw kernelState.getLastError();
         }
+        if (blockRef.getContext() != null) kernelState.getLastError().getCheckResult().setContext(blockRef.getContext());
         kernelState.handleError(record);
         wasError = true;
         throw new RedirectException(FrameAddress.RETURN);
