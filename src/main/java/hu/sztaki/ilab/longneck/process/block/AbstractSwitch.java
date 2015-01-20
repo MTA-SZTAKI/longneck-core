@@ -22,9 +22,6 @@ abstract public class AbstractSwitch extends Sequence {
     }
 
     public void setCases(List<Case> cases) {
-        for (Case c: cases) {
-            c.setContext(this.context);
-        }
         this.blocks = cases;
         this.cases = cases;
     }
@@ -53,11 +50,9 @@ abstract public class AbstractSwitch extends Sequence {
 
             for (final Case c : cases) {
                 Case cloneCase = c.clone();
-                cloneCase.setContext(this.context);
                 copy.cases.add(cloneCase);
             }
         }
-        copy.setContext(this.context) ;
         return copy;
     }
 }

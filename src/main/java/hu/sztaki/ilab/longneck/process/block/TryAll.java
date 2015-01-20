@@ -19,9 +19,7 @@ public class TryAll extends AbstractSwitch {
 
     @Override
     public TryAll clone() {
-        TryAll copy = (TryAll) super.clone();
-        copy.setContext(this.context);
-        return copy ;
+        return (TryAll) super.clone();
     }
 
 

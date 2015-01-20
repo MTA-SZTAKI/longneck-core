@@ -20,7 +20,6 @@ public class Case extends Sequence {
     @Override
     public Case clone() {
         Case copy = (Case) super.clone();
-        copy.setContext( this.context );
         return copy ;
     }
 }

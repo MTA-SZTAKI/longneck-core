@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
-public class Check extends AbstractSourceInfoContainer implements ContextualBlock {
+public class Check extends AbstractSourceInfoContainer implements Block {
 
     /** The summary of implemented checks as a short text. */
     private String summary;
@@ -23,20 +23,15 @@ public class Check extends AbstractSourceInfoContainer implements ContextualBloc
     private String checkedField;
     /** The contained constraints. */
     private AndOperator constraints = new AndOperator();
-    /** */
-    private String context ;
 
     public Check() {
     }
 
     @Override
     public void apply(Record record, VariableSpace parentScope) throws CheckError {
-        String localContext ;
+        String localContext = null ;
         if (contextField != null && BlockUtils.exists(contextField, record, parentScope)) {
             localContext = BlockUtils.getValue(contextField, record, parentScope) ;
-        }
-        else {
-            localContext = this.context ;
         }
         CheckResult res;
         if (checkedField == null || !BlockUtils.exists(checkedField, record, parentScope)) {
@@ -56,7 +51,6 @@ public class Check extends AbstractSourceInfoContainer implements ContextualBloc
     public Check clone() {
         Check copy = (Check) super.clone();
         copy.constraints = this.constraints.clone();
-        copy.setContext(context);
         return copy;
     }
 
@@ -95,16 +89,6 @@ public class Check extends AbstractSourceInfoContainer implements ContextualBloc
     }
 
     @Override
-    public String getContext() {
-        return this.context ;
-    }
-
-    @Override
-    public void setContext(String context) {
-        this.context = context ;
-    }
-
-    @Override
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + (this.summary != null ? this.summary.hashCode() : 0);
@@ -132,9 +116,6 @@ public class Check extends AbstractSourceInfoContainer implements ContextualBloc
             return false;
         }
         if (this.constraints != other.constraints && (this.constraints == null || !this.constraints.equals(other.constraints))) {
-            return false;
-        }
-        if (this.context != other.context && (this.context == null || !this.context.equals(other.context))) {
             return false;
         }
         if (this.contextField != other.contextField && (this.contextField == null || !this.contextField.equals(other.contextField))) {
