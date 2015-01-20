@@ -19,9 +19,7 @@ public class SwitchStrict extends AbstractSwitch {
 
     @Override
     public SwitchStrict clone() {
-        SwitchStrict copy = (SwitchStrict) super.clone();
-        copy.setContext(this.context) ;
-        return copy ;
+        return (SwitchStrict) super.clone();
 
     }
 

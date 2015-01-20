@@ -38,7 +38,6 @@ public class GenericBlock extends Sequence implements RepositoryItem {
 
     public void setInputConstraints(Check inputConstraints) {
         this.inputConstraints = inputConstraints;
-        this.inputConstraints.setContext(this.context);
     }
 
     public Check getOutputConstraints() {
@@ -47,7 +46,6 @@ public class GenericBlock extends Sequence implements RepositoryItem {
 
     public void setOutputConstraints(Check outputConstraints) {
         this.outputConstraints = outputConstraints;
-        this.outputConstraints.setContext(this.context);
     }
 
     @Override
@@ -83,14 +81,11 @@ public class GenericBlock extends Sequence implements RepositoryItem {
         // Copy input and output constraints
         if (inputConstraints != null) {
             copy.inputConstraints = inputConstraints.clone();
-            copy.inputConstraints.setContext(context);
         }
 
         if (outputConstraints != null) {
             copy.outputConstraints = outputConstraints.clone();
-            copy.outputConstraints.setContext(context);
         }
-        copy.setContext(context);
 
         return copy;
     }
@@ -106,13 +101,6 @@ public class GenericBlock extends Sequence implements RepositoryItem {
 
     public void setPropagateFailure(boolean propagateFailure) {
         this.propagateFailure = propagateFailure;
-    }
-
-    @Override
-    public void setContext(String context) {
-        super.setContext(context);
-        if (inputConstraints!= null) inputConstraints.setContext(context);
-        if (outputConstraints!=null) outputConstraints.setContext(context);
     }
 
 

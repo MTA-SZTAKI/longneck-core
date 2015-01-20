@@ -19,9 +19,7 @@ public class Switch extends AbstractSwitch {
 
     @Override
     public Switch clone() {
-        Switch copy =  (Switch) super.clone();
-        copy.setContext(context);
-        return copy ;
+        return (Switch) super.clone() ;
     }
 
 

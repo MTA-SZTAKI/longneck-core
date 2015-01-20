@@ -72,7 +72,6 @@ public class If extends Sequence {
         copy.blocks = new ArrayList<Block>(2);
         if (thenBranch != null) {
             copy.thenBranch = thenBranch.clone();
-            if (context != null) copy.thenBranch.setContext(context);
             ((List<Block>) copy.blocks).add(copy.thenBranch);
         }
 
@@ -80,7 +79,6 @@ public class If extends Sequence {
             copy.elseBranch = elseBranch.clone();
             ((List<Block>) copy.blocks).add(copy.elseBranch);
         }
-        copy.setContext(this.context);
         return copy;
     }
 

@@ -12,14 +12,12 @@ import java.util.List;
  * @author Molnar Peter <molnarp@sztaki.mta.hu>
  */
 public class Sequence extends AbstractSourceInfoContainer
-        implements CompoundBlock, ContextualBlock, Cloneable {
+        implements CompoundBlock, Cloneable {
 
     /** The sequence id. */
     private int id;
     /** The blocks contained in this compound block. */
     protected List<? extends Block> blocks;
-    /** A string representing the context in which the block was referred. */
-    protected String context = null;
 
     @Override
     public List<Block> getBlocks() {
@@ -29,13 +27,6 @@ public class Sequence extends AbstractSourceInfoContainer
     @Override
     public void setBlocks(List<? extends Block> blocks) {
         this.blocks = blocks;
-//        if (context != null) {
-//            for (Block b : blocks) {
-//                if (b instanceof ContextualBlock) {
-//                    ((ContextualBlock) b).setContext(context);
-//                }
-//            }
-//        }
     }
 
     @Override
@@ -47,13 +38,9 @@ public class Sequence extends AbstractSourceInfoContainer
 
             for (final Block b : blocks) {
                 Block bc = b.clone() ;
-                if (b instanceof ContextualBlock) {
-                    ((ContextualBlock) bc).setContext(context);
-                }
                 ((List<Block>) copy.blocks).add(bc);
             }
         }
-        copy.setContext(this.context);
         return copy;
     }
 
@@ -76,25 +63,6 @@ public class Sequence extends AbstractSourceInfoContainer
         }
 
         return (pos >= 0 && pos < blocks.size());
-    }
-
-    @Override
-    public String getContext() {
-        return context;
-    }
-
-    @Override
-    public void setContext(String context) {
-
-        if (context != null) this.context = context ;
-//        if (blocks != null ) {
-//            for (Block b : blocks) {
-//                if (b instanceof ContextualBlock) {
-//                    ((ContextualBlock) b).setContext(context);
-//                }
-//            }
-//        }
-
     }
 
 }

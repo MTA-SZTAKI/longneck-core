@@ -9,7 +9,7 @@ import hu.sztaki.ilab.longneck.process.VariableSpace;
  *
  * @author Molnár Péter <molnarp@sztaki.mta.hu>
  */
-public class BlockReference extends AbstractReference implements Block, ContextualBlock {
+public class BlockReference extends AbstractReference implements Block {
 
     /** The block that is referred. */
     private GenericBlock referredBlock = null;
@@ -43,7 +43,6 @@ public class BlockReference extends AbstractReference implements Block, Contextu
 
     public void setReferredBlock(GenericBlock referredBlock) {
         this.referredBlock = referredBlock;
-        if (context != null) this.referredBlock.setContext(context);
     }
 
     public boolean isPropagateFailure() {
@@ -58,11 +57,6 @@ public class BlockReference extends AbstractReference implements Block, Contextu
         return this.context;
     }
     public void setContext(String context) {
-        if (context != null && this.context != context ) {
-            this.context = context ;
-//            if (this.referredBlock != null) {
-//                this.referredBlock.setContext(context);
-//            }
-        }
+        this.context = context ;
     }
 }
