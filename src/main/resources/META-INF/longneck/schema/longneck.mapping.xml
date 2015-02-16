@@ -809,6 +809,25 @@
       <c:bind-xml name="flag" node="attribute"/>
     </c:field>
   </c:class>
+  
+  <!-- Interval check constraint -->
+  <c:class name="hu.sztaki.ilab.longneck.process.constraint.IntervalCheckConstraint"
+           extends="hu.sztaki.ilab.longneck.process.constraint.AbstractAtomicConstraint">
+    <c:map-to xml="interval-check" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
+
+    <c:field name="inputFormat" type="string">
+      <c:bind-xml name="input-format" node="attribute" type="string"/>
+    </c:field>
+    
+    <c:field name="marginFrom" type="string">
+      <c:bind-xml name="margin-from" node="attribute" type="string"/>
+    </c:field>
+    
+    <c:field name="marginTo" type="string">
+      <c:bind-xml name="margin-to" node="attribute" type="string"/>
+    </c:field>
+  </c:class>
+
 
   <!-- Is null constraint -->
   <c:class name="hu.sztaki.ilab.longneck.process.constraint.IsNullConstraint"
