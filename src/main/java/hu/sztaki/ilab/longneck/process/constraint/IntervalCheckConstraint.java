@@ -78,14 +78,20 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
     
         // Prepare result variable
         List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
+        
+        //Determining optional parameters
+        boolean fromSet = (marginFrom==null)?false:true;
+        boolean toSet = (marginTo==null)?false:true;
        
         //processing input fields
         DateFormat formatter = new SimpleDateFormat(inputFormat);
-        Date fromDate;
-        Date toDate;
+        Date fromDate = null;
+        Date toDate = null;
         try {
-            fromDate = formatter.parse(marginFrom);
-            toDate = formatter.parse(marginTo);
+            if(fromSet)
+                fromDate = formatter.parse(marginFrom);
+            if (toSet) 
+                toDate = formatter.parse(marginTo);
         
             //processing each examined field
             for (String examineeField : applyTo) {
@@ -97,15 +103,51 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
 
                     // Details
                     String details = String.format("Date Values: form: %12s; to: %12s; examinee: %12s; format: %12s", fromDate, toDate, examineeDate, inputFormat);
+                    
+                    if (!toSet && !fromSet) {
+//                        None ot the margins set: ERROR
+                        String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required. Current values - form: %12s; to: %12s;", fromDate, toDate);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                        
+                        
+                    } else if (toSet && !fromSet) {
+//                        Upper margin set
+                        if (examineeDate.before(toDate)) {
+                            //examined date is before the upper margin
+                           results.add(new CheckResult(this, true, examineeField, examineeValue, details));
 
-                    if (examineeDate.after(fromDate) && examineeDate.before(toDate)) {
-                        //examined date falls in the intervall
-                       results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+                        } else {
+                            //examined date falls out of the intervall
+                            results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                            return new CheckResult(this, false, null, null, null, results);
+                        }
+                        
+                    } else if (!toSet && fromSet) {
+//                        Lower margin set
+                        if (examineeDate.after(fromDate)) {
+                            //examined date is after the margin
+                           results.add(new CheckResult(this, true, examineeField, examineeValue, details));
 
+                        } else {
+                            //examined date falls out of the intervall
+                            results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                            return new CheckResult(this, false, null, null, null, results);
+                        }
+                        
                     } else {
-                        //examined date falls out of the intervall
-                        results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+//                        both margins set
+                        if (examineeDate.after(fromDate) && examineeDate.before(toDate)) {
+                            //examined date falls in the intervall
+                           results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                        } else {
+                            //examined date falls out of the intervall
+                            results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                            return new CheckResult(this, false, null, null, null, results);
+                        }
                     }
+
+                    
                 } catch (ParseException ex) {
                     //Parsing Error: Examinee
                     String eDetails = String.format("Parsing Error - Examinee: examinee: %12s; format: %12s", examineeValue, inputFormat);

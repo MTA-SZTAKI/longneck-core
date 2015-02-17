@@ -815,15 +815,15 @@
            extends="hu.sztaki.ilab.longneck.process.constraint.AbstractAtomicConstraint">
     <c:map-to xml="interval-check" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
-    <c:field name="inputFormat" type="string">
+    <c:field name="inputFormat" type="string" set-method="setInputFormat">
       <c:bind-xml name="input-format" node="attribute" type="string"/>
     </c:field>
     
-    <c:field name="marginFrom" type="string">
+    <c:field name="marginFrom" type="string" set-method="setMarginFrom">
       <c:bind-xml name="margin-from" node="attribute" type="string"/>
     </c:field>
     
-    <c:field name="marginTo" type="string">
+    <c:field name="marginTo" type="string" set-method="setMarginTo">
       <c:bind-xml name="margin-to" node="attribute" type="string"/>
     </c:field>
   </c:class>

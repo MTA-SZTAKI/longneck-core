@@ -1718,33 +1718,43 @@
   <!-- Interval checking constraint -->
   <xs:complexType name="intervalCheckType">
     <xs:complexContent>
-      <xs:extension base="tns:atomicConstraintType">
+      <xs:extension base="tns:atomicConstraintType" >
+        <xs:attributeGroup ref="tns:atomicConstraintAttrGroup"/>
         <xs:attribute name="input-format" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation>
-              Date format. Example: "YYYY-MM-DD"
+              Date format uses same rules as JAVA DateFormat. Example: "yyyy-MM-dd"
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="margin-to" type="xs:string" use="required">
+        <xs:attribute name="margin-to" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
               Lower date margin, should be given according to input-format.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="margin-from" type="xs:string" use="required">
+        <xs:attribute name="margin-from" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
               Upper date margin, should be given according to input-format.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-       
-
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  <xs:element name="interval-check" type="tns:intervalCheckType" substitutionGroup="tns:abstract-constraint">
+    <xs:annotation>
+        <xs:documentation>
+          Checks whether a given date falls between the provided intervals.
+        </xs:documentation>
+        <xs:documentation d:example="true">
+          <interval-check apply-to="examinee" input-format="YYYY-MM-DD" margin-from="1996-01-01" margin-to="2014-01-01" />
+        </xs:documentation>
+      </xs:annotation>
+  </xs:element>
   
 
   <!-- Is null constraint -->
