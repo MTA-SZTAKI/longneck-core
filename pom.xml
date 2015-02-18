@@ -41,6 +41,11 @@
       <name>Döme Geszler</name>
       <email>geszler@sztaki.mta.hu</email>
     </developer>
+    <developer>
+      <id>hajdu</id>
+      <name>Hajdu Balázs</name>
+      <email>hajdu@sztaki.mta.hu</email>
+    </developer>
   </developers>
 
   <licenses>

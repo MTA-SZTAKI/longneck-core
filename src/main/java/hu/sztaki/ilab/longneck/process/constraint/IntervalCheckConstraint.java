@@ -16,27 +16,51 @@ import java.util.logging.Logger;
 /**
  * Checks whether the input falls between the given margins.
  * 
- * @author hajdu
+ * @author hajdu - 2015 febr
  */
 public class IntervalCheckConstraint extends AbstractAtomicConstraint{
     
-    private String marginFrom, marginTo, inputFormat;
+    private String lowerBound, upperBound, dateFormat, numberFormat, intervalType;
     private List<String> applyTo;
 
-    public String getMarginFrom() {
-        return marginFrom;
+    public String getNumberFormat() {
+        return numberFormat;
     }
 
-    public void setMarginFrom(String marginFrom) {
-        this.marginFrom = marginFrom;
+    public void setNumberFormat(String numberFormat) {
+        this.numberFormat = numberFormat;
+    }
+    
+    public String getDateFormat() {
+        return dateFormat;
     }
 
-    public String getMarginTo() {
-        return marginTo;
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+    
+    public String getIntervalType() {
+        return intervalType;
     }
 
-    public void setMarginTo(String marginTo) {
-        this.marginTo = marginTo;
+    public void setIntervalType(String intervalType) {
+        this.intervalType = intervalType;
+    }
+
+    public String getLowerBound() {
+        return lowerBound;
+    }
+
+    public void setLowerBound(String lowerBound) {
+        this.lowerBound = lowerBound;
+    }
+
+    public String getUpperBound() {
+        return upperBound;
+    }
+
+    public void setUpperBound(String upperBound) {
+        this.upperBound = upperBound;
     }
 
     @Override
@@ -53,14 +77,6 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
         this.applyTo = BlockUtils.splitIdentifiers(applyTo);
     }
 
-    public String getInputFormat() {
-        return inputFormat;
-    }
-
-    public void setInputFormat(String inputFormat) {
-        this.inputFormat = inputFormat;
-    }
-    
     @Override
     public IntervalCheckConstraint clone() {
         IntervalCheckConstraint copy = (IntervalCheckConstraint) super.clone();
@@ -75,94 +91,916 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
 
     @Override
     public CheckResult check(Record record, VariableSpace scope) {
-    
-        // Prepare result variable
-        List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
         
-        //Determining optional parameters
-        boolean fromSet = (marginFrom==null)?false:true;
-        boolean toSet = (marginTo==null)?false:true;
-       
-        //processing input fields
-        DateFormat formatter = new SimpleDateFormat(inputFormat);
-        Date fromDate = null;
-        Date toDate = null;
+        //Determining function mode: date or number
+        if (dateFormat != null && numberFormat != null) {
+//            conflicting parameters: Throw error
+            String eDetails = String.format("FunctionModeError - Both date-format and number-format not allowed");
+            return new CheckResult(this, false, null, null, null, eDetails);
+            
+        } else if (dateFormat == null && numberFormat != null) {
+//            function mode - number
+            return parseNumInterval(record, scope, numberFormat, lowerBound, upperBound, intervalType);
+        } else if (dateFormat != null && numberFormat == null) {
+//            function mode - date
+            return parseDateInterval(record, scope, dateFormat, lowerBound, upperBound, intervalType);
+        } else {
+//            function mode -  default-number
+            return parseDefaultNumInterval(record, scope, lowerBound, upperBound, intervalType);
+        }
+    }
+
+    private CheckResult parseNumInterval(Record record, VariableSpace scope, String numberFormat, String lowerBound, String upperBound, String intervalType) {
+//          Prepare result variable
+        List<CheckResult> results = new ArrayList<>(applyTo.size());
+        
+//        Determining optional parameters
+        boolean lowerSet = (lowerBound != null);
+        boolean upperSet = (upperBound != null);
+        
+        Double lower = null;
+        Double upper = null;
         try {
-            if(fromSet)
-                fromDate = formatter.parse(marginFrom);
-            if (toSet) 
-                toDate = formatter.parse(marginTo);
+            if(lowerSet)
+                lower = Double.parseDouble(lowerBound);
+            if (upperSet) 
+                upper = Double.parseDouble(upperBound);
         
-            //processing each examined field
-            for (String examineeField : applyTo) {
-                //Fetching date value
-                String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+//        main flow control: intervalType
+        switch (intervalType) {
+            case "closed":
+//                            processing each examined field as CLOSED interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
 
-                try { 
-                    Date examineeDate = formatter.parse(examineeValue);
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
 
-                    // Details
-                    String details = String.format("Date Values: form: %12s; to: %12s; examinee: %12s; format: %12s", fromDate, toDate, examineeDate, inputFormat);
-                    
-                    if (!toSet && !fromSet) {
-//                        None ot the margins set: ERROR
-                        String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required. Current values - form: %12s; to: %12s;", fromDate, toDate);
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee <= upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee >= lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee >= lower) && (examinee <= upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
                         return new CheckResult(this, false, null, null, null, eDetails);
-                        
-                        
-                    } else if (toSet && !fromSet) {
-//                        Upper margin set
-                        if (examineeDate.before(toDate)) {
-                            //examined date is before the upper margin
-                           results.add(new CheckResult(this, true, examineeField, examineeValue, details));
-
-                        } else {
-                            //examined date falls out of the intervall
-                            results.add(new CheckResult(this, false, examineeField, examineeValue, details));
-                            return new CheckResult(this, false, null, null, null, results);
-                        }
-                        
-                    } else if (!toSet && fromSet) {
-//                        Lower margin set
-                        if (examineeDate.after(fromDate)) {
-                            //examined date is after the margin
-                           results.add(new CheckResult(this, true, examineeField, examineeValue, details));
-
-                        } else {
-                            //examined date falls out of the intervall
-                            results.add(new CheckResult(this, false, examineeField, examineeValue, details));
-                            return new CheckResult(this, false, null, null, null, results);
-                        }
-                        
-                    } else {
-//                        both margins set
-                        if (examineeDate.after(fromDate) && examineeDate.before(toDate)) {
-                            //examined date falls in the intervall
-                           results.add(new CheckResult(this, true, examineeField, examineeValue, details));
-
-                        } else {
-                            //examined date falls out of the intervall
-                            results.add(new CheckResult(this, false, examineeField, examineeValue, details));
-                            return new CheckResult(this, false, null, null, null, results);
-                        }
                     }
-
-                    
-                } catch (ParseException ex) {
-                    //Parsing Error: Examinee
-                    String eDetails = String.format("Parsing Error - Examinee: examinee: %12s; format: %12s", examineeValue, inputFormat);
-                    return new CheckResult(this, false, null, null, null, eDetails);
                 }
-            }
+                break;
+            case "open-closed":
+//                            processing each examined field as OPEN-CLOSED interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee <= upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee > lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee > lower) && (examinee <= upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            case "closed-open":
+//                            processing each examined field as CLOSED-OPEN interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee < upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee >= lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee >= lower) && (examinee < upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }    
+                break;
+            case "open":
+//                            processing each examined field as OPEN interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee < upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee > lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee > lower) && (examinee < upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            default:
+//                invalid parameter
+                String eDetails = String.format("InvalidIntervalTypeError - interval-type possible values: closed, open-closed, closed-open, open");
+                return new CheckResult(this, false, null, null, null, eDetails);             
+        }
+       
+
         
-        } catch (ParseException ex) {
+
+        
+        } catch (Exception ex) {
             //Parsing Error: Margins
-            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", marginFrom, marginTo, inputFormat);
+            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
             return new CheckResult(this, false, null, null, null, eDetails);
         }
         
         return new CheckResult(this, true, null, null, null, results);
+    }
 
+    private CheckResult parseDateInterval(Record record, VariableSpace scope, String dateFormat, String lowerBound, String upperBound, String intervalType) {
+        
+//                 Prepare result variable
+        List<CheckResult> results = new ArrayList<>(applyTo.size());
+        
+//        Determining optional parameters
+        boolean lowerSet = (lowerBound != null);
+        boolean upperSet = (upperBound != null);
+        
+        DateFormat formatter = new SimpleDateFormat(dateFormat);
+        Date lowerDate = null;
+        Date upperDate = null;
+        try {
+            if(lowerSet)
+                lowerDate = formatter.parse(lowerBound);
+            if (upperSet) 
+                upperDate = formatter.parse(upperBound);
+        
+//        main flow control: intervalType
+        switch (intervalType) {
+            case "closed":
+//                            processing each examined field as CLOSED interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        Date examineeDate = formatter.parse(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examineeDate.before(upperDate) || examineeDate.equals(upperDate)) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examineeDate.after(lowerDate) || examineeDate.equals(lowerDate)) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examineeDate.after(lowerDate) || examineeDate.equals(lowerDate)) && (examineeDate.before(upperDate) || examineeDate.equals(upperDate))) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (ParseException ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s; format: %12s", examineeValue, dateFormat);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            case "open-closed":
+//                            processing each examined field as OPEN-CLOSED interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        Date examineeDate = formatter.parse(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examineeDate.before(upperDate) || examineeDate.equals(upperDate)) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examineeDate.after(lowerDate)) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examineeDate.after(lowerDate)) && (examineeDate.before(upperDate) || examineeDate.equals(upperDate))) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (ParseException ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s; format: %12s", examineeValue, dateFormat);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }                
+                break;
+            case "closed-open":
+//                            processing each examined field as CLOSED-OPEN interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        Date examineeDate = formatter.parse(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examineeDate.before(upperDate)) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examineeDate.after(lowerDate) || examineeDate.equals(lowerDate)) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examineeDate.after(lowerDate) || examineeDate.equals(lowerDate)) && (examineeDate.before(upperDate))) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (ParseException ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s; format: %12s", examineeValue, dateFormat);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }         
+                break;
+            case "open":
+//            processing each examined field as OPEN interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        Date examineeDate = formatter.parse(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examineeDate.before(upperDate)) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examineeDate.after(lowerDate)) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if (examineeDate.after(lowerDate) && examineeDate.before(upperDate)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (ParseException ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s; format: %12s", examineeValue, dateFormat);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            default:
+//                invalid parameter
+                String eDetails = String.format("InvalidIntervalTypeError - interval-type possible values: closed, open-closed, closed-open, open");
+                return new CheckResult(this, false, null, null, null, eDetails);             
+        }
+       
+
+        
+
+        
+        } catch (ParseException ex) {
+            //Parsing Error: Margins
+            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
+            return new CheckResult(this, false, null, null, null, eDetails);
+        }
+        
+        return new CheckResult(this, true, null, null, null, results);
+    }
+
+    private CheckResult parseDefaultNumInterval(Record record, VariableSpace scope, String lowerBound, String upperBound, String intervalType) {
+//          Prepare result variable
+        List<CheckResult> results = new ArrayList<>(applyTo.size());
+        
+//        Determining optional parameters
+        boolean lowerSet = (lowerBound != null);
+        boolean upperSet = (upperBound != null);
+        
+        Double lower = null;
+        Double upper = null;
+        try {
+            if(lowerSet)
+                lower = Double.parseDouble(lowerBound);
+            if (upperSet) 
+                upper = Double.parseDouble(upperBound);
+        
+//        main flow control: intervalType
+        switch (intervalType) {
+            case "closed":
+//                            processing each examined field as CLOSED interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee <= upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee >= lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee >= lower) && (examinee <= upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            case "open-closed":
+//                            processing each examined field as OPEN-CLOSED interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee <= upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee > lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee > lower) && (examinee <= upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            case "closed-open":
+//                            processing each examined field as CLOSED-OPEN interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                                , intervalType, dateFormat, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee < upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee >= lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee >= lower) && (examinee < upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }    
+                break;
+            case "open":
+//                            processing each examined field as OPEN interval type
+                for (String examineeField : applyTo) {
+//                    Fetching date value
+                    String examineeValue = BlockUtils.getValue(examineeField, record, scope);
+                    try { 
+                        double examinee = Double.parseDouble(examineeValue);
+
+//                         Details
+                        String details = String.format("Interval - %s Date - from: %12s to: %12s examinee: %12s"
+                                , intervalType, lower, upper, examinee);
+
+                        if (!upperSet && !lowerSet) {
+//                            None ot the margins set: ERROR
+                            String eDetails = String.format("InsufficientArgumentNumberError - margin-from or margin-to required.");
+                            return new CheckResult(this, false, null, null, null, eDetails);
+
+                        } else if (upperSet && !lowerSet) {
+//                            Upper margin set
+                            
+                            if (examinee < upper) {
+//                                examined date is before the upper margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else if (!upperSet && lowerSet) {
+//                            Lower margin set;
+                            
+                            if (examinee > lower) {
+                                //examined date is after the margin
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+
+                        } else {
+//                            both margins set
+                            
+                            if ((examinee > lower) && (examinee < upper)) {
+//                                examined date falls in the intervall
+                               results.add(new CheckResult(this, true, examineeField, examineeValue, details));
+
+                            } else {
+//                                examined date falls out of the intervall
+                                results.add(new CheckResult(this, false, examineeField, examineeValue, details));
+                                return new CheckResult(this, false, null, null, null, results);
+                            }
+                        }
+
+
+                    } catch (Exception ex) {
+//                        Parsing Error: Examinee
+                        String eDetails = String.format("Parsing Error - Examinee: examinee: %12s", examineeValue);
+                        return new CheckResult(this, false, null, null, null, eDetails);
+                    }
+                }
+                break;
+            default:
+//                invalid parameter
+                String eDetails = String.format("InvalidIntervalTypeError - interval-type possible values: closed, open-closed, closed-open, open");
+                return new CheckResult(this, false, null, null, null, eDetails);             
+        }
+       
+
+        
+
+        
+        } catch (Exception ex) {
+            //Parsing Error: Margins
+            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
+            return new CheckResult(this, false, null, null, null, eDetails);
+        }
+        
+        return new CheckResult(this, true, null, null, null, results);
     }
     
 }
