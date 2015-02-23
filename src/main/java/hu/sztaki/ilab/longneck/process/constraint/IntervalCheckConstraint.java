@@ -5,6 +5,8 @@ import hu.sztaki.ilab.longneck.process.VariableSpace;
 import hu.sztaki.ilab.longneck.process.access.SimpleDatabaseTarget;
 import hu.sztaki.ilab.longneck.process.block.BlockUtils;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -122,9 +124,9 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
         Double upper = null;
         try {
             if(lowerSet)
-                lower = Double.parseDouble(lowerBound);
+                lower = formatNumber(lowerBound, numberFormat).doubleValue();
             if (upperSet) 
-                upper = Double.parseDouble(upperBound);
+                upper = formatNumber(upperBound, numberFormat).doubleValue();
         
 //        main flow control: intervalType
         switch (intervalType) {
@@ -134,11 +136,11 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
 //                    Fetching date value
                     String examineeValue = BlockUtils.getValue(examineeField, record, scope);
                     try { 
-                        double examinee = Double.parseDouble(examineeValue);
+                        double examinee = formatNumber(examineeValue, numberFormat).doubleValue();
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Number - format: %12s from: %12s to: %12s examinee: %12s"
+                                , intervalType, numberFormat, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -199,11 +201,11 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
 //                    Fetching date value
                     String examineeValue = BlockUtils.getValue(examineeField, record, scope);
                     try { 
-                        double examinee = Double.parseDouble(examineeValue);
+                        double examinee = formatNumber(examineeValue, numberFormat).doubleValue();
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Number - format: %12s from: %12s to: %12s examinee: %12s"
+                                , intervalType, numberFormat, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -264,11 +266,11 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
 //                    Fetching date value
                     String examineeValue = BlockUtils.getValue(examineeField, record, scope);
                     try { 
-                        double examinee = Double.parseDouble(examineeValue);
+                        double examinee = formatNumber(examineeValue, numberFormat).doubleValue();
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Number - format: %12s from: %12s to: %12s examinee: %12s"
+                                , intervalType, numberFormat, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -329,11 +331,11 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
 //                    Fetching date value
                     String examineeValue = BlockUtils.getValue(examineeField, record, scope);
                     try { 
-                        double examinee = Double.parseDouble(examineeValue);
+                        double examinee = formatNumber(examineeValue, numberFormat).doubleValue();
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Number - format: %12s from: %12s to: %12s examinee: %12s"
+                                , intervalType, numberFormat, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -400,7 +402,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
         
         } catch (Exception ex) {
             //Parsing Error: Margins
-            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
+            String eDetails = String.format("Parsing Error - Margins: from: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
             return new CheckResult(this, false, null, null, null, eDetails);
         }
         
@@ -436,7 +438,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         Date examineeDate = formatter.parse(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                        String details = String.format("Interval - %s Date -  format: %12s from: %12s to: %12s examinee: %12s"
                                 , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
 
                         if (!upperSet && !lowerSet) {
@@ -501,7 +503,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         Date examineeDate = formatter.parse(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                        String details = String.format("Interval - %s Date -  format: %12s from: %12s to: %12s examinee: %12s"
                                 , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
 
                         if (!upperSet && !lowerSet) {
@@ -566,7 +568,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         Date examineeDate = formatter.parse(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                        String details = String.format("Interval - %s Date -  format: %12s from: %12s to: %12s examinee: %12s"
                                 , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
 
                         if (!upperSet && !lowerSet) {
@@ -631,7 +633,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         Date examineeDate = formatter.parse(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
+                        String details = String.format("Interval - %s Date -  format: %12s from: %12s to: %12s examinee: %12s"
                                 , intervalType, dateFormat, lowerDate, upperDate, examineeDate);
 
                         if (!upperSet && !lowerSet) {
@@ -699,7 +701,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
         
         } catch (ParseException ex) {
             //Parsing Error: Margins
-            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
+            String eDetails = String.format("Parsing Error - Margins: from: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
             return new CheckResult(this, false, null, null, null, eDetails);
         }
         
@@ -733,8 +735,8 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         double examinee = Double.parseDouble(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Numbers -  from: %12s to: %12s examinee: %12s"
+                                , intervalType, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -798,8 +800,8 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         double examinee = Double.parseDouble(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Numbers -  from: %12s to: %12s examinee: %12s"
+                                , intervalType, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -863,8 +865,8 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         double examinee = Double.parseDouble(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date -  format: %12s form: %12s to: %12s examinee: %12s"
-                                , intervalType, dateFormat, lower, upper, examinee);
+                        String details = String.format("Interval - %s Numbers -  from: %12s to: %12s examinee: %12s"
+                                , intervalType, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
 //                            None ot the margins set: ERROR
@@ -928,7 +930,7 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
                         double examinee = Double.parseDouble(examineeValue);
 
 //                         Details
-                        String details = String.format("Interval - %s Date - from: %12s to: %12s examinee: %12s"
+                        String details = String.format("Interval - %s Numbers -  from: %12s to: %12s examinee: %12s"
                                 , intervalType, lower, upper, examinee);
 
                         if (!upperSet && !lowerSet) {
@@ -996,11 +998,15 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
         
         } catch (Exception ex) {
             //Parsing Error: Margins
-            String eDetails = String.format("Parsing Error - Margins: form: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
+            String eDetails = String.format("Parsing Error - Margins: from: %12s; to: %12s; format: %12s", lowerBound, upperBound, dateFormat);
             return new CheckResult(this, false, null, null, null, eDetails);
         }
         
         return new CheckResult(this, true, null, null, null, results);
     }
-    
+ 
+    private Number formatNumber(String value, String format) throws ParseException {
+        DecimalFormat nf = new DecimalFormat(format);
+        return nf.parse(value);
+    } 
 }

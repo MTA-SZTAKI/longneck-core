@@ -815,16 +815,24 @@
            extends="hu.sztaki.ilab.longneck.process.constraint.AbstractAtomicConstraint">
     <c:map-to xml="interval-check" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
 
-    <c:field name="inputFormat" type="string" set-method="setInputFormat">
-      <c:bind-xml name="input-format" node="attribute" type="string"/>
+    <c:field name="numberFormat" type="string" set-method="setNumberFormat">
+      <c:bind-xml name="number-format" node="attribute" type="string"/>
     </c:field>
     
-    <c:field name="marginFrom" type="string" set-method="setMarginFrom">
-      <c:bind-xml name="margin-from" node="attribute" type="string"/>
+    <c:field name="dateFormat" type="string" set-method="setDateFormat">
+      <c:bind-xml name="date-format" node="attribute" type="string"/>
     </c:field>
     
-    <c:field name="marginTo" type="string" set-method="setMarginTo">
-      <c:bind-xml name="margin-to" node="attribute" type="string"/>
+    <c:field name="intervalType" type="string" set-method="setIntervalType">
+      <c:bind-xml name="interval-type" node="attribute" type="string"/>
+    </c:field>
+    
+    <c:field name="lowerBound" type="string" set-method="setLowerBound">
+      <c:bind-xml name="lower-bound" node="attribute" type="string"/>
+    </c:field>
+    
+    <c:field name="upperBound" type="string" set-method="setUpperBound">
+      <c:bind-xml name="upper-bound" node="attribute" type="string"/>
     </c:field>
   </c:class>
 
