@@ -423,9 +423,18 @@ public class IntervalCheckConstraint extends AbstractAtomicConstraint{
         Date upperDate = null;
         try {
             if(lowerSet)
-                lowerDate = formatter.parse(lowerBound);
+                if (lowerBound.equals("TODAY")) {
+                    lowerDate = formatter.parse(formatter.format(new Date()));
+                } else {
+                    lowerDate = formatter.parse(lowerBound);
+                }
+                    
             if (upperSet) 
-                upperDate = formatter.parse(upperBound);
+                if (upperBound.equals("TODAY")) {
+                    upperDate = formatter.parse(formatter.format(new Date()));
+                } else {
+                    upperDate = formatter.parse(upperBound);
+                }                
         
 //        main flow control: intervalType
         switch (intervalType) {
