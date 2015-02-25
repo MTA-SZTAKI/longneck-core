@@ -1741,17 +1741,17 @@
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>       
-        <xs:attribute name="upper-bound" type="xs:string" use="optional">
-          <xs:annotation>
-            <xs:documentation>
-              Lower date margin, should be given according to input-format.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="lower-bound" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
-              Upper date margin, should be given according to input-format.
+              Lower date margin, should be given according to input-format, or the constant "TODAY".
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="upper-bound" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Upper date margin, should be given according to input-format, or the constant "TODAY".
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
