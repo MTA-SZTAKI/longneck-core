@@ -73,7 +73,7 @@ public enum FileType {
     }
     
     public String getFileName(String baseName) {
-        String filepath = baseName.replaceAll("/", ("\\".equals(File.separator)?"\\":File.separator));
+        String filepath = baseName.replaceAll("/", File.separator);
         switch (this) {
             case Block:
                 return String.format("%1$s.block.xml", filepath);
