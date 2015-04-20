@@ -10,9 +10,9 @@ public class OsUtils {
 
     public static String getHomeDirectoryPath(OsType type) {
         if (type == OsType.Linux) {
-            return String.format("%1$s%2$s%3$s", System.getProperty("user.home"), File.separator, ".longneck");
+            return String.format("%1$s%2$s%3$s", System.getProperty("user.home"), "/", ".longneck");
         }
-        
-        return String.format("%1$s%2$s%3$s", System.getProperty("user.home"), File.separator, "longneck");        
+              
+        return String.format("%1$s%2$s%3$s", System.getProperty("user.home"), "/", "longneck");        
     }
 }

@@ -1,7 +1,6 @@
 package hu.sztaki.ilab.longneck.bootstrap;
 
 import hu.sztaki.ilab.longneck.process.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,7 +46,7 @@ public class SourceLoader implements ResourceLoaderAware {
             MarshalException, ValidationException, ParserConfigurationException, SAXException {
         Unmarshaller unmarshaller = unmarshallerLoader.getUnmarshaller();
         Document pkgDoc = xmlDocumentLoader.getDocument(
-                resourceLoader.getResource(repositoryPath + File.separator + path), 
+                resourceLoader.getResource(repositoryPath + "/" + path), 
                 FileType.forPath(path));
         // Add package id to root element
         pkgDoc.getDocumentElement().setAttributeNS(
@@ -64,14 +63,14 @@ public class SourceLoader implements ResourceLoaderAware {
             // Load process
             LongneckProcess process = getProcess(processPath);
             int loadedReferenceCount = unmarshalListener.getReferences().size();
-            List<RefToDirPair> unsolvedref = new ArrayList<RefToDirPair>();
-            List<RefToDirPair> doneref = new ArrayList<RefToDirPair>();
+            List<RefToDirPair> unsolvedref = new ArrayList<>();
+            List<RefToDirPair> doneref = new ArrayList<>();
             for(AbstractReference ref:unmarshalListener.getReferences()) {
                 unsolvedref.add(new RefToDirPair(ref, null));
             }
             
-            List<LongneckPackage> packages = new ArrayList<LongneckPackage>();
-            Set<PathToDirPair> loadedpathSet = new HashSet<PathToDirPair>();
+            List<LongneckPackage> packages = new ArrayList<>();
+            Set<PathToDirPair> loadedpathSet = new HashSet<>();
             
             while(!unsolvedref.isEmpty()) {
                 // Create unloaded packages set from references and update path if nessesary minus already loaded packages.
@@ -105,17 +104,7 @@ public class SourceLoader implements ResourceLoaderAware {
 
             return cp;
 
-        } catch (MappingException ex) {
-            throw new RuntimeException("Could not create compact process.", ex);
-        } catch (MarshalException ex) {
-            throw new RuntimeException("Could not create compact process.", ex);
-        } catch (ValidationException ex) {
-            throw new RuntimeException("Could not create compact process.", ex);
-        } catch (IOException ex) {
-            throw new RuntimeException("Could not create compact process.", ex);
-        } catch (ParserConfigurationException ex) {
-            throw new RuntimeException("Could not create compact process.", ex);
-        } catch (SAXException ex) {
+        } catch (MappingException | MarshalException | ValidationException | IOException | ParserConfigurationException | SAXException ex) {
             throw new RuntimeException("Could not create compact process.", ex);
         }
     }

@@ -56,33 +56,34 @@ public enum FileType {
     
     public static String getPackageId(String path) {
         int dotIndex  = path.lastIndexOf('.', path.lastIndexOf('.')-1);
-        return path.substring(0, dotIndex).replaceAll(File.separator, "/");
+        return path.substring(0, dotIndex);
     }
     
     
     public static String getFullPackageId(String defaultdirectory, String pkg) {
         return pkg.startsWith("/") ? pkg.substring(1):(defaultdirectory == null ?"":
-                defaultdirectory.replace(File.separatorChar, '/'))+pkg;
+                defaultdirectory)+pkg;
     }
     
     public static String normalizePackageId(String fullpackageid, String repositoryPath, 
             AbstractReference ref) {
-        return getPackageId(FileSystems.getDefault().getPath(
+        String packageid = getPackageId(FileSystems.getDefault().getPath(
                 repositoryPath, forReference(ref).getFileName(fullpackageid)).normalize().toString()
-                .replaceFirst(repositoryPath+File.separator, ""));
+                .replaceFirst(repositoryPath+("\\".equals(File.separator)?"\\\\":File.separator), ""));
+        if('/' != File.separatorChar) return packageid.replaceAll("\\".equals(File.separator)?"\\\\":File.separator, "/");
+        return packageid;
     }
     
     public String getFileName(String baseName) {
-        String filepath = baseName.replaceAll("/", File.separator);
         switch (this) {
             case Block:
-                return String.format("%1$s.block.xml", filepath);
+                return String.format("%1$s.block.xml", baseName);
             case Constraint:
-                return String.format("%1$s.constraint.xml", filepath);
+                return String.format("%1$s.constraint.xml", baseName);
             case Entity:
-                return String.format("%1$s.entity.xml", filepath);
+                return String.format("%1$s.entity.xml", baseName);
             case Process:
-                return String.format("%1$s.process.xml", filepath);
+                return String.format("%1$s.process.xml", baseName);
             default:
                 throw new RuntimeException("Invalid package type.");
         }

@@ -22,7 +22,8 @@ public class PathToDirPair {
     
     public PathToDirPair normalizePath(String repositoryPath) throws IOException {
         String cannonicalpath = FileSystems.getDefault().getPath(repositoryPath, path).normalize()
-                .toString().replaceFirst(repositoryPath+File.separator, "");
+                .toString().replaceFirst(repositoryPath+("\\".equals(File.separator)?"\\\\":File.separator), "");
+        if('/' != File.separatorChar) cannonicalpath = cannonicalpath.replaceAll("\\".equals(File.separator)?"\\\\":File.separator, "/");
         
         if(cannonicalpath.equals(path)) return this;
         init(cannonicalpath);
@@ -39,7 +40,7 @@ public class PathToDirPair {
     
     private void init(String path) {
         this.path = path;
-        this.directory = path.substring(0, path.lastIndexOf(File.separatorChar)+1);
+        this.directory = path.substring(0, path.lastIndexOf('/')+1);
     }
 
     @Override
