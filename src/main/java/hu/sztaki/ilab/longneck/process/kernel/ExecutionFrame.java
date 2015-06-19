@@ -147,7 +147,8 @@ class ExecutionFrame {
         
         context = other.context;
 
-        hostBlock = (CompoundBlock) other.hostBlock.clone();
+        //hostBlock = (CompoundBlock) other.hostBlock.clone();
+        hostBlock = (CompoundBlock) other.hostBlock;
         control = other.control == null ? null : other.control.clone();
 
         hasControl = other.hasControl;
