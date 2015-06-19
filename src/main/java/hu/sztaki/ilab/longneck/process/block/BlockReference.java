@@ -17,7 +17,7 @@ public class BlockReference extends AbstractReference implements Block {
     private boolean propagateFailure = false;
     /** A context which helps identifying block occurrences and errors.*/
     private String context = null ;
-
+    
     /**
      * Used mainly for testing.
      * @param record
@@ -27,7 +27,15 @@ public class BlockReference extends AbstractReference implements Block {
     public void apply(Record record, VariableSpace parentScope) {
         referredBlock.apply(record, parentScope);
     }
-
+    
+    /**
+     * Block clone. 
+     * 
+     * Cloning the block might cause problems if the block structure contains a cycle -
+     * the clone methods do not implement a real deep copy, that is, the cloning of 
+     * a cyclic block graph clones the same objects endlessly, causing stack overflow. 
+     * @return 
+     */
     @Override
     public BlockReference clone() {
         BlockReference copy = (BlockReference) super.clone();

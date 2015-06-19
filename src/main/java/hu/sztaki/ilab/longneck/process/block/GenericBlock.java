@@ -26,7 +26,7 @@ public class GenericBlock extends Sequence implements RepositoryItem {
     private Check inputConstraints;
     /** The output constraints. */
     private Check outputConstraints;
-
+    
     @Override
     public void apply(Record record, VariableSpace parentScope) {
         // do nothing
