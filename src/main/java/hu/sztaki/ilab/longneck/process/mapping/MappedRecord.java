@@ -23,7 +23,7 @@ public class MappedRecord extends AbstractRecord {
     public MappedRecord(Record parent, Mapping mapping) {
         super();
         this.parent = parent;
-        this.mapping = mapping;
+        this.mapping = mapping.clone();
         init();
     }
     
