@@ -375,6 +375,14 @@ database.connection.NAME.password=XXXX</code></pre>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="charset" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the character set (encoding) to use when reading the input CSV file. Default: 'UTF-8'.
+              Java charset names are expected.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

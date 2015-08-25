@@ -168,6 +168,10 @@
     <c:field name="columns" type="string" set-method="setColumns">
       <c:bind-xml name="columns" node="attribute" />
     </c:field>
+
+    <c:field name="characterSet" type="string" set-method="setCharacterSet">
+      <c:bind-xml name="charset" node="attribute" />
+    </c:field>
   </c:class>
 
 
