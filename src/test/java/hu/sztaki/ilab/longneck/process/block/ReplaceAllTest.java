@@ -74,6 +74,7 @@ public class ReplaceAllTest {
         assertEquals("s", rf.pattern.pattern());
         rf.setRegexp("[^a-z]+"); 
         assertEquals("[^a-z]+", rf.pattern.pattern());
+        rf.setRegexpfield(null);
         rf.validatePattern(r, parentScope);
         assertEquals("[^a-z]+", rf.pattern.pattern());
         rf.setText("mas");
@@ -87,7 +88,7 @@ public class ReplaceAllTest {
         rf.pattern = null;
         rf.setRegexpfield(null);
         rf.validatePattern(r, parentScope);
-        assertEquals("\\Qmas\\E", rf.pattern.pattern());
+        assertEquals("\\Q\\s\\E", rf.pattern.pattern());
         rf.pattern = null;
         rf.setRegexpfield(null);
         rf.setText(null);
@@ -111,6 +112,7 @@ public class ReplaceAllTest {
         rf.apply(r, parentScope);
         assertEquals("   a work wellfdwork wellf  work well5work wellwork well  ", r.get("test1").getValue());
         rf.setRegexp("a");
+        rf.setRegexpfield(null);
         rf.apply(r, parentScope);
         assertEquals("   work well work wellfdwork wellf  work well5work wellwork well  ", r.get("test1").getValue());
     }
@@ -141,6 +143,25 @@ public class ReplaceAllTest {
         rf.validatePattern(r, parentScope);
         rf.apply(r, parentScope);
         assertEquals("   a work wellfdwork wellf   5 5 work well  6   ", r.get("test1").getValue());
+    }
+        
+        /**
+     * Test of apply method, of class ReplaceFirst.
+     */
+    @Test
+    public void testtextreplace2() {
+        rf.pattern = null;
+        rf.setApplyTo(Arrays.asList("test1"));
+        rf.setText(null);
+        rf.setRegexpfield(null);
+        r.get("testregexpfield").setValue(".*");
+        rf.setTextfield("testregexpfield");
+        rf.apply(r, parentScope);
+        rf.regexp = null;
+        assertEquals("   a sfdsf   5 5 work well  6   ", r.get("test1").getValue());
+        r.get("testregexpfield").setValue("5");
+        rf.apply(r, parentScope);
+        assertEquals("   a sfdsf   work well work well work well  6   ", r.get("test1").getValue());
     }
 
 }

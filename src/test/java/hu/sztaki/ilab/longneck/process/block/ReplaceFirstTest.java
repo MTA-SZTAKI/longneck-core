@@ -56,6 +56,7 @@ public class ReplaceFirstTest {
         r.add(new Field("testregexpfield", ".*"));
         r.add(new Field("testtextfield1", "\\s"));
         r.add(new Field("testtextfield2", "s"));
+        r.add(new Field("testtextfield3", "\\s[^a-z\\s]+\\s"));
     }
     
     @After
@@ -74,6 +75,7 @@ public class ReplaceFirstTest {
         assertEquals(".*", rf.pattern.pattern());
         rf.setRegexp("[^a-z]+"); 
         assertEquals("[^a-z]+", rf.pattern.pattern());
+        rf.setRegexpfield(null);
         rf.validatePattern(r, parentScope);
         assertEquals("[^a-z]+", rf.pattern.pattern());
         rf.setText("mas");
@@ -87,7 +89,7 @@ public class ReplaceFirstTest {
         rf.pattern = null;
         rf.setRegexpfield(null);
         rf.validatePattern(r, parentScope);
-        assertEquals("\\Qmas\\E", rf.pattern.pattern());
+        assertEquals("\\Q\\s\\E", rf.pattern.pattern());
         rf.pattern = null;
         rf.setRegexpfield(null);
         rf.setText(null);
@@ -111,6 +113,7 @@ public class ReplaceFirstTest {
         rf.apply(r, parentScope);
         assertEquals("work well", r.get("test1").getValue());
         rf.setRegexp("[^a-z]+");
+        rf.setRegexpfield(null);
         rf.apply(r, parentScope);
         assertEquals("workwork wellwell", r.get("test1").getValue());
     }
@@ -141,6 +144,24 @@ public class ReplaceFirstTest {
         rf.validatePattern(r, parentScope);
         rf.apply(r, parentScope);
         assertEquals("   a work wellfdsf   5 5 work well  6   ", r.get("test1").getValue());
+    }
+    
+        /**
+     * Test of apply method, of class ReplaceFirst.
+     */
+    @Test
+    public void testtextreplace2() {
+        rf.pattern = null;
+        rf.setApplyTo(Arrays.asList("test1"));
+        rf.setText(null);
+        rf.setRegexpfield(null);
+        rf.setTextfield("testregexpfield");
+        rf.apply(r, parentScope);
+        rf.regexp = null;
+        assertEquals("   a sfdsf   5 5 work well  6   ", r.get("test1").getValue());
+        r.get("testregexpfield").setValue("5");
+        rf.apply(r, parentScope);
+        assertEquals("   a sfdsf   work well 5 work well  6   ", r.get("test1").getValue());
     }
 
 }

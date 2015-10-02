@@ -52,10 +52,10 @@ public abstract class AbstractReplaceBlock extends AbstractRegexpBlock {
 
     @Override
     protected boolean validatePattern(Record record, VariableSpace parentScope) {
-        if (super.validatePattern(record, parentScope)) {
+        if ((regexpfield != null || regexp != null) && super.validatePattern(record, parentScope)) {
             return true;
         }
-        if (text == null) {
+        if (textfield != null) {
             String valuefieldvalue = BlockUtils.getValue(textfield, record, parentScope);
             if (valuefieldvalue == null) {
                 Logger.getLogger(this.getClass().getName()).warn(
