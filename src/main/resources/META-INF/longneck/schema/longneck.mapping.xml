@@ -26,6 +26,23 @@
     <c:field name="regexp" type="string">
       <c:bind-xml name="regexp" node="attribute"/>
     </c:field>
+    <c:field name="regexpfield" type="string">
+      <c:bind-xml name="regexp-field" node="attribute"/>
+    </c:field>
+  </c:class>
+
+  <!-- Abstract regexp block -->
+  <c:class name="hu.sztaki.ilab.longneck.process.block.AbstractReplaceBlock"
+           extends="hu.sztaki.ilab.longneck.process.block.AbstractRegexpBlock">
+    <c:field name="replacement" type="string">
+      <c:bind-xml name="replacement" node="attribute"/>
+    </c:field>
+    <c:field name="text" type="string">
+      <c:bind-xml name="text" node="attribute"/>
+    </c:field>
+    <c:field name="textfield" type="string">
+      <c:bind-xml name="text-field" node="attribute"/>
+    </c:field>
   </c:class>
 
   <!-- Abstract compound block -->
@@ -531,22 +548,14 @@
 
   <!-- Replace All -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.ReplaceAll"
-           extends="hu.sztaki.ilab.longneck.process.block.AbstractRegexpBlock">
+           extends="hu.sztaki.ilab.longneck.process.block.AbstractReplaceBlock">
     <c:map-to xml="replace-all" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-
-    <c:field name="replacement" type="string">
-      <c:bind-xml name="replacement" node="attribute"/>
-    </c:field>
   </c:class>
 
   <!-- Replace First -->
   <c:class name="hu.sztaki.ilab.longneck.process.block.ReplaceFirst"
-           extends="hu.sztaki.ilab.longneck.process.block.AbstractRegexpBlock">
+           extends="hu.sztaki.ilab.longneck.process.block.AbstractReplaceBlock">
     <c:map-to xml="replace-first" ns-uri="urn:hu.sztaki.ilab.longneck:1.0"/>
-
-    <c:field name="replacement" type="string">
-      <c:bind-xml name="replacement" node="attribute"/>
-    </c:field>
   </c:class>
 
   <!-- Set -->

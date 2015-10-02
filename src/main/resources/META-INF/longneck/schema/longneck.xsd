@@ -225,10 +225,17 @@
   <xs:complexType name="regexpBlockType">
     <xs:complexContent>
       <xs:extension base="tns:atomicBlockType">
-        <xs:attribute name="regexp" type="xs:string">
+        <xs:attribute name="regexp" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
               A regular expression.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="regexp-field" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              The filed name which contain a regular expression.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -972,6 +979,20 @@
     <xs:complexContent>
       <xs:extension base="tns:regexpBlockType">
         <xs:attribute name="replacement" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Replacement string.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="text-field" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Replacement string.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="text" type="xs:string" use="optional">
           <xs:annotation>
             <xs:documentation>
               Replacement string.

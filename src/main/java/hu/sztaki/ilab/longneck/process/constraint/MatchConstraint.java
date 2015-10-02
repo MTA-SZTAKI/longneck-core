@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.log4j.Logger;
 
 /**
  * Checks, if the field matches the specified regular expression.
@@ -31,19 +32,12 @@ public class MatchConstraint extends AndOperator implements Atomic {
     public CheckResult check(Record record, VariableSpace scope) {
         // Prepare result variable
         List<CheckResult> results = new ArrayList<CheckResult>(applyTo.size());
-        if(regexp == null && regexpfield == null) {
+        if(!validatePattern(record, scope)) {
             results.add(new CheckResult(this, false, null, null, 
                     "No regexp value or field defined."));
             return new CheckResult(this, false, null, null, null, results);
         }
-        String details;
-        if(regexp != null) {
-            details = String.format("Regexp: '%1$s'.", regexp);
-        } else {
-            String regexpfromfield = BlockUtils.getValue(regexpfield, record, scope);
-            details = String.format("Regexp: '%1$s'.", regexpfromfield);
-            pattern = Pattern.compile(regexpfromfield);
-        }
+        String details = String.format("Regexp: '%1$s'.", regexp);
         
         for (String fieldName : applyTo) {
             
@@ -83,6 +77,19 @@ public class MatchConstraint extends AndOperator implements Atomic {
         return new CheckResult(this, true, null, null, null, results);
     }
     
+    protected boolean validatePattern(Record record, VariableSpace parentScope) {
+        if (pattern == null && regexpfield != null) {
+            String regexpfieldvalue = BlockUtils.getValue(regexpfield, record, parentScope);
+            if (regexpfieldvalue == null) {
+                Logger.getLogger(this.getClass().getName()).warn(
+                            String.format("The given filed in regexpfield is't exist: fieldname = %1$s!",
+                                    regexpfield));
+                return false;
+            }
+            pattern = Pattern.compile(regexpfieldvalue);
+        }
+        return pattern != null;
+    }
     /**
      * Sets the regular expression.
      *

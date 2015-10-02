@@ -74,7 +74,7 @@ public class MappedRecord extends AbstractRecord {
                 } else {
                     // Do nothing if wrong mapping occour: none of mappig filed (from, to) exist
                     Logger.getLogger(this.getClass().getName()).warn(
-                            String.format("None of mappig filed (from, to) exist: from = %1$s, to = %2$s!",
+                            String.format("None of mapping field (from, to) exist: from = %1$s, to = %2$s!",
                                     value, key));
                 }
             }

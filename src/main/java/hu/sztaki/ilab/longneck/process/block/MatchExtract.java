@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
+import org.apache.log4j.Logger;
 
 /**
  * Matches the input against regular expression and extracts regexp groups.
@@ -27,6 +28,10 @@ public class MatchExtract extends  AbstractRegexpBlock implements CompoundBlock 
 
     @Override
     public void apply(Record record, VariableSpace variables) throws CheckError {
+        if(!validatePattern(record, variables)) {
+            Logger.getLogger(this.getClass().getName()).warn("Not any regexp given! Skip the match!");
+            return;
+        }
         // Execute regular expression
         for (String fieldName : applyTo) {
             // Get source value
