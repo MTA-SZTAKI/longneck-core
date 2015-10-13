@@ -3,6 +3,7 @@ package hu.sztaki.ilab.longneck.process.kernel;
 import hu.sztaki.ilab.longneck.process.VariableSpace;
 import hu.sztaki.ilab.longneck.process.block.Block;
 import hu.sztaki.ilab.longneck.process.block.BlockReference;
+import hu.sztaki.ilab.longneck.process.block.Caching;
 import hu.sztaki.ilab.longneck.process.block.CompoundBlock;
 import hu.sztaki.ilab.longneck.process.block.If;
 import hu.sztaki.ilab.longneck.process.block.Switch;
@@ -171,6 +172,8 @@ class ExecutionFrame {
             return new TryAllControl();
         } else if (block instanceof BlockReference) {
             return new BlockReferenceControl((BlockReference) block);
+        } else if (block instanceof Caching) {
+            return new CachingControl((Caching) block);
         }
 
         return null;

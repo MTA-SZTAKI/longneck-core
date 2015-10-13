@@ -22,6 +22,8 @@ class CachingControl implements StartHandler, EndHandler {
         private final Caching caching;
         /** True, if the currently processed record was a hit. */
         private boolean hit = false;
+        /** The key of the cache. */
+        private String cacheKey;
 
         public CachingControl(Caching caching) {
             this.caching = caching;
@@ -32,7 +34,7 @@ class CachingControl implements StartHandler, EndHandler {
                 throws RedirectException {
             
             VariableSpace variables = kernelState.getLastExecutionFrame().getVariables();
-            String cacheKey = BlockUtils.getValue(caching.getApplyTo().get(0), record, variables);
+            cacheKey = BlockUtils.getValue(caching.getApplyTo().get(0), record, variables);
             List<Field> cacheValue = caching.getCacheElement(cacheKey);
         
             //cache hit
@@ -52,8 +54,6 @@ class CachingControl implements StartHandler, EndHandler {
         @Override
         public void afterChildren(KernelState kernelState, Record record) throws CheckError {
             if (hit == false) {
-                VariableSpace variables = kernelState.getLastExecutionFrame().getVariables();
-                String cacheKey = BlockUtils.getValue(caching.getApplyTo().get(0), record, variables);
                 
                 List<Field> cacheValue = new ArrayList<Field>(caching.getOutputFields().size());
                 

@@ -4,6 +4,7 @@ import hu.sztaki.ilab.longneck.Field;
 import hu.sztaki.ilab.longneck.Record;
 import hu.sztaki.ilab.longneck.process.VariableSpace;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections.map.LRUMap;
@@ -25,16 +26,18 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
     /** The list of inside blocks. */
     private List<? extends Block> blocks;
     /** The thread-local cache. */
-    private CacheMapBuilder localCache;
+//    private CacheMapBuilder localCache;
     /** Internal cache */
-    transient private Map<String, List<Field>> cache = null;
+//    transient private Map<String, List<Field>> cache = null;
+    private Map<String, List<Field>> cache;
     /** Maximum size. */
     private int size = 100;
     /** Value of the cache */
     private List<String> outputFields;
 
     public Caching() {
-        localCache = new CacheMapBuilder(size);
+//        localCache = new CacheMapBuilder(size);
+        cache = (Map<String, List<Field>>) (Collections.synchronizedMap(new LRUMap(size)));
     }
 
     public int getSize() {
@@ -78,17 +81,18 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
     }
 
     public List<Field> getCacheElement(String key) {
-        if (cache == null) {
-            cache = localCache.get();
-        }
+//        if (cache == null) {
+//            cache = localCache.get();
+//        }
 
+//        return cache.get(sourceInfo.getLine() + "_" + key);
         return cache.get(sourceInfo.getLine() + "_" + key);
     }
 
     public void putCacheElement(String key, List<Field> value) {
-        if (cache == null) {
-            cache = localCache.get();
-        }
+//        if (cache == null) {
+//            cache = localCache.get();
+//        }
 
         cache.put((sourceInfo.getLine() + "_" + key) , value);
     }
@@ -104,8 +108,10 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
             }
         }
 
-        copy.localCache = new CacheMapBuilder(size);
-        copy.cache = null;
+//        copy.localCache = new CacheMapBuilder(size);
+//        copy.cache = null;
+        copy.cache = (Map<String, List<Field>>) (Collections.synchronizedMap(new LRUMap(size)));
+        copy.cache.putAll(cache);
 
         if (outputFields != null) {
             copy.outputFields =  new ArrayList<String>(outputFields.size());
@@ -115,22 +121,22 @@ public class Caching extends AbstractAtomicBlock implements CompoundBlock {
         return copy;
     }
 
-    public static class CacheMapBuilder extends ThreadLocal<Map> {
-        private final int size;
-
-        public CacheMapBuilder(int size) {
-            this.size = size;
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        @Override
-        protected Map initialValue() {
-            return new LRUMap(size);
-        }
-    }
+//    public static class CacheMapBuilder extends ThreadLocal<Map> {
+//        private final int size;
+//
+//        public CacheMapBuilder(int size) {
+//            this.size = size;
+//        }
+//
+//        public int getSize() {
+//            return size;
+//        }
+//
+//        @Override
+//        protected Map initialValue() {
+//            return new LRUMap(size);
+//        }
+//    }
 
     @Override
     public int hashCode() {
