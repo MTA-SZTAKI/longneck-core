@@ -70,6 +70,7 @@ public abstract class AbstractReplaceBlock extends AbstractRegexpBlock {
     }
 
     protected void replaceBasedOnRegexp(Record record, VariableSpace parentScope, boolean all) {
+//        Time
         for (String fName : applyTo) {
             try {
                 Matcher m = pattern.matcher(BlockUtils.getValue(fName, record, parentScope));
@@ -84,6 +85,12 @@ public abstract class AbstractReplaceBlock extends AbstractRegexpBlock {
                 // do nothing - operation is valid on a null value
             }
         }
+        
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
     }
 
     @Override

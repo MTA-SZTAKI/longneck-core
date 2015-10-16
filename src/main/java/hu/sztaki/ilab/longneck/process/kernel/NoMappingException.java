@@ -8,7 +8,7 @@ package hu.sztaki.ilab.longneck.process.kernel;
 public class NoMappingException extends Exception {
 
     public NoMappingException() {
-        super("No mapping exists to the given blockreference.");
+        super("No mapping exists to the given blockreference.", null, false, false);
     }
     
 }
