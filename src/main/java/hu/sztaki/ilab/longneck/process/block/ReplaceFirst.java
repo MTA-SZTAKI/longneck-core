@@ -13,8 +13,8 @@ public class ReplaceFirst extends AbstractReplaceBlock {
 
     @Override
     public void apply(Record record, VariableSpace parentScope) {
-        if (!validatePattern(record, parentScope)) {
-            Logger.getLogger(this.getClass().getName()).warn("Not any regexp or text value given! Skip the match!");
+        if (!validateAndCompilePattern(record, parentScope)) {
+            Logger.getLogger(ReplaceFirst.class).warn("Not any regexp or text value given! Skip the match!");
         }
         replaceBasedOnRegexp(record, parentScope, false);
     }

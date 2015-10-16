@@ -71,29 +71,29 @@ public class ReplaceFirstTest {
         assertEquals("\\s[^a-z\\s]+\\s", rf.pattern.pattern());
         rf.setRegexpfield("testregexpfield");
         rf.pattern = null;
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         assertEquals(".*", rf.pattern.pattern());
         rf.setRegexp("[^a-z]+"); 
         assertEquals("[^a-z]+", rf.pattern.pattern());
         rf.setRegexpfield(null);
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         assertEquals("[^a-z]+", rf.pattern.pattern());
         rf.setText("mas");
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         assertEquals("[^a-z]+", rf.pattern.pattern());
         rf.pattern = null;
         rf.setRegexpfield(null);
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         assertEquals("\\Qmas\\E", rf.pattern.pattern());
         rf.setTextfield("testtextfield1");
         rf.pattern = null;
         rf.setRegexpfield(null);
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         assertEquals("\\Q\\s\\E", rf.pattern.pattern());
         rf.pattern = null;
         rf.setRegexpfield(null);
         rf.setText(null);
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         assertEquals("\\Q\\s\\E", rf.pattern.pattern());  
     }
 
@@ -109,7 +109,7 @@ public class ReplaceFirstTest {
         assertEquals("   a sfdsf  work well5work well 6   ", r.get("test1").getValue());
         rf.setRegexpfield("testregexpfield");
         rf.pattern = null;
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         rf.apply(r, parentScope);
         assertEquals("work well", r.get("test1").getValue());
         rf.setRegexp("[^a-z]+");
@@ -135,13 +135,13 @@ public class ReplaceFirstTest {
         rf.apply(r, parentScope);
         assertEquals("   a sfdsf   5 5 work well  6   ", r.get("test1").getValue());
         rf.pattern = null;
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         rf.apply(r, parentScope);
         assertEquals("   a sfdsf   5 5 work well  6   ", r.get("test1").getValue());
         rf.setText(null);
         rf.setTextfield("testtextfield2");
         rf.pattern = null;
-        rf.validatePattern(r, parentScope);
+        rf.validateAndCompilePattern(r, parentScope);
         rf.apply(r, parentScope);
         assertEquals("   a work wellfdsf   5 5 work well  6   ", r.get("test1").getValue());
     }

@@ -28,7 +28,7 @@ public class MatchExtract extends  AbstractRegexpBlock implements CompoundBlock 
 
     @Override
     public void apply(Record record, VariableSpace variables) throws CheckError {
-        if(!validatePattern(record, variables)) {
+        if(!validateAndCompilePattern(record, variables)) {
             Logger.getLogger(this.getClass().getName()).warn("Not any regexp given! Skip the match!");
             return;
         }

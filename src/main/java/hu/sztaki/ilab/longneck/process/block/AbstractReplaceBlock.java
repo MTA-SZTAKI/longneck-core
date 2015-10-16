@@ -51,8 +51,8 @@ public abstract class AbstractReplaceBlock extends AbstractRegexpBlock {
     }
 
     @Override
-    protected boolean validatePattern(Record record, VariableSpace parentScope) {
-        if ((regexpfield != null || regexp != null) && super.validatePattern(record, parentScope)) {
+    protected boolean validateAndCompilePattern(Record record, VariableSpace parentScope) {
+        if ((regexpfield != null || regexp != null) && super.validateAndCompilePattern(record, parentScope)) {
             return true;
         }
         if (textfield != null) {

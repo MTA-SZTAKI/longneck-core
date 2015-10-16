@@ -10,11 +10,11 @@ import org.apache.log4j.Logger;
  * @author Péter Molnár <molnarp@sztaki.mta.hu>
  */
 public class ReplaceAll extends AbstractReplaceBlock {
-
+    
     @Override
     public void apply(Record record, VariableSpace parentScope) {
-        if (!validatePattern(record, parentScope)) {
-            Logger.getLogger(this.getClass().getName()).warn("Not any regexp or text value given! Skip the match!");
+        if (!validateAndCompilePattern(record, parentScope)) {
+            Logger.getLogger(ReplaceAll.class).warn("No regexp or regexp field given.");
         }
         replaceBasedOnRegexp(record, parentScope, true);
     }

@@ -42,12 +42,12 @@ public abstract class AbstractRegexpBlock extends AbstractAtomicBlock {
         this.regexpfield = regexpfield;
     }
     
-    protected boolean validatePattern(Record record, VariableSpace parentScope) {
+    protected boolean validateAndCompilePattern(Record record, VariableSpace parentScope) {
         if (regexpfield != null) {
             String regexpfieldvalue = BlockUtils.getValue(regexpfield, record, parentScope);
             if (regexpfieldvalue == null) {
-                Logger.getLogger(this.getClass().getName()).warn(
-                            String.format("The given filed in regexpfield is't exist: fieldname = %1$s!",
+                Logger.getLogger(AbstractRegexpBlock.class).warn(
+                            String.format("The given filed in regexpfield does not exist: fieldname = %1$s!",
                                     regexpfield));
                 return false;
             }
