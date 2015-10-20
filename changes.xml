@@ -9,6 +9,11 @@
   </properties>
   
   <body>
+    <release version="1.7.7" date="2015-10-16" description="Performance improvements.">
+      <action dev="lukacsg" type="update">
+	Performance improvements on using Redirect- and other Exceptions.
+      </action>
+    </release>
     <release version="1.7.4" date="2014-08-28" description="Longneck with new fileds mapping logic.">
       <action dev="lukacsg" type="update">
         Refactor the omipotens kernel class.
