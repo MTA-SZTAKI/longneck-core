@@ -5,9 +5,14 @@ import hu.sztaki.ilab.longneck.bootstrap.DecimalKeyGenerator;
 import hu.sztaki.ilab.longneck.bootstrap.KeyGenerator;
 import hu.sztaki.ilab.longneck.bootstrap.PropertyUtils;
 import hu.sztaki.ilab.longneck.process.ImmutableErrorRecordImpl;
+import hu.sztaki.ilab.longneck.process.access.CsvTarget;
+import hu.sztaki.ilab.longneck.process.access.NullTarget;
+import hu.sztaki.ilab.longneck.process.access.SimpleDatabaseTarget;
 import hu.sztaki.ilab.longneck.process.access.Target;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
@@ -94,8 +99,9 @@ public class ErrorWriter extends AbstractTask implements Runnable {
                 outRecords = item.getRecords();
                 
                 // Write records to output
-                if (outRecords.size() > 0) {
-                    
+                if (outRecords.size() > 0 && !(target instanceof NullTarget)) {
+                    Collection<String> outfields = setOutfields();
+                    boolean hasFields = outfields != null;
                     // Wrap constraint failures and write out errors
                     for (Record r : outRecords) {
                         for (CheckResult c : r.getErrors()) {
@@ -104,7 +110,8 @@ public class ErrorWriter extends AbstractTask implements Runnable {
                                     CheckTreeItem.flatten(c, nodeKeyGenerator, maxErrorEventLevel);
                             
                             for (CheckTreeItem treeItem : results) {
-                                outErrors.add(new ImmutableErrorRecordImpl(r, treeItem));
+                                Record errorrecord = hasFields?new ImmutableErrorRecordImpl(r, treeItem, outfields):new ImmutableErrorRecordImpl(r, treeItem);
+                                outErrors.add(errorrecord);
                             }
                         }
                     }
@@ -164,5 +171,15 @@ public class ErrorWriter extends AbstractTask implements Runnable {
 
     public int getMaxErrorEventLevel() {
         return maxErrorEventLevel;
+    }
+
+    private Collection<String> setOutfields() {
+        if (!(target instanceof CsvTarget) && !(target instanceof SimpleDatabaseTarget)) {
+            return null;
+        }
+        if(target instanceof SimpleDatabaseTarget) {
+            return Collections.unmodifiableCollection(((SimpleDatabaseTarget)target).getPlaceholders());
+        }
+        return ((CsvTarget)target).getFileds();
     }
 }

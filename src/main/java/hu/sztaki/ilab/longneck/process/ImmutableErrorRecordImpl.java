@@ -7,6 +7,7 @@ import hu.sztaki.ilab.longneck.Record;
 import hu.sztaki.ilab.longneck.process.kernel.KernelState;
 import hu.sztaki.ilab.longneck.process.constraint.CheckResult;
 import hu.sztaki.ilab.longneck.process.task.CheckTreeItem;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +49,7 @@ public class ImmutableErrorRecordImpl implements Record {
                 new ImmutableFieldImpl("check_result",
                         Boolean.toString(item.getResult().isPassed())));
         fieldsBuilder.put("check_parent_id", new ImmutableFieldImpl("check_parent_id",
-                (item.getCheckParentId() > 0) ?
-                        Long.toString(item.getCheckParentId()) : null));
+                (item.getCheckParentId() > 0) ? Long.toString(item.getCheckParentId()) : null));
         fieldsBuilder.put("check_id",
                 new ImmutableFieldImpl("check_id", Long.toString(item.getCheckId())));
         fieldsBuilder.put("check_tree_id",
@@ -65,6 +65,82 @@ public class ImmutableErrorRecordImpl implements Record {
                    f.equals("context") || f.equals("document_url") || f.equals("document_url") || f.equals("document_column") ||
                    f.equals("check_result") || f.equals("check_parent_id") || f.equals("check_id") || f.equals("check_tree_id") ||
                    f.equals("check_level")) ) {
+                fieldsBuilder.put(e.getKey(), new ImmutableFieldImpl(e.getValue()));
+            }
+        }
+
+        fields = fieldsBuilder.build();
+    }
+
+    public ImmutableErrorRecordImpl(Record record, CheckTreeItem item, Collection<String> outRecords) {
+        ImmutableMap.Builder<String, Field> fieldsBuilder = new ImmutableMap.Builder<String, Field>();
+
+        // special fields:
+        if (outRecords.contains("class_name")) {
+            fieldsBuilder.put("class_name", new ImmutableFieldImpl("class_name",
+                    item.getResult().getSourceInfoContainer().getClass().getName()));
+        }
+        if (outRecords.contains("field")) {
+            fieldsBuilder.put("field",
+                    new ImmutableFieldImpl("field", item.getResult().getField()));
+        }
+        if (outRecords.contains("field_value")) {
+            fieldsBuilder.put("field_value",
+                    new ImmutableFieldImpl("field_value", item.getResult().getValue()));
+        }
+        if (outRecords.contains("details")) {
+            fieldsBuilder.put("details",
+                    new ImmutableFieldImpl("details", item.getResult().getDetails()));
+        }
+        if (outRecords.contains("context")) {
+            fieldsBuilder.put("context",
+                    new ImmutableFieldImpl("context", item.getResult().getContext()));
+        }
+
+            //        if (item.getResult().getSourceInfoContainer().getSourceInfo() == null) {
+        //            System.out.println(record.getFields().values().toString());
+        //        }
+        if (outRecords.contains("document_url")) {
+            fieldsBuilder.put("document_url", new ImmutableFieldImpl("document_url",
+                    item.getResult().getSourceInfoContainer().getSourceInfo().getDocumentUrl()));
+        }
+        if (outRecords.contains("document_line")) {
+            fieldsBuilder.put("document_line", new ImmutableFieldImpl("document_line",
+                    Integer.toString(item.getResult().getSourceInfoContainer().getSourceInfo().getLine())));
+        }
+        if (outRecords.contains("document_column")) {
+            fieldsBuilder.put("document_column", new ImmutableFieldImpl("document_column",
+                    Integer.toString(item.getResult().getSourceInfoContainer().getSourceInfo().getColumn())));
+        }
+        if (outRecords.contains("check_result")) {
+            fieldsBuilder.put("check_result",
+                    new ImmutableFieldImpl("check_result", Boolean.toString(item.getResult().isPassed())));
+        }
+        if (outRecords.contains("check_parent_id")) {
+            fieldsBuilder.put("check_parent_id", new ImmutableFieldImpl("check_parent_id",
+                    (item.getCheckParentId() > 0) ? Long.toString(item.getCheckParentId()) : null));
+        }
+        if (outRecords.contains("check_id")) {
+            fieldsBuilder.put("check_id",
+                    new ImmutableFieldImpl("check_id", Long.toString(item.getCheckId())));
+        }
+        if (outRecords.contains("check_tree_id")) {
+            fieldsBuilder.put("check_tree_id",
+                    new ImmutableFieldImpl("check_tree_id", Long.toString(item.getCheckTreeId())));
+        }
+        if (outRecords.contains("check_level")) {
+            fieldsBuilder.put("check_level",
+                    new ImmutableFieldImpl("check_level", Integer.toString(item.getCheckLevel())));
+        }
+
+        // fields of the record:
+        for (Map.Entry<String, Field> e : record.getFields().entrySet()) {
+            String f = e.getKey();
+            // special fields override record fields:
+            if (!(f.equals("class_name") || f.equals("field") || f.equals("field_value") || f.equals("details")
+                    || f.equals("context") || f.equals("document_url") || f.equals("document_url") || f.equals("document_column")
+                    || f.equals("check_result") || f.equals("check_parent_id") || f.equals("check_id") || f.equals("check_tree_id")
+                    || f.equals("check_level")) && outRecords.contains(f)) {
                 fieldsBuilder.put(e.getKey(), new ImmutableFieldImpl(e.getValue()));
             }
         }

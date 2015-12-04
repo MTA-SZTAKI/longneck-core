@@ -78,7 +78,7 @@ public class MatchConstraint extends AndOperator implements Atomic {
     }
     
     protected boolean validatePattern(Record record, VariableSpace parentScope) {
-        if (pattern == null && regexpfield != null) {
+        if (regexpfield != null) {
             String regexpfieldvalue = BlockUtils.getValue(regexpfield, record, parentScope);
             if (regexpfieldvalue == null) {
                 Logger.getLogger(this.getClass().getName()).warn(

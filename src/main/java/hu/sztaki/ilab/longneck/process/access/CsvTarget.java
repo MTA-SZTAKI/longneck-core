@@ -15,7 +15,9 @@ import org.apache.commons.lang.StringUtils;
 import com.csvreader.CsvWriter;
 import hu.sztaki.ilab.longneck.Field;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 
@@ -190,6 +192,10 @@ public class CsvTarget implements Target {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public Set<String> getFileds() {
+        return headerFieldMapping == null?null:headerFieldMapping.keySet();
     }
 
     @Override

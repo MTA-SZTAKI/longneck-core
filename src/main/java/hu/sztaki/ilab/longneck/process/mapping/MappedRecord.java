@@ -60,13 +60,18 @@ public class MappedRecord extends AbstractRecord {
                 String key = entry.getKey();
                 String value = entry.getValue();
                 if (this.has(key)) {
-                    try {
-                        // Assign value to existsing field
-                        parent.get(value).setValue(this.get(key).getValue());
-
-                    } catch (NullPointerException ex) {
-                        // Create new field with specified value
+//                    try {
+//                        // Assign value to existsing field
+//                        parent.get(value).setValue(this.get(key).getValue());
+//
+//                    } catch (NullPointerException ex) {
+//                        // Create new field with specified value
+//                        parent.add(new Field(value, this.get(key).getValue()));
+//                    }
+                    if(parent.get(value) == null) {
                         parent.add(new Field(value, this.get(key).getValue()));
+                    } else {
+                        parent.get(value).setValue(this.get(key).getValue());
                     }
                 } else if (parent.has(value)) {
                     // Questioned: Not neccesary to remove.
