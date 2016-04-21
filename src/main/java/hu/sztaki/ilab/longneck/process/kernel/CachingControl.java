@@ -36,11 +36,11 @@ class CachingControl implements StartHandler, EndHandler {
             VariableSpace variables = kernelState.getLastExecutionFrame().getVariables();
             cacheKey = BlockUtils.getValue(caching.getApplyTo().get(0), record, variables);
             List<Field> cacheValue = caching.getCacheElement(cacheKey);
-        
+                    
             //cache hit
             if (cacheValue != null) {
                 for (Field f : cacheValue) {
-                    record.add(f);
+                    record.add(new Field(f));
                 }
                 
                 hit = true;
@@ -59,7 +59,7 @@ class CachingControl implements StartHandler, EndHandler {
                 
                 for (String s : caching.getOutputFields()) {
 
-                    Field f = record.get(s);
+                    Field f = new Field(record.get(s));
                     if (f == null) {
                         f = new Field(s);
                     }
